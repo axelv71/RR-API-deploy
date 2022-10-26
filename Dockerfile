@@ -1,5 +1,12 @@
 FROM php:8.1-fpm-alpine
 
+RUN set -ex \
+  && apk --no-cache add \
+    postgresql-dev
+
+RUN docker-php-ext-install pdo pdo_pgsql
+
+
 RUN apk --no-cache update && apk --no-cache add bash && apk --no-cache add git
 
 # Install composer
