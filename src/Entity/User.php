@@ -3,6 +3,8 @@
 namespace App\Entity;
 
 use App\Repository\UserRepository;
+use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Security\Core\User\PasswordAuthenticatedUserInterface;
 use Symfony\Component\Security\Core\User\UserInterface;
@@ -43,8 +45,16 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     #[ORM\Column]
     private ?\DateTimeImmutable $createdAt = null;
 
-    #[ORM\OneToOne(mappedBy: 'user_id', cascade: ['persist', 'remove'])]
-    private ?Settings $settings_id = null;
+    #[ORM\OneToOne(mappedBy: 'user', cascade: ['persist', 'remove'])]
+    private ?Settings $settings = null;
+
+    #[ORM\OneToMany(mappedBy: 'creator', targetEntity: Ressource::class, orphanRemoval: true)]
+    private Collection $ressources;
+
+    public function __construct()
+    {
+        $this->ressources = new ArrayCollection();
+    }
 
     public function getId(): ?int
     {
@@ -176,19 +186,49 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
         return $this;
     }
 
-    public function getSettingsId(): ?Settings
+    public function getSettings(): ?Settings
     {
-        return $this->settings_id;
+        return $this->settings;
     }
 
-    public function setSettingsId(Settings $settings_id): self
+    public function setSettings(Settings $settings): self
     {
         // set the owning side of the relation if necessary
-        if ($settings_id->getUserId() !== $this) {
-            $settings_id->setUserId($this);
+        if ($settings->getUser() !== $this) {
+            $settings->setUser($this);
         }
 
-        $this->settings_id = $settings_id;
+        $this->settings = $settings;
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, Ressource>
+     */
+    public function getRessources(): Collection
+    {
+        return $this->ressources;
+    }
+
+    public function addRessource(Ressource $ressource): self
+    {
+        if (!$this->ressources->contains($ressource)) {
+            $this->ressources->add($ressource);
+            $ressource->setCreator($this);
+        }
+
+        return $this;
+    }
+
+    public function removeRessource(Ressource $ressource): self
+    {
+        if ($this->ressources->removeElement($ressource)) {
+            // set the owning side to null (unless already changed)
+            if ($ressource->getCreator() === $this) {
+                $ressource->setCreator(null);
+            }
+        }
 
         return $this;
     }
