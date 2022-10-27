@@ -51,10 +51,14 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     #[ORM\OneToMany(mappedBy: 'creator', targetEntity: Ressource::class, orphanRemoval: true)]
     private Collection $ressources;
 
+    #[ORM\OneToMany(mappedBy: 'creator', targetEntity: Comment::class)]
+    private Collection $comments;
+
     public function __construct()
     {
         $this->createdAt = new \DateTimeImmutable();
         $this->ressources = new ArrayCollection();
+        $this->comments = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -228,6 +232,36 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
             // set the owning side to null (unless already changed)
             if ($ressource->getCreator() === $this) {
                 $ressource->setCreator(null);
+            }
+        }
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, Comment>
+     */
+    public function getComments(): Collection
+    {
+        return $this->comments;
+    }
+
+    public function addComment(Comment $comment): self
+    {
+        if (!$this->comments->contains($comment)) {
+            $this->comments->add($comment);
+            $comment->setCreator($this);
+        }
+
+        return $this;
+    }
+
+    public function removeComment(Comment $comment): self
+    {
+        if ($this->comments->removeElement($comment)) {
+            // set the owning side to null (unless already changed)
+            if ($comment->getCreator() === $this) {
+                $comment->setCreator(null);
             }
         }
 
