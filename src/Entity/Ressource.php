@@ -7,6 +7,7 @@ use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
+use JMS\Serializer\Annotation\Groups;
 
 #[ORM\Entity(repositoryClass: RessourceRepository::class)]
 class Ressource
@@ -14,32 +15,41 @@ class Ressource
     #[ORM\Id]
     #[ORM\GeneratedValue]
     #[ORM\Column]
+    #[Groups(["getRessource"])]
     private ?int $id = null;
 
     #[ORM\Column(type: Types::TEXT)]
+    #[Groups(["getRessource"])]
     private ?string $description = null;
 
     #[ORM\Column(nullable: true)]
+    #[Groups(["getRessource"])]
     private ?bool $isValid = null;
 
     #[ORM\Column]
+    #[Groups(["getRessource"])]
     private ?bool $isPublished = null;
 
     #[ORM\Column]
+    #[Groups(["getRessource"])]
     private ?\DateTimeImmutable $createdAt = null;
 
     #[ORM\ManyToOne(inversedBy: 'ressources')]
     #[ORM\JoinColumn(nullable: false)]
+    #[Groups(["getRessource"])]
     private ?Category $category = null;
 
     #[ORM\ManyToOne(inversedBy: 'ressources')]
     #[ORM\JoinColumn(nullable: false)]
+    #[Groups(["getRessource"])]
     private ?User $creator = null;
 
     #[ORM\OneToMany(mappedBy: 'ressource', targetEntity: Comment::class)]
+    #[Groups(["getRessource"])]
     private Collection $comments;
 
     #[ORM\OneToMany(mappedBy: 'ressource', targetEntity: Media::class)]
+    #[Groups(["getRessource"])]
     private Collection $media;
 
     public function __construct()

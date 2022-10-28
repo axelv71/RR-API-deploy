@@ -8,6 +8,8 @@ use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Security\Core\User\PasswordAuthenticatedUserInterface;
 use Symfony\Component\Security\Core\User\UserInterface;
+use JMS\Serializer\Annotation\Groups;
+use Symfony\Component\Validator\Constraints as Assert;
 
 #[ORM\Entity(repositoryClass: UserRepository::class)]
 #[ORM\Table(name: '`user`')]
@@ -16,45 +18,61 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     #[ORM\Id]
     #[ORM\GeneratedValue]
     #[ORM\Column]
+    #[Groups(["getUsers"])]
     private ?int $id = null;
 
     #[ORM\Column(length: 180, unique: true)]
+    #[Groups(["getUsers"])]
     private ?string $email = null;
 
-    #[ORM\Column]
-    private array $roles = [];
 
+    #[ORM\ManyToOne(inversedBy: 'role')]
+    #[ORM\JoinColumn(nullable: false)]
+    private ?Role $roles = null;
+
+    #[ORM\Column(length: 255)]
+    #[Groups(["getUsers"])]
+    private ?string $role_name = null;
     /**
      * @var string The hashed password
      */
     #[ORM\Column]
+    #[Groups(["getUsers"])]
     private ?string $password = null;
 
     #[ORM\Column(length: 255)]
+    #[Groups(["getUsers"])]
     private ?string $name = null;
 
     #[ORM\Column(length: 255)]
+    #[Groups(["getUsers"])]
     private ?string $surname = null;
 
     #[ORM\Column(length: 255)]
+    #[Groups(["getUsers"])]
     private ?string $pseudo = null;
 
     #[ORM\Column(nullable: true)]
+    #[Groups(["getUsers"])]
     private ?\DateTimeImmutable $birthday = null;
 
     #[ORM\Column]
+    #[Groups(["getUsers"])]
     private ?\DateTimeImmutable $createdAt = null;
 
     #[ORM\OneToOne(mappedBy: 'user', targetEntity: Settings::class ,cascade: ['persist', 'remove'])]
+    #[Groups(["getUsers"])]
     private ?Settings $settings = null;
 
     #[ORM\OneToMany(mappedBy: 'creator', targetEntity: Ressource::class, orphanRemoval: true)]
+    #[Groups(["getUsers"])]
     private Collection $ressources;
 
     #[ORM\OneToMany(mappedBy: 'creator', targetEntity: Comment::class)]
     private Collection $comments;
 
     #[ORM\Column]
+    #[Groups(["getUsers"])]
     private ?bool $isActive = null;
 
     public function __construct()
@@ -62,6 +80,8 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
         $this->createdAt = new \DateTimeImmutable();
         $this->ressources = new ArrayCollection();
         $this->comments = new ArrayCollection();
+        $this->roles = new Role();
+        $this->role_name = $this->roles->getName();
     }
 
     public function getId(): ?int
@@ -94,20 +114,22 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     /**
      * @see UserInterface
      */
-    public function getRoles(): array
+    public function getRoles(): Role
     {
-        $roles = $this->roles;
-        // guarantee every user at least has ROLE_USER
-        $roles[] = 'ROLE_USER';
-
-        return array_unique($roles);
+        return $this->roles;
     }
 
-    public function setRoles(array $roles): self
+    public function setRoles(Role $roles): self
     {
         $this->roles = $roles;
+        $this->role_name = $this->roles->getName();
 
         return $this;
+    }
+
+    public function getRoleName(): string
+    {
+        return $this->role_name;
     }
 
     /**

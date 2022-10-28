@@ -3,6 +3,7 @@
 namespace App\Entity;
 
 use App\Repository\RoleRepository;
+use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 
 #[ORM\Entity(repositoryClass: RoleRepository::class)]
@@ -19,9 +20,13 @@ class Role
     #[ORM\Column]
     private ?\DateTimeImmutable $createdAt = null;
 
+    #[ORM\OneToMany(mappedBy: 'user', targetEntity: User::class)]
+    private Collection $users;
+
     public function __construct ()
     {
         $this->createdAt = new \DateTimeImmutable();
+        $this->name = "NOT_CONNECTED_USER";
     }
 
     public function getId(): ?int

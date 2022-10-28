@@ -41,10 +41,11 @@ class AppFixtures extends Fixture
             $user->setName($this->faker->name());
             $user->setSurname($this->faker->lastName());
             $user->setEmail($this->faker->email());
-            $user->setRoles(["ROLE_USER_CONNECTED"]);
+            $user->setRoles($role);
             $user->setPassword($this->userPasswordHasher->hashPassword($user, "password" . $i));
             $user->setPseudo($user->getPseudo().$user->getSurname());
             $user->setBirthday(new \DateTimeImmutable());
+            $user->setIsActive(true);
             $user->setSettings($setting);
             $manager->persist($user);
 
