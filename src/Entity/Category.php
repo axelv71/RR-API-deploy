@@ -14,17 +14,19 @@ class Category
     #[ORM\Id]
     #[ORM\GeneratedValue]
     #[ORM\Column]
-    #[Groups(["getRessource"])]
+    #[Groups(["getRessources", "getCategories"])]
     private ?int $id = null;
 
     #[ORM\Column(length: 255)]
-    #[Groups(["getRessource"])]
+    #[Groups(["getRessources","getCategories"])]
     private ?string $title = null;
 
     #[ORM\Column]
+    #[Groups(["getCategories"])]
     private ?\DateTimeImmutable $createdAt = null;
 
     #[ORM\OneToMany(mappedBy: 'category', targetEntity: Ressource::class)]
+    #[Groups(["getCategories"])]
     private Collection $ressources;
 
     public function __construct()

@@ -15,41 +15,41 @@ class Ressource
     #[ORM\Id]
     #[ORM\GeneratedValue]
     #[ORM\Column]
-    #[Groups(["getRessource"])]
+    #[Groups(["getRessources","getMedia"])]
     private ?int $id = null;
 
     #[ORM\Column(type: Types::TEXT)]
-    #[Groups(["getRessource"])]
+    #[Groups(["getRessources","getMedia"])]
     private ?string $description = null;
 
     #[ORM\Column(nullable: true)]
-    #[Groups(["getRessource"])]
+    #[Groups(["getRessources","getMedia"])]
     private ?bool $isValid = null;
 
     #[ORM\Column]
-    #[Groups(["getRessource"])]
+    #[Groups(["getRessources","getMedia"])]
     private ?bool $isPublished = null;
 
     #[ORM\Column]
-    #[Groups(["getRessource"])]
+    #[Groups(["getRessources","getMedia"])]
     private ?\DateTimeImmutable $createdAt = null;
 
     #[ORM\ManyToOne(inversedBy: 'ressources')]
     #[ORM\JoinColumn(nullable: false)]
-    #[Groups(["getRessource"])]
+    #[Groups(["getRessources","getMedia"])]
     private ?Category $category = null;
 
     #[ORM\ManyToOne(inversedBy: 'ressources')]
     #[ORM\JoinColumn(nullable: false)]
-    #[Groups(["getRessource"])]
+    #[Groups(["getRessources","getMedia"])]
     private ?User $creator = null;
 
     #[ORM\OneToMany(mappedBy: 'ressource', targetEntity: Comment::class)]
-    #[Groups(["getRessource"])]
+    #[Groups(["getRessources"])]
     private Collection $comments;
 
     #[ORM\OneToMany(mappedBy: 'ressource', targetEntity: Media::class)]
-    #[Groups(["getRessource"])]
+    #[Groups(["getRessources"])]
     private Collection $media;
 
     public function __construct()

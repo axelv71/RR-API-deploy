@@ -18,11 +18,11 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     #[ORM\Id]
     #[ORM\GeneratedValue]
     #[ORM\Column]
-    #[Groups(["getUsers"])]
+    #[Groups(["getUsers", "getRessources","getRoles"])]
     private ?int $id = null;
 
     #[ORM\Column(length: 180, unique: true)]
-    #[Groups(["getUsers"])]
+    #[Groups(["getUsers","getRessources","getRoles"])]
     private ?string $email = null;
 
 
@@ -31,7 +31,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     private ?Role $roles = null;
 
     #[ORM\Column(length: 255)]
-    #[Groups(["getUsers"])]
+    #[Groups(["getUsers","getRessources"])]
     private ?string $role_name = null;
     /**
      * @var string The hashed password
@@ -49,7 +49,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     private ?string $surname = null;
 
     #[ORM\Column(length: 255)]
-    #[Groups(["getUsers"])]
+    #[Groups(["getUsers","getRessources","getRoles"])]
     private ?string $pseudo = null;
 
     #[ORM\Column(nullable: true)]
@@ -65,7 +65,6 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     private ?Settings $settings = null;
 
     #[ORM\OneToMany(mappedBy: 'creator', targetEntity: Ressource::class, orphanRemoval: true)]
-    #[Groups(["getUsers"])]
     private Collection $ressources;
 
     #[ORM\OneToMany(mappedBy: 'creator', targetEntity: Comment::class)]
