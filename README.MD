@@ -19,6 +19,7 @@ Et voilà notre backend ainsi que notre base de données sont lancer ! Pour le v
 > ```properties
 >> composer install
 >> symfony console doctrine:migrations:migrate
+>> symfony console doctrine:fixtures:load
 >```
 
 
