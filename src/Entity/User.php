@@ -26,9 +26,8 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     private ?string $email = null;
 
 
-    #[ORM\ManyToOne(inversedBy: 'role')]
-    #[ORM\JoinColumn(nullable: false)]
-    private ?Role $roles = null;
+    #[ORM\Column]
+    private array $roles = [];
 
     #[ORM\Column(length: 255)]
     #[Groups(["getUsers"])]
@@ -80,8 +79,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
         $this->createdAt = new \DateTimeImmutable();
         $this->ressources = new ArrayCollection();
         $this->comments = new ArrayCollection();
-        $this->roles = new Role();
-        $this->role_name = $this->roles->getName();
+        $this->role_name =  "Test"; //$this->roles->getName();
     }
 
     public function getId(): ?int
@@ -114,15 +112,19 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     /**
      * @see UserInterface
      */
-    public function getRoles(): Role
+    public function getRoles(): array
     {
-        return $this->roles;
+        $roles = $this->roles;
+        // guarantee every user at least has ROLE_USER
+        $roles[] = 'ROLE_USER';
+
+        return array_unique($roles);
     }
 
-    public function setRoles(Role $roles): self
+    public function setRoles(array $roles): self
     {
         $this->roles = $roles;
-        $this->role_name = $this->roles->getName();
+        //$this->role_name = $this->roles->getName();
 
         return $this;
     }

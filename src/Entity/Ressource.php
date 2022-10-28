@@ -56,6 +56,7 @@ class Ressource
     {
         $this->comments = new ArrayCollection();
         $this->media = new ArrayCollection();
+        $this->createdAt = new \DateTimeImmutable();
     }
 
     public function getId(): ?int
