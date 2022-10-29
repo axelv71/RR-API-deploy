@@ -27,12 +27,9 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
 
 
     #[ORM\Column]
-    #[ORM\ManyToOne(inversedBy: 'role', targetEntity: Role::class)]
-    private Role $roles;
+    private array $roles = [];
 
-    #[ORM\Column(length: 255)]
-    #[Groups(["getUsers","getRessources"])]
-    private ?string $role_name = null;
+
     /**
      * @var string The hashed password
      */
@@ -91,10 +88,11 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
         $this->createdAt = new \DateTimeImmutable();
         $this->ressources = new ArrayCollection();
         $this->comments = new ArrayCollection();
-        $this->roles = new Role();
-        $this->role_name = $this->roles->getName();
+
+        //Relations
         $this->sent_relation = new ArrayCollection();
         $this->received_relation = new ArrayCollection();
+
         $this->likes = new ArrayCollection();
         $this->favorites = new ArrayCollection();
     }
@@ -129,16 +127,19 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     /**
      * @see UserInterface
      */
-    public function getRoles(): Role
+    public function getRoles(): array
     {
-        return $this->roles;
+        $roles = $this->roles;
+        // guarantee every user at least has ROLE_USER
+        $roles[] = 'ROLE_USER';
 
+        return array_unique($roles);
     }
 
-    public function setRoles(Role $roles): self
+    public function setRoles(array $roles): self
     {
         $this->roles = $roles;
-        $this->role_name = $this->roles->getName();
+        //$this->role_name = $this->roles->getName();
 
         return $this;
     }
