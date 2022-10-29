@@ -27,7 +27,8 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
 
 
     #[ORM\Column]
-    private array $roles = [];
+    #[ORM\ManyToOne(inversedBy: 'role', targetEntity: Role::class)]
+    private Role $roles;
 
     #[ORM\Column(length: 255)]
     #[Groups(["getUsers","getRessources"])]
@@ -128,19 +129,16 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     /**
      * @see UserInterface
      */
-    public function getRoles(): array
+    public function getRoles(): Role
     {
-        $roles = $this->roles;
-        // guarantee every user at least has ROLE_USER
-        $roles[] = 'ROLE_USER';
+        return $this->roles;
 
-        return array_unique($roles);
     }
 
-    public function setRoles(array $roles): self
+    public function setRoles(Role $roles): self
     {
         $this->roles = $roles;
-        //$this->role_name = $this->roles->getName();
+        $this->role_name = $this->roles->getName();
 
         return $this;
     }
