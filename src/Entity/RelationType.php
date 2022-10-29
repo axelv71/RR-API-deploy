@@ -3,7 +3,10 @@
 namespace App\Entity;
 
 use App\Repository\RelationTypeRepository;
+use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Component\Serializer\Annotation\Groups;
 
 #[ORM\Entity(repositoryClass: RelationTypeRepository::class)]
 class RelationType
@@ -18,6 +21,14 @@ class RelationType
 
     #[ORM\Column]
     private ?\DateTimeImmutable $createdAt = null;
+
+    #[ORM\OneToMany(mappedBy: 'relation_type', targetEntity: Relation::class, orphanRemoval: true)]
+    private Collection $relations;
+
+    public function __construct()
+    {
+        $this->relations = new ArrayCollection();
+    }
 
     public function getId(): ?int
     {
@@ -44,6 +55,36 @@ class RelationType
     public function setCreatedAt(\DateTimeImmutable $createdAt): self
     {
         $this->createdAt = $createdAt;
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, Relation>
+     */
+    public function getRelations(): Collection
+    {
+        return $this->relations;
+    }
+
+    public function addRelation(Relation $relation): self
+    {
+        if (!$this->relations->contains($relation)) {
+            $this->relations->add($relation);
+            $relation->setRelationType($this);
+        }
+
+        return $this;
+    }
+
+    public function removeRelation(Relation $relation): self
+    {
+        if ($this->relations->removeElement($relation)) {
+            // set the owning side to null (unless already changed)
+            if ($relation->getRelationType() === $this) {
+                $relation->setRelationType(null);
+            }
+        }
 
         return $this;
     }

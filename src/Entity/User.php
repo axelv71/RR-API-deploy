@@ -8,7 +8,7 @@ use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Security\Core\User\PasswordAuthenticatedUserInterface;
 use Symfony\Component\Security\Core\User\UserInterface;
-use JMS\Serializer\Annotation\Groups;
+use Symfony\Component\Serializer\Annotation\Groups;
 use Symfony\Component\Validator\Constraints as Assert;
 
 #[ORM\Entity(repositoryClass: UserRepository::class)]
@@ -74,6 +74,18 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     #[Groups(["getUsers"])]
     private ?bool $isActive = null;
 
+    #[ORM\OneToMany(mappedBy: 'Sender', targetEntity: Relation::class, orphanRemoval: true)]
+    private Collection $sent_relation;
+
+    #[ORM\OneToMany(mappedBy: 'Receiver', targetEntity: Relation::class, orphanRemoval: true)]
+    private Collection $received_relation;
+
+    #[ORM\OneToMany(mappedBy: 'user_like', targetEntity: Like::class)]
+    private Collection $likes;
+
+    #[ORM\OneToMany(mappedBy: 'user_favorite', targetEntity: Favorite::class)]
+    private Collection $favorites;
+
     public function __construct()
     {
         $this->createdAt = new \DateTimeImmutable();
@@ -81,6 +93,10 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
         $this->comments = new ArrayCollection();
         $this->roles = new Role();
         $this->role_name = $this->roles->getName();
+        $this->sent_relation = new ArrayCollection();
+        $this->received_relation = new ArrayCollection();
+        $this->likes = new ArrayCollection();
+        $this->favorites = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -300,6 +316,126 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     public function setIsActive(bool $isActive): self
     {
         $this->isActive = $isActive;
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, Relation>
+     */
+    public function getReceiver(): Collection
+    {
+        return $this->sent_relation;
+    }
+
+    public function addReceiver(Relation $receiver): self
+    {
+        if (!$this->sent_relation->contains($receiver)) {
+            $this->sent_relation->add($receiver);
+            $receiver->setSender($this);
+        }
+
+        return $this;
+    }
+
+    public function removeReceiver(Relation $receiver): self
+    {
+        if ($this->sent_relation->removeElement($receiver)) {
+            // set the owning side to null (unless already changed)
+            if ($receiver->getSender() === $this) {
+                $receiver->setSender(null);
+            }
+        }
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, Relation>
+     */
+    public function getReceivedRelation(): Collection
+    {
+        return $this->received_relation;
+    }
+
+    public function addReceivedRelation(Relation $receivedRelation): self
+    {
+        if (!$this->received_relation->contains($receivedRelation)) {
+            $this->received_relation->add($receivedRelation);
+            $receivedRelation->setReceiver($this);
+        }
+
+        return $this;
+    }
+
+    public function removeReceivedRelation(Relation $receivedRelation): self
+    {
+        if ($this->received_relation->removeElement($receivedRelation)) {
+            // set the owning side to null (unless already changed)
+            if ($receivedRelation->getReceiver() === $this) {
+                $receivedRelation->setReceiver(null);
+            }
+        }
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, Like>
+     */
+    public function getLikes(): Collection
+    {
+        return $this->likes;
+    }
+
+    public function addLike(Like $like): self
+    {
+        if (!$this->likes->contains($like)) {
+            $this->likes->add($like);
+            $like->setUserLike($this);
+        }
+
+        return $this;
+    }
+
+    public function removeLike(Like $like): self
+    {
+        if ($this->likes->removeElement($like)) {
+            // set the owning side to null (unless already changed)
+            if ($like->getUserLike() === $this) {
+                $like->setUserLike(null);
+            }
+        }
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, Favorite>
+     */
+    public function getFavorites(): Collection
+    {
+        return $this->favorites;
+    }
+
+    public function addFavorite(Favorite $favorite): self
+    {
+        if (!$this->favorites->contains($favorite)) {
+            $this->favorites->add($favorite);
+            $favorite->setUserFavorite($this);
+        }
+
+        return $this;
+    }
+
+    public function removeFavorite(Favorite $favorite): self
+    {
+        if ($this->favorites->removeElement($favorite)) {
+            // set the owning side to null (unless already changed)
+            if ($favorite->getUserFavorite() === $this) {
+                $favorite->setUserFavorite(null);
+            }
+        }
 
         return $this;
     }
