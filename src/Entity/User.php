@@ -144,11 +144,6 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
         return $this;
     }
 
-    public function getRoleName(): string
-    {
-        return $this->role_name;
-    }
-
     /**
      * @see PasswordAuthenticatedUserInterface
      */
