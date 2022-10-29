@@ -28,6 +28,7 @@ class RelationType
     public function __construct()
     {
         $this->relations = new ArrayCollection();
+        $this->createdAt = new \DateTimeImmutable();
     }
 
     public function getId(): ?int

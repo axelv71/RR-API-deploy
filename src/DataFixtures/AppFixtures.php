@@ -4,8 +4,10 @@ namespace App\DataFixtures;
 
 use App\Entity\Category;
 use App\Entity\Comment;
+use App\Entity\Favorite;
 use App\Entity\Like;
 use App\Entity\Media;
+use App\Entity\RelationType;
 use App\Entity\Ressource;
 use App\Entity\Role;
 use App\Entity\Settings;
@@ -34,6 +36,16 @@ class AppFixtures extends Fixture
         $role = new Role();
         $role->setName("ROLE_USER_CONNECTED");
         $manager->persist($role);
+
+
+        $relationTypes = [];
+        for ($r = 0; $r < 5; $r++) {
+            $relationType = new RelationType();
+            $relationType->setName($this->faker->word());
+
+            $relationTypes[] = $relationType;
+            $manager->persist($relationType);
+        }
 
         $users = [];
         for ($i = 0; $i < 10; $i++) {
@@ -112,10 +124,17 @@ class AppFixtures extends Fixture
                             ->setRessourceLike($ressourcies[$r])
                             ->setIsLiked((bool)mt_rand(0, 1));
 
+                        $favorite = new Favorite();
+                        $favorite->setUserFavorite($users[$u])
+                            ->setRessourceFavorite($ressourcies[$r]);
+
+                        $manager->persist($favorite);
                         $manager->persist($like);
                     }
                 }
             }
+
+
 
             $manager->persist($ressource);
             $ressourcies[] = $ressource;
