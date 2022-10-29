@@ -4,6 +4,7 @@ namespace App\DataFixtures;
 
 use App\Entity\Category;
 use App\Entity\Comment;
+use App\Entity\Media;
 use App\Entity\Ressource;
 use App\Entity\Role;
 use App\Entity\Settings;
@@ -77,7 +78,7 @@ class AppFixtures extends Fixture
                 ->setCategory($categories[mt_rand(0, count($categories) - 1)])
                 ->setCreator($users[mt_rand(0, count($users) - 1)]);
 
-            $ressourcies[] = $ressource;
+
 
             for ($c = 0; $c < mt_rand(0, 10); $c++) {
                 $comment = new Comment();
@@ -88,9 +89,19 @@ class AppFixtures extends Fixture
                 $manager->persist($comment);
             }
 
-            $manager->persist($ressource);
-        }
+            for ($m = 0; $m < mt_rand(0, 3); $m++)
+            {
+                $media = new Media();
+                $media->setTitle($this->faker->word())
+                    ->setLink($this->faker->imageUrl(640, 480, 'media', true))
+                    ->setRessource($ressource);
 
+                $manager->persist($media);
+            }
+
+            $manager->persist($ressource);
+            $ressourcies[] = $ressource;
+        }
 
         $manager->flush();
     }

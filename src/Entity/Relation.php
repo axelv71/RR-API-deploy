@@ -37,6 +37,8 @@ class Relation
         $this->relation_type = $relation_type;
     }
 
+    //public  function __construct() { }
+
     public function getId(): ?int
     {
         return $this->id;
