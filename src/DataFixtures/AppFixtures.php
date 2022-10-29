@@ -4,6 +4,7 @@ namespace App\DataFixtures;
 
 use App\Entity\Category;
 use App\Entity\Comment;
+use App\Entity\Like;
 use App\Entity\Media;
 use App\Entity\Ressource;
 use App\Entity\Role;
@@ -80,6 +81,7 @@ class AppFixtures extends Fixture
 
 
 
+            // Comments
             for ($c = 0; $c < mt_rand(0, 10); $c++) {
                 $comment = new Comment();
                 $comment->setContent($this->faker->paragraph())
@@ -89,6 +91,7 @@ class AppFixtures extends Fixture
                 $manager->persist($comment);
             }
 
+            // Media
             for ($m = 0; $m < mt_rand(0, 3); $m++)
             {
                 $media = new Media();
@@ -97,6 +100,21 @@ class AppFixtures extends Fixture
                     ->setRessource($ressource);
 
                 $manager->persist($media);
+            }
+
+            // Like
+            for ($u = 0; $u < count($users) - 1; $u++)
+            {
+                for ($r =0; $r < count($ressourcies) - 1; $r++) {
+                    if ((bool)mt_rand(0,1)) {
+                        $like = new Like();
+                        $like->setUserLike($users[$u])
+                            ->setRessourceLike($ressourcies[$r])
+                            ->setIsLiked((bool)mt_rand(0, 1));
+
+                        $manager->persist($like);
+                    }
+                }
             }
 
             $manager->persist($ressource);
