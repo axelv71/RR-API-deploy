@@ -7,7 +7,7 @@ use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
-use JMS\Serializer\Annotation\Groups;
+use Symfony\Component\Serializer\Annotation\Groups;
 
 #[ORM\Entity(repositoryClass: RessourceRepository::class)]
 class Ressource
@@ -15,47 +15,55 @@ class Ressource
     #[ORM\Id]
     #[ORM\GeneratedValue]
     #[ORM\Column]
-    #[Groups(["getRessource"])]
+    #[Groups(["getRessources","getMedia"])]
     private ?int $id = null;
 
     #[ORM\Column(type: Types::TEXT)]
-    #[Groups(["getRessource"])]
+    #[Groups(["getRessources","getMedia"])]
     private ?string $description = null;
 
     #[ORM\Column(nullable: true)]
-    #[Groups(["getRessource"])]
+    #[Groups(["getRessources","getMedia"])]
     private ?bool $isValid = null;
 
     #[ORM\Column]
-    #[Groups(["getRessource"])]
+    #[Groups(["getRessources","getMedia"])]
     private ?bool $isPublished = null;
 
     #[ORM\Column]
-    #[Groups(["getRessource"])]
+    #[Groups(["getRessources","getMedia"])]
     private ?\DateTimeImmutable $createdAt = null;
 
     #[ORM\ManyToOne(inversedBy: 'ressources')]
     #[ORM\JoinColumn(nullable: false)]
-    #[Groups(["getRessource"])]
+    #[Groups(["getRessources","getMedia"])]
     private ?Category $category = null;
 
     #[ORM\ManyToOne(inversedBy: 'ressources')]
     #[ORM\JoinColumn(nullable: false)]
-    #[Groups(["getRessource"])]
+    #[Groups(["getRessources","getMedia"])]
     private ?User $creator = null;
 
     #[ORM\OneToMany(mappedBy: 'ressource', targetEntity: Comment::class)]
-    #[Groups(["getRessource"])]
+    #[Groups(["getRessources"])]
     private Collection $comments;
 
     #[ORM\OneToMany(mappedBy: 'ressource', targetEntity: Media::class)]
-    #[Groups(["getRessource"])]
+    #[Groups(["getRessources"])]
     private Collection $media;
+
+    #[ORM\OneToMany(mappedBy: 'ressource_like', targetEntity: Like::class)]
+    private Collection $likes;
+
+    #[ORM\OneToMany(mappedBy: 'ressource_favorite', targetEntity: Favorite::class)]
+    private Collection $favorites;
 
     public function __construct()
     {
         $this->comments = new ArrayCollection();
         $this->media = new ArrayCollection();
+        $this->likes = new ArrayCollection();
+        $this->favorites = new ArrayCollection();
         $this->createdAt = new \DateTimeImmutable();
     }
 
@@ -190,6 +198,66 @@ class Ressource
             // set the owning side to null (unless already changed)
             if ($medium->getRessource() === $this) {
                 $medium->setRessource(null);
+            }
+        }
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, Like>
+     */
+    public function getLikes(): Collection
+    {
+        return $this->likes;
+    }
+
+    public function addLike(Like $like): self
+    {
+        if (!$this->likes->contains($like)) {
+            $this->likes->add($like);
+            $like->setRessourceLike($this);
+        }
+
+        return $this;
+    }
+
+    public function removeLike(Like $like): self
+    {
+        if ($this->likes->removeElement($like)) {
+            // set the owning side to null (unless already changed)
+            if ($like->getRessourceLike() === $this) {
+                $like->setRessourceLike(null);
+            }
+        }
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, Favorite>
+     */
+    public function getFavorites(): Collection
+    {
+        return $this->favorites;
+    }
+
+    public function addFavorite(Favorite $favorite): self
+    {
+        if (!$this->favorites->contains($favorite)) {
+            $this->favorites->add($favorite);
+            $favorite->setRessourceFavorite($this);
+        }
+
+        return $this;
+    }
+
+    public function removeFavorite(Favorite $favorite): self
+    {
+        if ($this->favorites->removeElement($favorite)) {
+            // set the owning side to null (unless already changed)
+            if ($favorite->getRessourceFavorite() === $this) {
+                $favorite->setRessourceFavorite(null);
             }
         }
 

@@ -4,6 +4,7 @@ namespace App\Entity;
 
 use App\Repository\SettingsRepository;
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Component\Serializer\Annotation\Groups;
 
 #[ORM\Entity(repositoryClass: SettingsRepository::class)]
 class Settings
@@ -11,9 +12,11 @@ class Settings
     #[ORM\Id]
     #[ORM\GeneratedValue]
     #[ORM\Column]
+    #[Groups(["getUsers"])]
     private ?int $id = null;
 
     #[ORM\Column]
+    #[Groups(["getUsers"])]
     private ?bool $isDark = null;
 
     #[ORM\Column]
