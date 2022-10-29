@@ -33,6 +33,11 @@ class Comment
     #[ORM\JoinColumn(nullable: false)]
     private ?Ressource $ressource = null;
 
+    public function __construct()
+    {
+        $this->createAt = new \DateTimeImmutable();
+    }
+
     public function getId(): ?int
     {
         return $this->id;

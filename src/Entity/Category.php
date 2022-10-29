@@ -32,6 +32,7 @@ class Category
     public function __construct()
     {
         $this->ressources = new ArrayCollection();
+        $this->createdAt = new \DateTimeImmutable();
     }
 
     public function getId(): ?int
