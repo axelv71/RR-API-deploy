@@ -59,7 +59,8 @@ class AppFixtures extends Fixture
             $user->setName($this->faker->name());
             $user->setSurname($this->faker->lastName());
             $user->setEmail($this->faker->email());
-            $user->setRoles(["USER_CONNECTED"]);
+            $user->setUserRole($role);
+            $user->setRoles([$user->getUserRole()->getName()]);
             $user->setPassword($this->userPasswordHasher->hashPassword($user, "password" . $i));
             $user->setPseudo($user->getPseudo().$user->getSurname());
             $user->setBirthday(new \DateTimeImmutable());
