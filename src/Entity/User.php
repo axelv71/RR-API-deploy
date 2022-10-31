@@ -27,6 +27,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
 
 
     #[ORM\Column]
+    #[Groups(["getUsers"])]
     private array $roles = [];
 
 
