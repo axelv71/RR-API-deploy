@@ -3,6 +3,7 @@
 namespace App\Entity;
 
 use App\Repository\RoleRepository;
+use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Serializer\Annotation\Groups;
@@ -28,10 +29,12 @@ class Role
     #[Groups(["getRoles"])]
     private Collection $users;
 
+
     public function __construct ()
     {
         $this->createdAt = new \DateTimeImmutable();
         $this->name = "NOT_CONNECTED_USER";
+        $this->users = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -59,6 +62,36 @@ class Role
     public function setCreatedAt(\DateTimeImmutable $createdAt): self
     {
         $this->createdAt = $createdAt;
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, User>
+     */
+    public function getUsers(): Collection
+    {
+        return $this->users;
+    }
+
+    public function addUsers(User $users): self
+    {
+        if (!$this->users->contains($users)) {
+            $this->users->add($users);
+            $users->setUserRole($this);
+        }
+
+        return $this;
+    }
+
+    public function removeUsers(User $users): self
+    {
+        if ($this->users->removeElement($users)) {
+            // set the owning side to null (unless already changed)
+            if ($users->getUserRole() === $this) {
+                $users->setUserRole(null);
+            }
+        }
 
         return $this;
     }

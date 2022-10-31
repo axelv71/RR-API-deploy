@@ -83,6 +83,9 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     #[ORM\OneToMany(mappedBy: 'user_favorite', targetEntity: Favorite::class)]
     private Collection $favorites;
 
+    #[ORM\ManyToOne(inversedBy: 'users')]
+    private ?Role $user_role = null;
+
     public function __construct()
     {
         $this->createdAt = new \DateTimeImmutable();
@@ -433,6 +436,18 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
                 $favorite->setUserFavorite(null);
             }
         }
+
+        return $this;
+    }
+
+    public function getUserRole(): ?Role
+    {
+        return $this->user_role;
+    }
+
+    public function setUserRole(?Role $user_role): self
+    {
+        $this->user_role = $user_role;
 
         return $this;
     }
