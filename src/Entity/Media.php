@@ -32,6 +32,11 @@ class Media
     #[Groups(["getMedia"])]
     private ?Ressource $ressource = null;
 
+    public function __construct()
+    {
+        $this->createdAt = new \DateTimeImmutable();
+    }
+
     public function getId(): ?int
     {
         return $this->id;
