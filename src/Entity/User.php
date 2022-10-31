@@ -65,7 +65,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     #[ORM\OneToMany(mappedBy: 'creator', targetEntity: Ressource::class, orphanRemoval: true)]
     private Collection $ressources;
 
-    #[ORM\OneToMany(mappedBy: 'creator', targetEntity: Comment::class)]
+    #[ORM\OneToMany(mappedBy: 'creator', targetEntity: Comment::class, orphanRemoval: true)]
     private Collection $comments;
 
     #[ORM\Column]
@@ -78,10 +78,10 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     #[ORM\OneToMany(mappedBy: 'Receiver', targetEntity: Relation::class, orphanRemoval: true)]
     private Collection $received_relation;
 
-    #[ORM\OneToMany(mappedBy: 'user_like', targetEntity: Like::class)]
+    #[ORM\OneToMany(mappedBy: 'user_like', targetEntity: Like::class, orphanRemoval: true)]
     private Collection $likes;
 
-    #[ORM\OneToMany(mappedBy: 'user_favorite', targetEntity: Favorite::class)]
+    #[ORM\OneToMany(mappedBy: 'user_favorite', targetEntity: Favorite::class, orphanRemoval: true)]
     private Collection $favorites;
 
     #[ORM\ManyToOne(inversedBy: 'users')]

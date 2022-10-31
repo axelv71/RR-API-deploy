@@ -12,6 +12,7 @@ use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
+use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 use Symfony\Component\Serializer\SerializerInterface;
 use Symfony\Component\Validator\Constraints\Json;
 
@@ -48,6 +49,12 @@ class UserController extends AbstractController
     }
 
 
+    /**
+     * This function allows us to delete a user
+     * @param User $user
+     * @param EntityManagerInterface $em
+     * @return JsonResponse
+     */
     #[Route("/api/users/{id}", name: "deleteUser", methods: ["DELETE"])]
     public function deleteUser(User $user, EntityManagerInterface $em) : JsonResponse
     {
@@ -55,6 +62,20 @@ class UserController extends AbstractController
         $em->flush();
 
         return new JsonResponse(null, Response::HTTP_NO_CONTENT);
+    }
+
+    #[Route("/api/users", name:"createUser", methods:["POST"])]
+    public function createUser(Request $request, SerializerInterface $serializer, EntityManagerInterface $em, UrlGeneratorInterface $urlGenerator) : JsonResponse
+    {
+        $user = $serializer->deserialize($request->getContent(), User::class, "json");
+        $em->persist($user);
+        $em->flush();
+
+        $jsonUser = $serializer->serialize($user,"json", ["groups"=>"getUsers"]);
+
+        $location = $urlGenerator->generate("oneUser", ["id" => $user->getId()], UrlGeneratorInterface::ABSOLUTE_URL);
+
+        return new JsonResponse($jsonUser, Response::HTTP_CREATED, ["Location" => $location], true);
     }
 
 }

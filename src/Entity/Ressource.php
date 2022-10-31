@@ -44,18 +44,18 @@ class Ressource
     #[Groups(["getRessources","getMedia"])]
     private ?User $creator = null;
 
-    #[ORM\OneToMany(mappedBy: 'ressource', targetEntity: Comment::class)]
+    #[ORM\OneToMany(mappedBy: 'ressource', targetEntity: Comment::class, orphanRemoval: true)]
     #[Groups(["getRessources"])]
     private Collection $comments;
 
-    #[ORM\OneToMany(mappedBy: 'ressource', targetEntity: Media::class)]
+    #[ORM\OneToMany(mappedBy: 'ressource', targetEntity: Media::class, orphanRemoval: true)]
     #[Groups(["getRessources"])]
     private Collection $media;
 
-    #[ORM\OneToMany(mappedBy: 'ressource_like', targetEntity: Like::class)]
+    #[ORM\OneToMany(mappedBy: 'ressource_like', targetEntity: Like::class, orphanRemoval: true)]
     private Collection $likes;
 
-    #[ORM\OneToMany(mappedBy: 'ressource_favorite', targetEntity: Favorite::class)]
+    #[ORM\OneToMany(mappedBy: 'ressource_favorite', targetEntity: Favorite::class, orphanRemoval: true)]
     private Collection $favorites;
 
     public function __construct()
