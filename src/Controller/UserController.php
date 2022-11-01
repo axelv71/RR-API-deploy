@@ -13,6 +13,7 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
+use Symfony\Component\Serializer\Normalizer\AbstractNormalizer;
 use Symfony\Component\Serializer\SerializerInterface;
 use Symfony\Component\Validator\Constraints\Json;
 
@@ -65,7 +66,8 @@ class UserController extends AbstractController
     }
 
     #[Route("/api/users", name:"createUser", methods:["POST"])]
-    public function createUser(Request $request, SerializerInterface $serializer, EntityManagerInterface $em, UrlGeneratorInterface $urlGenerator) : JsonResponse
+    public function createUser(Request $request, SerializerInterface $serializer, EntityManagerInterface $em,
+                               UrlGeneratorInterface $urlGenerator) : JsonResponse
     {
         $user = $serializer->deserialize($request->getContent(), User::class, "json");
         $em->persist($user);
@@ -76,6 +78,20 @@ class UserController extends AbstractController
         $location = $urlGenerator->generate("oneUser", ["id" => $user->getId()], UrlGeneratorInterface::ABSOLUTE_URL);
 
         return new JsonResponse($jsonUser, Response::HTTP_CREATED, ["Location" => $location], true);
+    }
+
+    #[Route("/api/users/{id}", name:"updateUser", methods: ["PUT"])]
+    public function updateUser(Request $request, SerializerInterface $serializer, User $user,
+                               EntityManagerInterface $em) : JsonResponse
+    {
+        $updateUser = $serializer->deserialize($request->getContent(),
+            User::class,
+            "json",
+            [AbstractNormalizer::OBJECT_TO_POPULATE => $user]);
+
+        $em->persist($updateUser);
+        $em->flush();
+        return new JsonResponse(null, JsonResponse::HTTP_NO_CONTENT);
     }
 
 }
