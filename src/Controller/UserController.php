@@ -65,6 +65,15 @@ class UserController extends AbstractController
         return new JsonResponse(null, Response::HTTP_NO_CONTENT);
     }
 
+
+    /**
+     * This function allows us to create an User
+     * @param Request $request
+     * @param SerializerInterface $serializer
+     * @param EntityManagerInterface $em
+     * @param UrlGeneratorInterface $urlGenerator
+     * @return JsonResponse
+     */
     #[Route("/api/users", name:"createUser", methods:["POST"])]
     public function createUser(Request $request, SerializerInterface $serializer, EntityManagerInterface $em,
                                UrlGeneratorInterface $urlGenerator) : JsonResponse
@@ -80,6 +89,15 @@ class UserController extends AbstractController
         return new JsonResponse($jsonUser, Response::HTTP_CREATED, ["Location" => $location], true);
     }
 
+
+    /**
+     * This function allows us to update an user by changing his members
+     * @param Request $request
+     * @param SerializerInterface $serializer
+     * @param User $user
+     * @param EntityManagerInterface $em
+     * @return JsonResponse
+     */
     #[Route("/api/users/{id}", name:"updateUser", methods: ["PUT"])]
     public function updateUser(Request $request, SerializerInterface $serializer, User $user,
                                EntityManagerInterface $em) : JsonResponse
