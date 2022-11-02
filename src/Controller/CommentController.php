@@ -4,6 +4,8 @@ namespace App\Controller;
 
 use App\Entity\Comment;
 use App\Repository\CommentRepository;
+use App\Repository\RessourceRepository;
+use App\Repository\UserRepository;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
@@ -49,10 +51,36 @@ class CommentController extends AbstractController
     }
 
     #[Route('/api/comments', name: 'addComment', methods: ["POST"])]
-    public function addComment(EntityManagerInterface $em, Request $request, SerializerInterface $serializer) : JsonResponse
+    public function addComment(EntityManagerInterface $em,
+                               Request $request,
+                               SerializerInterface $serializer,
+                               UserRepository $userRepository,
+                               RessourceRepository $ressourceRepository) : JsonResponse
     {
         $jsonComment = $request->getContent();
         $comment = $serializer->deserialize($jsonComment, Comment::class, "json");
+
+        $content = $request->toArray();
+
+        $creatorId = $content["creator"]["id"];
+        $ressourceId = $content["ressource"]["id"];
+
+        $user = $userRepository->find($creatorId);
+        $ressource = $ressourceRepository->find($ressourceId);
+
+        $comment->setCreator($user);
+        $comment->setRessource($ressource);
+
+        if($user){
+            $user->addComment($comment);
+            $em->persist($user);
+        }
+        if($ressource){
+            $ressource->addComment($comment);
+            $em->persist($ressource);
+        }
+
+
         $em->persist($comment);
         $em->flush();
 
