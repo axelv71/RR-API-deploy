@@ -13,24 +13,25 @@ class Comment
     #[ORM\Id]
     #[ORM\GeneratedValue]
     #[ORM\Column]
-    #[Groups(["getRessources"])]
+    #[Groups(["getRessources", "getComments"])]
     private ?int $id = null;
 
     #[ORM\Column(type: Types::TEXT)]
-    #[Groups(["getRessources"])]
+    #[Groups(["getRessources", "getComments"])]
     private ?string $content = null;
 
     #[ORM\Column]
-    #[Groups(["getRessources"])]
+    #[Groups(["getRessources", "getComments"])]
     private ?\DateTimeImmutable $createAt = null;
 
     #[ORM\ManyToOne(inversedBy: 'comments')]
     #[ORM\JoinColumn(nullable: false)]
-    #[Groups(["getRessources"])]
+    #[Groups(["getRessources", "getComments"])]
     private ?User $creator = null;
 
     #[ORM\ManyToOne(inversedBy: 'comments')]
     #[ORM\JoinColumn(nullable: false)]
+    #[Groups(["getComments"])]
     private ?Ressource $ressource = null;
 
     public function __construct()

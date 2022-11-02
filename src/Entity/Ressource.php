@@ -15,7 +15,7 @@ class Ressource
     #[ORM\Id]
     #[ORM\GeneratedValue]
     #[ORM\Column]
-    #[Groups(["getRessources","getMedia"])]
+    #[Groups(["getRessources","getMedia","getComments"])]
     private ?int $id = null;
 
     #[ORM\Column(type: Types::TEXT)]
