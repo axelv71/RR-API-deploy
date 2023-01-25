@@ -71,12 +71,12 @@ class CommentController extends AbstractController
                             example: "This is a comment"
                         ),
                         new OA\Property(
-                            property: "user",
+                            property: "creatorid",
                             type: "integer",
                             example: 1
                         ),
                         new OA\Property(
-                            property: "ressource",
+                            property: "ressourceid",
                             type: "integer",
                             example: 1
                         )
@@ -95,8 +95,8 @@ class CommentController extends AbstractController
 
         $content = $request->toArray();
 
-        $creatorId = $content["creator"]["id"];
-        $ressourceId = $content["ressource"]["id"];
+        $creatorId = $content["creatorid"];
+        $ressourceId = $content["ressourceid"];
 
         $user = $userRepository->find($creatorId);
         $ressource = $ressourceRepository->find($ressourceId);
