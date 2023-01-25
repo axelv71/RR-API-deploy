@@ -27,11 +27,6 @@ class CommentController extends AbstractController
      */
 
     #[Route('/api/comments', name: 'comments', methods: ["GET"])]
-    #[OA\Response(
-        response: 200,
-        description: "Returns the list of comments",
-        content: new OA\JsonContent(ref: new Model(type: Comment::class))
-    )]
     #[OA\Tag(name: "Comment")]
     public function getAllComments(CommentRepository $repository, SerializerInterface $serializer) : JsonResponse
     {
@@ -41,19 +36,9 @@ class CommentController extends AbstractController
     }
 
     #[Route('/api/comments/{id}', name: 'oneComment', methods: ["GET"])]
-    #[OA\Response(
-        response: 200,
-        description: "Returns one comment",
-        content: new OA\JsonContent(ref: new Model(type: Comment::class)),
-    )]
+    #[OA\Response(response: 200, description: "Returns one comment", content: new OA\JsonContent(ref: new Model(type: Comment::class)))]
     #[OA\Tag(name: "Comment")]
-    #[OA\Parameter(
-        name: "id",
-        description: "The id of the comment",
-        in: "path",
-        required: true,
-        example: 1
-    )]
+    #[OA\Parameter(name: "id", description: "The id of the comment", in: "path", required: true, example: 1)]
     public function getOneComment(Comment $comment, SerializerInterface $serializer) : JsonResponse
     {
         $jsonComment = $serializer->serialize($comment, "json", ["groups"=>"getComments"]);
@@ -61,19 +46,9 @@ class CommentController extends AbstractController
     }
 
     #[Route('/api/comments/{id}', name: 'deleteComment', methods: ["DELETE"])]
-    #[OA\Response(
-        response: 204,
-        description: "Delete one comment",
-        content: new Model(type: Comment::class, groups: ["default"]),
-    )]
+    #[OA\Response(response: 204, description: "Delete one comment", content: new Model(type: Comment::class, groups: ["default"]))]
     #[OA\Tag(name: "Comment")]
-    #[OA\Parameter(
-        name: "id",
-        description: "The id of the comment",
-        in: "path",
-        required: true,
-        example: 1
-    )]
+    #[OA\Parameter(name: "id", description: "The id of the comment", in: "path", required: true, example: 1)]
     public function deleteComment(Comment $comment, EntityManagerInterface $em) : JsonResponse
     {
         $em->remove($comment);
@@ -82,15 +57,9 @@ class CommentController extends AbstractController
     }
 
     #[Route('/api/comments', name: 'addComment', methods: ["POST"])]
-    #[OA\Response(
-        response: 201,
-        description: "Add one comment",
-        content: new Model(type: Comment::class, groups: ["comment"])
-    )]
+    #[OA\Response(response: 201, description: "Add one comment", content: new Model(type: Comment::class, groups: ["comment"]))]
     #[OA\Tag(name: "Comment")]
-    #[OA\RequestBody(
-        description: "Add a new comment",
-        attachables: [
+    #[OA\RequestBody(description: "Add a new comment", attachables: [
             new OA\MediaType(
                 mediaType: "application/json",
                 schema: new OA\Schema(
@@ -114,9 +83,7 @@ class CommentController extends AbstractController
                     ]
                 )
             )
-        ]
-
-    )]
+        ])]
     public function addComment(EntityManagerInterface $em,
                                Request $request,
                                SerializerInterface $serializer,
