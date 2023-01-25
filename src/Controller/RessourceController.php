@@ -16,10 +16,24 @@ use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 use Symfony\Component\Serializer\Normalizer\AbstractNormalizer;
 use Symfony\Component\Serializer\SerializerInterface;
+use Nelmio\ApiDocBundle\Annotation\Model;
+use Nelmio\ApiDocBundle\Annotation\Security;
+use OpenApi\Annotations as OA;
 
 class RessourceController extends AbstractController
 {
     /**
+     * @OA\Response(
+     *     response=200,
+     *     description="Returns the list of ressources",
+     *     @OA\JsonContent(
+     *     type="array",
+     *     @OA\Items(ref=@Model(type=Ressource::class, groups={"ressource"}))
+     *  )
+     * )
+     *
+     * @OA\Tag(name="Ressource")
+     *
      * This function allows us to get all ressources
      * @param RessourceRepository $ressourceRepository
      * @param SerializerInterface $serializer
