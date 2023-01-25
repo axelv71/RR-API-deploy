@@ -16,6 +16,7 @@ use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 use Symfony\Component\Serializer\Normalizer\AbstractNormalizer;
 use Symfony\Component\Serializer\SerializerInterface;
 use Symfony\Component\Validator\Constraints\Json;
+use OpenApi\Attributes as OA;
 
 class UserController extends AbstractController
 {
@@ -28,6 +29,7 @@ class UserController extends AbstractController
      * @return JsonResponse
      */
     #[Route('/api/users', name: 'users', methods:["GET"])]
+    #[OA\Tag(name: "User")]
     public function getAllUsers(UserRepository $userRepository, SerializerInterface $serializer, Request $request): JsonResponse
     {
         $userList = $userRepository->findAll();
@@ -43,6 +45,9 @@ class UserController extends AbstractController
      * @return JsonResponse
      */
     #[Route("/api/users/{id}", name: "oneUser", methods: ["GET"])]
+    #[OA\Response(response: 200, description: "Returns one user", content: new OA\JsonContent(ref: new Model(type: User::class)))]
+    #[OA\Tag(name: "User")]
+    #[OA\Parameter(name: "id", description: "The id of the user", in: "path", required: true, example: 1)]
     public function getOneUser(User $user, SerializerInterface $serializer) : JsonResponse
     {
         $jsonUser = $serializer->serialize($user, "json", ["groups" => "getUsers"]);
@@ -57,6 +62,9 @@ class UserController extends AbstractController
      * @return JsonResponse
      */
     #[Route("/api/users/{id}", name: "deleteUser", methods: ["DELETE"])]
+    #[OA\Response(response: 204, description: "Delete a user")]
+    #[OA\Tag(name: "User")]
+    #[OA\Parameter(name: "id", description: "The id of the user", in: "path", required: true, example: 1)]
     public function deleteUser(User $user, EntityManagerInterface $em) : JsonResponse
     {
         $em->remove($user);
@@ -64,52 +72,4 @@ class UserController extends AbstractController
 
         return new JsonResponse(null, Response::HTTP_NO_CONTENT);
     }
-
-
-    /**
-     * This function allows us to create an User
-     * @param Request $request
-     * @param SerializerInterface $serializer
-     * @param EntityManagerInterface $em
-     * @param UrlGeneratorInterface $urlGenerator
-     * @return JsonResponse
-     */
-    #[Route("/api/users", name:"createUser", methods:["POST"])]
-    public function createUser(Request $request, SerializerInterface $serializer, EntityManagerInterface $em,
-                               UrlGeneratorInterface $urlGenerator) : JsonResponse
-    {
-        $user = $serializer->deserialize($request->getContent(), User::class, "json");
-        $em->persist($user);
-        $em->flush();
-
-        $jsonUser = $serializer->serialize($user,"json", ["groups"=>"getUsers"]);
-
-        $location = $urlGenerator->generate("oneUser", ["id" => $user->getId()], UrlGeneratorInterface::ABSOLUTE_URL);
-
-        return new JsonResponse($jsonUser, Response::HTTP_CREATED, ["Location" => $location], true);
-    }
-
-
-    /**
-     * This function allows us to update an user by changing his members
-     * @param Request $request
-     * @param SerializerInterface $serializer
-     * @param User $user
-     * @param EntityManagerInterface $em
-     * @return JsonResponse
-     */
-    #[Route("/api/users/{id}", name:"updateUser", methods: ["PUT"])]
-    public function updateUser(Request $request, SerializerInterface $serializer, User $user,
-                               EntityManagerInterface $em) : JsonResponse
-    {
-        $updateUser = $serializer->deserialize($request->getContent(),
-            User::class,
-            "json",
-            [AbstractNormalizer::OBJECT_TO_POPULATE => $user]);
-
-        $em->persist($updateUser);
-        $em->flush();
-        return new JsonResponse(null, JsonResponse::HTTP_NO_CONTENT);
-    }
-
 }
