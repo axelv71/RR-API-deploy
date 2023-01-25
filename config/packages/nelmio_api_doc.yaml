@@ -1,9 +1,10 @@
 nelmio_api_doc:
+    use_validation_groups: true
     documentation:
         info:
-            title: My App
-            description: This is an awesome app!
-            version: 1.0.0
+            title: "Ressources Relationnelles"
+            description: "This is an awesome app!"
+            version: 0.1.0
     areas: # to filter documented areas
         path_patterns:
             - ^/api(?!/doc$) # Accepts routes under /api except /api/doc
