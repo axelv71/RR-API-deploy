@@ -16,6 +16,9 @@ use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 use Symfony\Component\Serializer\Normalizer\AbstractNormalizer;
 use Symfony\Component\Serializer\SerializerInterface;
+use Nelmio\ApiDocBundle\Annotation\Model;
+use Nelmio\ApiDocBundle\Annotation\Security;
+use OpenApi\Attributes as OA;
 
 class RessourceController extends AbstractController
 {
@@ -27,6 +30,7 @@ class RessourceController extends AbstractController
      * @return JsonResponse
      */
     #[Route("/api/resources", name: "resources", methods: ["GET"])]
+    #[OA\Tag(name: "Ressource")]
     public function getAllRessources(RessourceRepository $repository, SerializerInterface $serializer, Request $request) : JsonResponse
     {
         $ressourceList = $repository->findAll();
@@ -41,6 +45,9 @@ class RessourceController extends AbstractController
      * @return JsonResponse
      */
     #[Route("/api/resources/{id}", name: "oneRessource", methods: ["GET"])]
+    #[OA\Tag(name: "Ressource")]
+    #[OA\Response(response: 200, description: "Returns one ressource")]
+    #[OA\Parameter(name: "id", description: "The id of the ressource", in: "path", required: true, example: 1)]
     public function getOneRessource(Ressource $ressource, SerializerInterface $serializer) : JsonResponse
     {
         $jsonRessource = $serializer->serialize($ressource, "json", ["groups"=>"getRessources"]);
@@ -54,11 +61,14 @@ class RessourceController extends AbstractController
      * @return JsonResponse
      */
     #[Route("/api/resources/{id}", name: "deleteRessource", methods: ["DELETE"])]
+    #[OA\Tag(name: "Ressource")]
+    #[OA\Response(response: 204, description: "Delete one ressource")]
+    #[OA\Parameter(name: "id", description: "The id of the ressource", in: "path", required: true, example: 1)]
     public function deleteRessource(Ressource $ressource, EntityManagerInterface $em) : JsonResponse
     {
         $em->remove($ressource);
         $em->flush();
-        return new JsonResponse("Ressource deleted", Response::HTTP_OK, [], true);
+        return new JsonResponse("Ressource deleted", Response::HTTP_NO_CONTENT, [], true);
     }
 
     /**
@@ -69,6 +79,21 @@ class RessourceController extends AbstractController
      * @return JsonResponse
      */
     #[Route("/api/resources", name: "addRessource", methods: ["POST"])]
+    #[OA\Tag(name: "Ressource")]
+    #[OA\Response(response: 201, description: "Create one ressource")]
+    #[OA\RequestBody(description: "Create a ressource", required: true, attachables: [
+        new OA\MediaType(
+            mediaType: "application/json",
+            schema: new OA\Schema(
+                type: "object",
+                properties: [
+                    new OA\Property(property: "description", type: "string", example: "Ressource text content"),
+                    new OA\Property(property: "categoryid", type: "integer", example: 1),
+                    new OA\Property(property: "creatorid", type: "integer", example: 1),
+                ]
+            )
+        )
+    ])]
     public function addRessource(Request $request,
                                  SerializerInterface $serializer,
                                  EntityManagerInterface $em,
@@ -81,14 +106,15 @@ class RessourceController extends AbstractController
 
         $content = $request->toArray();
 
-        $creatorId = $content["creator"]["id"];
-        $categoryId = $content["category"]["id"];
+        $creatorId = $content["creatorid"];
+        $categoryId = $content["categoryid"];
 
         $user = $userRepository->find($creatorId);
         $category = $categoryRepository->find($categoryId);
 
         $ressource->setCreator($user);
         $ressource->setCategory($category);
+        $ressource->setIsPublished(false);
         if ($user){
             $user->addRessource($ressource);
             $em->persist($user);
@@ -117,13 +143,27 @@ class RessourceController extends AbstractController
      * @return JsonResponse
      */
     #[Route("/api/resources/{id}", name: "updateRessource", methods: ["PUT"])]
+    #[OA\Tag(name: "Ressource")]
+    #[OA\Response(response: 200, description: "Update one ressource")]
+    #[OA\Parameter(name: "id", description: "The id of the ressource", in: "path", required: true, example: 1)]
+    #[OA\RequestBody(description: "Update a ressource", required: true, attachables: [
+        new OA\MediaType(
+            mediaType: "application/json",
+            schema: new OA\Schema(
+                type: "object",
+                properties: [
+                    new OA\Property(property: "description", type: "string", example: "Ressource text content"),
+                ]
+            )
+        )
+    ])]
     public function updateRessource(Ressource $ressource, Request $request, SerializerInterface $serializer, EntityManagerInterface $em) : JsonResponse
     {
         $jsonRessource = $request->getContent();
         $updatedRessource = $serializer->deserialize($jsonRessource, Ressource::class, "json", [AbstractNormalizer::OBJECT_TO_POPULATE => $ressource]);
         $em->persist($updatedRessource);
         $em->flush();
-        return new JsonResponse("Ressource updated", Response::HTTP_NO_CONTENT);
+        return new JsonResponse("Ressource updated", Response::HTTP_OK);
     }
 
 
