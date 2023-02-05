@@ -12,14 +12,15 @@ class Settings
     #[ORM\Id]
     #[ORM\GeneratedValue]
     #[ORM\Column]
-    #[Groups(["getUsers"])]
+    #[Groups(["getUsers", "getSettings"])]
     private ?int $id = null;
 
     #[ORM\Column]
-    #[Groups(["getUsers"])]
+    #[Groups(["getUsers", "getSettings"])]
     private ?bool $isDark = null;
 
     #[ORM\Column]
+    #[Groups(["getSettings"])]
     private ?\DateTimeImmutable $createdAt = null;
 
     #[ORM\OneToOne(inversedBy: 'settings', cascade: ['persist', 'remove'])]

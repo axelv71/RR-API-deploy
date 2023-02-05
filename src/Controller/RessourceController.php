@@ -165,7 +165,4 @@ class RessourceController extends AbstractController
         $em->flush();
         return new JsonResponse("Ressource updated", Response::HTTP_OK);
     }
-
-
-
 }
