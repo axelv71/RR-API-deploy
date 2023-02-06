@@ -14,15 +14,19 @@ class RelationType
     #[ORM\Id]
     #[ORM\GeneratedValue]
     #[ORM\Column]
+    #[Groups(['getRelationType', 'getRelationTypesDetails'])]
     private ?int $id = null;
 
     #[ORM\Column(length: 255)]
+    #[Groups(['getRelationType', 'getRelationTypesDetails'])]
     private ?string $name = null;
 
     #[ORM\Column]
+    #[Groups(['getRelationType', 'getRelationTypesDetails'])]
     private ?\DateTimeImmutable $createdAt = null;
 
     #[ORM\OneToMany(mappedBy: 'relation_type', targetEntity: Relation::class, orphanRemoval: true)]
+    #[Groups(['getRelationTypesDetails'])]
     private Collection $relations;
 
     public function __construct()

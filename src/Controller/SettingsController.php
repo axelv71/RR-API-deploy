@@ -8,7 +8,6 @@ use App\Repository\SettingsRepository;
 use App\Repository\UserRepository;
 use Doctrine\ORM\EntityManager;
 use Doctrine\ORM\EntityManagerInterface;
-use JMS\Serializer\SerializerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
@@ -16,6 +15,7 @@ use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 use OpenApi\Attributes as OA;
 use Symfony\Component\Serializer\Normalizer\AbstractNormalizer;
+use Symfony\Component\Serializer\SerializerInterface;
 
 class SettingsController extends AbstractController
 {
@@ -29,12 +29,13 @@ class SettingsController extends AbstractController
     #[OA\Response(response: 200, description: "Returns user settings")]
     #[OA\Tag(name: "Settings")]
     #[OA\Parameter(name: "id", description: "The id of the user", in: "path", required: true, example: 1)]
-    public function getUserSettings(User $user, SettingsRepository $settingsRepository): JsonResponse
+    public function getUserSettings(User $user, SettingsRepository $settingsRepository, SerializerInterface $serializer): JsonResponse
     {
         // Get user settings
         $settings = $settingsRepository->findOneBy(["user" => $user]);
+        $jsonSettings = $serializer->serialize($settings, 'json', ["groups" => "getSettings"]);
 
-        return $this->json($settings, Response::HTTP_OK, [], ["groups" => "getSettings"]);
+        return new JsonResponse($jsonSettings, Response::HTTP_OK, [], true);
     }
 
     /**
@@ -46,9 +47,10 @@ class SettingsController extends AbstractController
     #[OA\Response(response: 200, description: "Returns settings")]
     #[OA\Tag(name: "Settings")]
     #[OA\Parameter(name: "id", description: "The id of the settings", in: "path", required: true, example: 1)]
-    public function getOneSettings(Settings $settings): JsonResponse
+    public function getOneSettings(Settings $settings, SerializerInterface $serializer): JsonResponse
     {
-        return $this->json($settings, Response::HTTP_OK, [], ["groups" => "getSettings"]);
+        $jsonSettings = $serializer->serialize($settings, 'json', ["groups" => "getSettings"]);
+        return new JsonResponse($jsonSettings, Response::HTTP_OK, [], true);
     }
 
     /**

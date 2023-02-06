@@ -12,17 +12,21 @@ class Relation
     #[ORM\Id]
     #[ORM\GeneratedValue]
     #[ORM\Column]
+    #[Groups(["getRelationTypesDetails"])]
     private ?int $id = null;
 
     #[ORM\ManyToOne(inversedBy: 'Receiver')]
     #[ORM\JoinColumn(nullable: false)]
+    #[Groups(["getRelationTypesDetails"])]
     private ?User $Sender = null;
 
-    #[ORM\ManyToOne(inversedBy: 'received_relation')]
+    #[ORM\ManyToOne(inversedBy: "received_relation")]
     #[ORM\JoinColumn(nullable: false)]
+    #[Groups(["getRelationTypesDetails"])]
     private ?User $Receiver = null;
 
     #[ORM\Column]
+    #[Groups(["getRelationTypesDetails"])]
     private ?bool $isAccepted = null;
 
     #[ORM\ManyToOne(inversedBy: 'relations')]

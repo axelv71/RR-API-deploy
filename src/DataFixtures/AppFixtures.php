@@ -7,6 +7,7 @@ use App\Entity\Comment;
 use App\Entity\Favorite;
 use App\Entity\Like;
 use App\Entity\Media;
+use App\Entity\Relation;
 use App\Entity\RelationType;
 use App\Entity\Ressource;
 use App\Entity\Role;
@@ -74,6 +75,26 @@ class AppFixtures extends Fixture
             $manager->persist($setting);
         }
 
+
+        // Relation
+        $relations = [];
+        for ($i = 0; $i < 30; $i++) {
+            $sender = $users[mt_rand(0, count($users) - 1)];
+            $receiver = $users[mt_rand(0, count($users) - 1)];
+
+            /**
+            while ($sender === $receiver) {
+                $receiver = $users[mt_rand(0, count($users) - 1)];
+            }
+             **/
+
+            $relation = new Relation($sender, $receiver, $relationTypes[mt_rand(0, count($relationTypes) - 1)]);
+            $relation->setIsAccepted(mt_rand(0, 1));
+
+            $relations[] = $relation;
+            $manager->persist($relation);
+        }
+
         $categories = [];
         for ($c = 0; $c < 10; $c++) {
             $category = new Category();
@@ -83,7 +104,7 @@ class AppFixtures extends Fixture
             $categories[] = $category;
         }
 
-        $ressourcies = [];
+        $ressources = [];
         for ($r = 0; $r < 25; $r++) {
             $ressource = new Ressource();
             $ressource->setDescription($this->faker->paragraph())
@@ -118,16 +139,16 @@ class AppFixtures extends Fixture
             // Like
             for ($u = 0; $u < count($users) - 1; $u++)
             {
-                for ($r =0; $r < count($ressourcies) - 1; $r++) {
+                for ($r =0; $r < count($ressources) - 1; $r++) {
                     if ((bool)mt_rand(0,1)) {
                         $like = new Like();
                         $like->setUserLike($users[$u])
-                            ->setRessourceLike($ressourcies[$r])
+                            ->setRessourceLike($ressources[$r])
                             ->setIsLiked((bool)mt_rand(0, 1));
 
                         $favorite = new Favorite();
                         $favorite->setUserFavorite($users[$u])
-                            ->setRessourceFavorite($ressourcies[$r]);
+                            ->setRessourceFavorite($ressources[$r]);
 
                         $manager->persist($favorite);
                         $manager->persist($like);
@@ -138,7 +159,7 @@ class AppFixtures extends Fixture
 
 
             $manager->persist($ressource);
-            $ressourcies[] = $ressource;
+            $ressources[] = $ressource;
         }
 
         $manager->flush();
