@@ -25,8 +25,8 @@ class Role
     #[Groups(["getRoles"])]
     private ?\DateTimeImmutable $createdAt = null;
 
+    // TODO: Corriger le bug de groupe sur le User
     #[ORM\OneToMany(mappedBy: 'user', targetEntity: User::class)]
-    #[Groups(["getRoles"])]
     private Collection $users;
 
 
