@@ -12,12 +12,15 @@ class Favorite
     #[ORM\Id]
     #[ORM\GeneratedValue]
     #[ORM\Column]
+    #[Groups(["getFavorites"])]
     private ?int $id = null;
 
     #[ORM\ManyToOne(inversedBy: 'favorites')]
+    #[Groups(["createFavorite"])]
     private ?User $user_favorite = null;
 
     #[ORM\ManyToOne(inversedBy: 'favorites')]
+    #[Groups(["getFavorites", "createFavorite"])]
     private ?Ressource $ressource_favorite = null;
 
     public function getId(): ?int

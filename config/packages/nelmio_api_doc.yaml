@@ -1,6 +1,6 @@
 nelmio_api_doc:
     use_validation_groups: true
-    models: { use_jms: true }
+    models: { use_jms: false }
     documentation:
         info:
             title: "Ressources Relationnelles"

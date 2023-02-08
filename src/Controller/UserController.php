@@ -7,6 +7,7 @@ use App\Repository\UserRepository;
 
 
 use Doctrine\ORM\EntityManagerInterface;
+use Nelmio\ApiDocBundle\Annotation\Model;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
@@ -45,7 +46,7 @@ class UserController extends AbstractController
      * @return JsonResponse
      */
     #[Route("/api/users/{id}", name: "oneUser", methods: ["GET"])]
-    #[OA\Response(response: 200, description: "Returns one user", content: new OA\JsonContent(ref: new Model(type: User::class)))]
+    #[OA\Response(response: 200, description: "Returns one user", content: new Model(type: User::class))]
     #[OA\Tag(name: "User")]
     #[OA\Parameter(name: "id", description: "The id of the user", in: "path", required: true, example: 1)]
     public function getOneUser(User $user, SerializerInterface $serializer) : JsonResponse

@@ -15,33 +15,33 @@ class Ressource
     #[ORM\Id]
     #[ORM\GeneratedValue]
     #[ORM\Column]
-    #[Groups(["getRessources","getMedia","getComments"])]
+    #[Groups(["getRessources","getMedia","getComments","getFavorites", "createFavorite", "getLikes", "createLike"])]
     private ?int $id = null;
 
     #[ORM\Column(type: Types::TEXT)]
-    #[Groups(["getRessources","getMedia"])]
+    #[Groups(["getRessources","getMedia", 'getFavorites', "getLikes"])]
     private ?string $description = null;
 
     #[ORM\Column(nullable: true)]
-    #[Groups(["getRessources","getMedia"])]
+    #[Groups(["getRessources","getMedia","getFavorites", "getLikes"])]
     private ?bool $isValid = null;
 
     #[ORM\Column]
-    #[Groups(["getRessources","getMedia"])]
+    #[Groups(["getRessources","getMedia","getFavorites", "getLikes"])]
     private ?bool $isPublished = null;
 
     #[ORM\Column]
-    #[Groups(["getRessources","getMedia"])]
+    #[Groups(["getRessources","getMedia","getFavorites", "getLikes"])]
     private ?\DateTimeImmutable $createdAt = null;
 
     #[ORM\ManyToOne(inversedBy: 'ressources')]
     #[ORM\JoinColumn(nullable: false)]
-    #[Groups(["getRessources","getMedia"])]
+    #[Groups(["getRessources","getMedia","getFavorites", "getLikes"])]
     private ?Category $category = null;
 
     #[ORM\ManyToOne(inversedBy: 'ressources')]
     #[ORM\JoinColumn(nullable: false)]
-    #[Groups(["getRessources","getMedia"])]
+    #[Groups(["getRessources","getMedia","getFavorites"])]
     private ?User $creator = null;
 
     #[ORM\OneToMany(mappedBy: 'ressource', targetEntity: Comment::class, orphanRemoval: true)]

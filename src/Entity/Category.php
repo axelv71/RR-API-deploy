@@ -18,7 +18,7 @@ class Category
     private ?int $id = null;
 
     #[ORM\Column(length: 255)]
-    #[Groups(["getRessources","getCategories"])]
+    #[Groups(["getRessources","getCategories","createCategory"])]
     private ?string $title = null;
 
     #[ORM\Column]
@@ -26,7 +26,6 @@ class Category
     private ?\DateTimeImmutable $createdAt = null;
 
     #[ORM\OneToMany(mappedBy: 'category', targetEntity: Ressource::class)]
-    #[Groups(["getCategories"])]
     private Collection $ressources;
 
     public function __construct()

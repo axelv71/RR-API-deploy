@@ -10,6 +10,7 @@ use Symfony\Component\Security\Core\User\PasswordAuthenticatedUserInterface;
 use Symfony\Component\Security\Core\User\UserInterface;
 use Symfony\Component\Serializer\Annotation\Groups;
 use Symfony\Component\Validator\Constraints as Assert;
+use OpenApi\Attributes as OA;
 
 #[ORM\Entity(repositoryClass: UserRepository::class)]
 #[ORM\Table(name: '`user`')]
@@ -18,7 +19,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     #[ORM\Id]
     #[ORM\GeneratedValue]
     #[ORM\Column]
-    #[Groups(["getUsers", "getRessources","getRoles", "getComments", "getRelationTypesDetails"])]
+    #[Groups(["getUsers", "getRessources","getRoles", "getComments", "getRelationTypesDetails","getFavorites", "createFavorite", "getLikes", "createLike"])]
     private ?int $id = null;
 
     #[ORM\Column(length: 180, unique: true)]
@@ -26,6 +27,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     private ?string $email = null;
 
 
+    #[OA\Property(type: "string", enum: ["ROLE_USER", "ROLE_ADMIN"])]
     #[ORM\Column]
     #[Groups(["getUsers"])]
     private array $roles = [];
@@ -39,15 +41,15 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     private ?string $password = null;
 
     #[ORM\Column(length: 255)]
-    #[Groups(["getUsers", "getRelationTypesDetails"])]
+    #[Groups(["getUsers", "getRelationTypesDetails","getFavorites"])]
     private ?string $name = null;
 
     #[ORM\Column(length: 255)]
-    #[Groups(["getUsers", "getRelationTypesDetails"])]
+    #[Groups(["getUsers", "getRelationTypesDetails","getFavorites"])]
     private ?string $surname = null;
 
     #[ORM\Column(length: 255)]
-    #[Groups(["getUsers","getRessources","getRoles", "getRelationTypesDetails"])]
+    #[Groups(["getUsers","getRessources","getRoles", "getRelationTypesDetails","getFavorites", "getLikes"])]
     private ?string $pseudo = null;
 
     #[ORM\Column(nullable: true)]
