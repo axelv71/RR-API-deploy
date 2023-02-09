@@ -5,9 +5,14 @@ namespace App\Entity;
 use App\Repository\MediaRepository;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Component\HttpFoundation\File\File;
 use Symfony\Component\Serializer\Annotation\Groups;
+use Vich\UploaderBundle\Mapping\Annotation as Vich;
+use OpenApi\Attributes as OA;
+
 
 #[ORM\Entity(repositoryClass: MediaRepository::class)]
+#[Vich\Uploadable]
 class Media
 {
     #[ORM\Id]
@@ -16,13 +21,26 @@ class Media
     #[Groups(["getRessources", "getMedia"])]
     private ?int $id = null;
 
-    #[ORM\Column(length: 255)]
+    #[ORM\Column(length: 255, nullable: true)]
     #[Groups(["getRessources","getMedia"])]
     private ?string $title = null;
 
-    #[ORM\Column(type: Types::TEXT)]
+    #[OA\Property(type: 'string')]
+    #[Vich\UploadableField(mapping: 'media', fileNameProperty: 'filePath', size: 'fileSize')]
+    private ?File $file = null;
+
+    #[ORM\Column(length: 255, nullable: true)]
     #[Groups(["getRessources","getMedia"])]
-    private ?string $link = null;
+    private ?string $filePath = null;
+
+    #[ORM\Column(nullable: true)]
+    #[Groups(["getRessources","getMedia"])]
+    private ?int $fileSize = null;
+
+
+    #[ORM\Column(nullable: true)]
+    #[Groups(["getRessources","getMedia"])]
+    private ?\DateTimeImmutable $updatedAt = null;
 
     #[ORM\Column]
     #[Groups(["getRessources","getMedia"])]
@@ -35,6 +53,7 @@ class Media
     public function __construct()
     {
         $this->createdAt = new \DateTimeImmutable();
+        $this->updatedAt = new \DateTimeImmutable();
     }
 
     public function getId(): ?int
@@ -49,19 +68,8 @@ class Media
 
     public function setTitle(string $title): self
     {
+        $title = explode('.', $title)[0];
         $this->title = $title;
-
-        return $this;
-    }
-
-    public function getLink(): ?string
-    {
-        return $this->link;
-    }
-
-    public function setLink(string $link): self
-    {
-        $this->link = $link;
 
         return $this;
     }
@@ -86,6 +94,58 @@ class Media
     public function setRessource(?Ressource $ressource): self
     {
         $this->ressource = $ressource;
+
+        return $this;
+    }
+
+    /**
+     * @return File|null
+     */
+    public function getFile(): ?File
+    {
+        return $this->file;
+    }
+
+    /**
+     * @param File|null $file
+     */
+    public function setFile(?File $file): void
+    {
+        $this->file = $file;
+    }
+
+    public function getFilePath(): ?string
+    {
+        return $this->filePath;
+    }
+
+    public function setFilePath(?string $filePath): self
+    {
+        $this->filePath = $filePath;
+
+        return $this;
+    }
+
+    public function getUpdatedAt(): ?\DateTimeImmutable
+    {
+        return $this->updatedAt;
+    }
+
+    public function setUpdatedAt(?\DateTimeImmutable $updatedAt): self
+    {
+        $this->updatedAt = $updatedAt;
+
+        return $this;
+    }
+
+    public function getFileSize(): ?int
+    {
+        return $this->fileSize;
+    }
+
+    public function setFileSize(int $fileSize): self
+    {
+        $this->fileSize = $fileSize;
 
         return $this;
     }

@@ -130,7 +130,6 @@ class AppFixtures extends Fixture
             {
                 $media = new Media();
                 $media->setTitle($this->faker->word())
-                    ->setLink($this->faker->imageUrl(640, 480, 'media', true))
                     ->setRessource($ressource);
 
                 $manager->persist($media);
