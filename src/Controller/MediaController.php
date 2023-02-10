@@ -31,6 +31,24 @@ class MediaController extends AbstractController
     #[OA\Tag('Media')]
     #[OA\Parameter(name: "id", description: "The id of the resource", in: "path", required: true, example: 1)]
     #[OA\Response(response: 201, description: 'Media has been uploaded successfully')]
+    #[OA\Response(response: 400, description: 'Bad request')]
+    #[OA\Response(response: 404, description: 'Resource not found')]
+    #[OA\RequestBody(description: 'Media to upload', required: true, attachables: [
+        new OA\MediaType(
+            mediaType: 'multipart/form-data',
+            schema: new OA\Schema(
+                type: 'object',
+                properties: [
+                    new OA\Property(
+                        property: 'file',
+                        type: 'string',
+                        format: 'binary',
+                        description: 'The file to upload. File accepted: jpeg, png, gif, pdf, mp4, quicktime. (max 100Mo)'
+                    )
+                ]
+            )
+        )
+    ])]
     public function upload(Ressource $ressource, Request $request, SerializerInterface $serializer, EntityManagerInterface $entityManager, UrlGeneratorInterface $urlGenerator, ValidatorInterface $validator): JsonResponse
     {
         // Get the file from the request and create a new Media object
