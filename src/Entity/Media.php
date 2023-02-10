@@ -44,6 +44,9 @@ class Media
     #[Groups(["getRessources","getMedia"])]
     private ?int $fileSize = null;
 
+    #[ORM\Column(length: 255, nullable: true)]
+    #[Groups(["getRessources","getMedia"])]
+    private ?string $mimetype = null;
 
     #[ORM\Column(nullable: true)]
     #[Groups(["getRessources","getMedia"])]
@@ -75,7 +78,6 @@ class Media
 
     public function setTitle(string $title): self
     {
-        $title = explode('.', $title)[0];
         $this->title = $title;
 
         return $this;
@@ -153,6 +155,18 @@ class Media
     public function setFileSize(int $fileSize): self
     {
         $this->fileSize = $fileSize;
+
+        return $this;
+    }
+
+    public function getMimetype(): ?string
+    {
+        return $this->mimetype;
+    }
+
+    public function setMimetype(?string $mimetype): self
+    {
+        $this->mimetype = $mimetype;
 
         return $this;
     }

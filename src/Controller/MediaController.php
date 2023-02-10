@@ -55,6 +55,8 @@ class MediaController extends AbstractController
         $media = new Media();
         $media->setRessource($ressource);
         $media->setFile($request->files->get('file'));
+        $media->setTitle(explode('.', $request->files->get('file')->getClientOriginalName())[0]);
+        $media->setMimetype($request->files->get('file')->getMimeType());
         $media->setUpdatedAt(new \DateTimeImmutable());
 
         // Validate the media
