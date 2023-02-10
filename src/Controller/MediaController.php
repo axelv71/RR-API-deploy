@@ -14,6 +14,7 @@ use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 use Symfony\Component\Serializer\SerializerInterface;
 use OpenApi\Attributes as OA;
+use Symfony\Component\Validator\Validator\ValidatorInterface;
 
 class MediaController extends AbstractController
 {
@@ -30,17 +31,26 @@ class MediaController extends AbstractController
     #[OA\Tag('Media')]
     #[OA\Parameter(name: "id", description: "The id of the resource", in: "path", required: true, example: 1)]
     #[OA\Response(response: 201, description: 'Media has been uploaded successfully')]
-    public function upload(Ressource $ressource, Request $request, SerializerInterface $serializer, EntityManagerInterface $entityManager, UrlGeneratorInterface $urlGenerator): JsonResponse
+    public function upload(Ressource $ressource, Request $request, SerializerInterface $serializer, EntityManagerInterface $entityManager, UrlGeneratorInterface $urlGenerator, ValidatorInterface $validator): JsonResponse
     {
+        // Get the file from the request and create a new Media object
         $media = new Media();
-        $request->files->get('file');
         $media->setRessource($ressource);
         $media->setFile($request->files->get('file'));
         $media->setUpdatedAt(new \DateTimeImmutable());
 
+        // Validate the media
+        $errors = $validator->validate($media);
+        if (count($errors) > 0) {
+            $jsonErrors = $serializer->serialize($errors, 'json');
+            return new JsonResponse($jsonErrors, Response::HTTP_BAD_REQUEST, [], true);
+        }
+
+        // Save the media
         $entityManager->persist($media);
         $entityManager->flush();
 
+        // Return the media
         $json = $serializer->serialize($media, 'json', ['groups' => 'getMedia']);
         $location = $urlGenerator->generate('detail_media', ['id' => $media->getId()], UrlGeneratorInterface::ABSOLUTE_URL);
 

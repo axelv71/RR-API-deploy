@@ -7,6 +7,7 @@ use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\HttpFoundation\File\File;
 use Symfony\Component\Serializer\Annotation\Groups;
+use Symfony\Component\Validator\Constraints as Assert;
 use Vich\UploaderBundle\Mapping\Annotation as Vich;
 use OpenApi\Attributes as OA;
 
@@ -27,6 +28,12 @@ class Media
 
     #[OA\Property(type: 'string')]
     #[Vich\UploadableField(mapping: 'media', fileNameProperty: 'filePath', size: 'fileSize')]
+    #[Assert\File(
+        maxSize: "100M",
+        mimeTypes: ["image/jpeg", "image/png", "image/gif", "image/svg+xml", "pdf", "application/pdf", "mp4", "video/mp4", "video/quicktime"],
+        maxSizeMessage: "Le fichier est trop volumineux ({{ size }} {{ suffix }}). La taille maximale autorisée est de {{ limit }} {{ suffix }}.",
+        mimeTypesMessage: "Please upload a valid file")
+    ]
     private ?File $file = null;
 
     #[ORM\Column(length: 255, nullable: true)]
