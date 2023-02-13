@@ -6,6 +6,7 @@ use App\Repository\UserRepository;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
 use Symfony\Component\Security\Core\User\PasswordAuthenticatedUserInterface;
 use Symfony\Component\Security\Core\User\UserInterface;
 use Symfony\Component\Serializer\Annotation\Groups;
@@ -14,22 +15,24 @@ use OpenApi\Attributes as OA;
 
 #[ORM\Entity(repositoryClass: UserRepository::class)]
 #[ORM\Table(name: '`user`')]
+#[UniqueEntity(fields: ['email'], message: 'There is already an account with this email')]
 class User implements UserInterface, PasswordAuthenticatedUserInterface
 {
     #[ORM\Id]
     #[ORM\GeneratedValue]
     #[ORM\Column]
-    #[Groups(["getUsers", "getRessources", "getRoles", "getComments", "getRelationTypesDetails", "getFavorites", "createFavorite", "getLikes", "createLike"])]
+    #[Groups(["getUsers", "getRessources", "getRoles", "getComments", "getRelationTypesDetails",
+        "getFavorites", "createFavorite", "getLikes", "createLike", "userLogin"])]
     private ?int $id = null;
 
     #[ORM\Column(length: 180, unique: true)]
-    #[Groups(["getUsers", "getRessources", "getRoles", "getRelationTypesDetails"])]
+    #[Groups(["getUsers", "getRessources", "getRoles", "getRelationTypesDetails", "userLogin"])]
     private ?string $email = null;
 
 
     #[OA\Property(type: "string", enum: ["ROLE_USER", "ROLE_ADMIN"])]
     #[ORM\Column]
-    #[Groups(["getUsers"])]
+    #[Groups(["getUsers", "userLogin"])]
     private array $roles = [];
 
 
@@ -41,15 +44,15 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     private ?string $password = null;
 
     #[ORM\Column(length: 255)]
-    #[Groups(["getUsers", "getRelationTypesDetails", "getFavorites"])]
+    #[Groups(["getUsers", "getRelationTypesDetails", "getFavorites", "userLogin"])]
     private ?string $name = null;
 
     #[ORM\Column(length: 255)]
-    #[Groups(["getUsers", "getRelationTypesDetails", "getFavorites"])]
+    #[Groups(["getUsers", "getRelationTypesDetails", "getFavorites", "userLogin"])]
     private ?string $surname = null;
 
     #[ORM\Column(length: 255)]
-    #[Groups(["getUsers", "getRessources", "getRoles", "getRelationTypesDetails", "getFavorites", "getLikes"])]
+    #[Groups(["getUsers", "getRessources", "getRoles", "getRelationTypesDetails", "getFavorites", "getLikes", "userLogin"])]
     private ?string $pseudo = null;
 
     #[ORM\Column(nullable: true)]
@@ -71,7 +74,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     private Collection $comments;
 
     #[ORM\Column]
-    #[Groups(["getUsers"])]
+    #[Groups(["getUsers", "userLogin"])]
     private ?bool $isActive = null;
 
     #[ORM\OneToMany(mappedBy: 'Sender', targetEntity: Relation::class, orphanRemoval: true)]
@@ -85,6 +88,10 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
 
     #[ORM\OneToMany(mappedBy: 'user_favorite', targetEntity: Favorite::class, orphanRemoval: true)]
     private Collection $favorites;
+
+    #[ORM\Column(type: 'boolean')]
+    #[Groups(["getUsers", "userLogin"])]
+    private $isVerified = false;
 
     public function __construct()
     {
@@ -125,6 +132,16 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     public function getUserIdentifier(): string
     {
         return (string)$this->email;
+    }
+
+    /**
+     *  Username method for the security component
+     *
+     * @see UserInterface
+     */
+    public function getUsername(): string
+    {
+        return $this->getUserIdentifier();
     }
 
     /**
@@ -435,6 +452,18 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
                 $favorite->setUserFavorite(null);
             }
         }
+
+        return $this;
+    }
+
+    public function isVerified(): bool
+    {
+        return $this->isVerified;
+    }
+
+    public function setIsVerified(bool $isVerified): self
+    {
+        $this->isVerified = $isVerified;
 
         return $this;
     }

@@ -1,23 +1,20 @@
 <?php
 
-namespace App\Controller;
+namespace App\Controller\EntityController;
 
 use App\Entity\User;
 use App\Repository\UserRepository;
-
-
 use Doctrine\ORM\EntityManagerInterface;
 use Nelmio\ApiDocBundle\Annotation\Model;
+use Nelmio\ApiDocBundle\Annotation\Security;
+use OpenApi\Attributes as OA;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
-use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
-use Symfony\Component\Serializer\Normalizer\AbstractNormalizer;
 use Symfony\Component\Serializer\SerializerInterface;
-use Symfony\Component\Validator\Constraints\Json;
-use OpenApi\Attributes as OA;
+
 
 class UserController extends AbstractController
 {
@@ -49,6 +46,7 @@ class UserController extends AbstractController
     #[OA\Response(response: 200, description: "Returns one user", content: new Model(type: User::class))]
     #[OA\Tag(name: "User")]
     #[OA\Parameter(name: "id", description: "The id of the user", in: "path", required: true, example: 1)]
+    #[Security(name: "Bearer")]
     public function getOneUser(User $user, SerializerInterface $serializer) : JsonResponse
     {
         $jsonUser = $serializer->serialize($user, "json", ["groups" => "getUsers"]);

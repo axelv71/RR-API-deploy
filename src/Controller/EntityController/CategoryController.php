@@ -1,19 +1,16 @@
 <?php
 
-namespace App\Controller;
+namespace App\Controller\EntityController;
 
 use App\Entity\Category;
-use App\Entity\Comment;
 use App\Repository\CategoryRepository;
 use Doctrine\ORM\EntityManagerInterface;
 use Nelmio\ApiDocBundle\Annotation\Model;
+use OpenApi\Attributes as OA;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
-use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Routing\Annotation\Route;
-use Symfony\Component\Validator\Constraints\Json;
-use OpenApi\Attributes as OA;
 
 class CategoryController extends AbstractController
 {

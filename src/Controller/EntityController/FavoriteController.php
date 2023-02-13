@@ -1,21 +1,18 @@
 <?php
 
-namespace App\Controller;
+namespace App\Controller\EntityController;
 
-use App\Entity\Category;
 use App\Entity\Favorite;
-use App\Entity\User;
 use App\Repository\FavoriteRepository;
 use App\Repository\RessourceRepository;
 use App\Repository\UserRepository;
 use Doctrine\ORM\EntityManagerInterface;
 use Nelmio\ApiDocBundle\Annotation\Model;
+use OpenApi\Attributes as OA;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
-use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
-use OpenApi\Attributes as OA;
 
 class FavoriteController extends AbstractController
 {
