@@ -17,20 +17,19 @@ use Symfony\Component\Routing\Annotation\Route;
 class FavoriteController extends AbstractController
 {
     #[OA\Tag(name: "Favorite")]
-    #[OA\Parameter(name: "id", description: "User id", in: "path", required: true, example: 1)]
     #[OA\Response(
         response: 200,
         description: "Returns all favorite of one user",
         content: new Model(type: Favorite::class)
     )]
-    #[Route('/api/favorite/{id}', name: 'all_favorite', methods: ['GET'])]
+    #[Route('/api/favorite', name: 'all_favorite', methods: ['GET'])]
     public function getAllFavorite(Request $request,
                                    UserRepository$userRepository,
                                    FavoriteRepository $favoriteRepository,
-                                   $id): JsonResponse
+                                   ): JsonResponse
     {
-        $user_id = $id;
-        $user = $userRepository->findOneBy(['id' => $user_id]);
+
+        $user = $this->getUser();
         $favorites = $favoriteRepository->findBy(['user_favorite' => $user]);
         return $this->json($favorites, 200, [], ['groups' => 'getFavorites']);
     }
@@ -41,11 +40,6 @@ class FavoriteController extends AbstractController
         content: new OA\JsonContent(
             type: "object",
             properties: [
-                new OA\Property(
-                    property: "user_id",
-                    type: "integer",
-                    example: 1
-                ),
                 new OA\Property(
                     property: "ressource_id",
                     type: "integer",
@@ -66,9 +60,8 @@ class FavoriteController extends AbstractController
                                    EntityManagerInterface $em): JsonResponse
     {
         $data = json_decode($request->getContent(), true);
-        $user_id = $data['user_id'];
         $resource_id = $data['ressource_id'];
-        $user = $userRepository->findOneBy(['id' => $user_id]);
+        $user = $this->getUser();
         $resource = $resourceRepository->findOneBy(['id' => $resource_id]);
         $favorite = new Favorite();
         $favorite->setUserFavorite($user);

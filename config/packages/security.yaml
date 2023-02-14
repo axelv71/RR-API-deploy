@@ -27,7 +27,10 @@ security:
         api:
             pattern: ^/api
             stateless: true
+            entry_point: jwt
             jwt: ~
+            refresh_jwt:
+                check_path: /api/token/refresh # or api_refresh_token as defined in config/routes.yaml
         dev:
             pattern: ^/(_(profiler|wdt)|css|images|js)/
             security: false
@@ -46,7 +49,7 @@ security:
     access_control:
         - { path: ^/admin, roles: ROLE_ADMIN }
         - { path: ^/api/doc, roles: PUBLIC_ACCESS }
-        - { path: ^/api/register, roles: PUBLIC_ACCESS }
+        - { path: ^/api/(register|login|token/refresh), roles: PUBLIC_ACCESS }
         - { path: ^/api, roles: ROLE_USER_AUTHENTICATED }
 
 when@test:

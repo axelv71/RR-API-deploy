@@ -6,6 +6,7 @@ use App\Entity\User;
 use App\Form\RegistrationFormType;
 use App\Repository\UserRepository;
 use App\Security\EmailVerifier;
+use Nelmio\ApiDocBundle\Annotation\Model;
 use SymfonyCasts\Bundle\VerifyEmail\VerifyEmailHelperInterface;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bridge\Twig\Mime\TemplatedEmail;
@@ -18,6 +19,7 @@ use Symfony\Component\Mime\Address;
 use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
 use Symfony\Component\Routing\Annotation\Route;
 use SymfonyCasts\Bundle\VerifyEmail\Exception\VerifyEmailExceptionInterface;
+use OpenApi\Attributes as OA;
 
 class RegistrationController extends AbstractController
 {
@@ -31,8 +33,53 @@ class RegistrationController extends AbstractController
     }
 
 
-    #[Route('/api/register', name: 'app_register')]
+    #[OA\Tag(name: "Register")]
+    #[OA\RequestBody(
+        content: new OA\JsonContent(
+            type: "object",
+            properties: [
+                new OA\Property(
+                    property: "email",
+                    type: "string",
+                    example: "test@gmail.com"
+                ),
+                new OA\Property(
+                property: "password",
+                type: "string",
+                example: "test"
+                ),
+                new OA\Property(
+                    property: "passwordConfirm",
+                    type: "string",
+                    example: "test"
+                ),
+                new OA\Property(
+                    property: "name",
+                    type: "string",
+                    example: "test_name"
+                ),
+                new OA\Property(
+                    property: "surname",
+                    type: "string",
+                    example: "test_surname"
+                ),
+                new OA\Property(
+                    property: "pseudo",
+                    type: "string",
+                    example: "test_pseudo"
+                ),
+
+            ]
+        )
+    )]
+    #[OA\Response(
+        response: 201,
+        description: "Returns the user created",
+        content: new Model(type: User::class)
+    )]
+    #[Route('/api/register', name: 'app_register', methods: ['POST'])]
     public function register(Request $request,
+                             UserRepository $userRepository,
                              UserPasswordHasherInterface $userPasswordHasher,
                              EntityManagerInterface $em): JsonResponse
     {
@@ -41,6 +88,7 @@ class RegistrationController extends AbstractController
 
         if (empty($data['email']) ||
             empty($data['password']) ||
+            empty($data['passwordConfirm']) ||
             empty($data['name']) ||
             empty($data['surname']) ||
             empty($data['pseudo'])){
@@ -51,23 +99,27 @@ class RegistrationController extends AbstractController
             throw new NotFoundHttpException('Passwords do not match!');
         }
 
+        if ($userRepository->findOneBy(['email' => $data['email']])) {
+            throw new NotFoundHttpException('Email already used!');
+        }
+
         $user->setEmail($data['email']);
         $user->setName($data['name']);
         $user->setSurname($data['surname']);
         $user->setPseudo($data['pseudo']);
         $user->setIsActive(true);
         $user->setPassword($userPasswordHasher->hashPassword($user, $data['password']));
-        $user->setRoles(['ROLE_USER']);
+        $user->setRoles(['ROLE_USER', 'ROLE_USER_AUTHENTICATED']);
         //change this after enabled email verification
         $user->setIsVerified(true);
         $em->persist($user);
         $em->flush();
 
-        $signatureComponents = $this->verifyEmailHelper->generateSignature(
+        /*$signatureComponents = $this->verifyEmailHelper->generateSignature(
             'app_verify_email',
             $user->getId(),
             $user->getEmail()
-        );
+        );*/
 
         /*// generate a signed url and email it to the user
         $this->emailVerifier->sendEmailConfirmation('app_verify_email', $user,
@@ -90,7 +142,7 @@ class RegistrationController extends AbstractController
     }
 
 
-    #[Route('/api/register/verify', name: 'app_verify_email')]
+    /*#[Route('/api/register/verify', name: 'app_verify_email')]
     public function verifyUserEmail(Request $request, UserRepository $userRepository): Response
     {
         $id = $request->get('id');
@@ -118,5 +170,5 @@ class RegistrationController extends AbstractController
         $this->addFlash('success', 'Your email address has been verified.');
 
         return $this->redirectToRoute('app_register');
-    }
+    }*/
 }
