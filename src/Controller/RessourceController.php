@@ -2,6 +2,7 @@
 
 namespace App\Controller;
 
+use App\Entity\Media;
 use App\Entity\Ressource;
 use App\Entity\User;
 use App\Repository\CategoryRepository;
@@ -16,8 +17,6 @@ use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 use Symfony\Component\Serializer\Normalizer\AbstractNormalizer;
 use Symfony\Component\Serializer\SerializerInterface;
-use Nelmio\ApiDocBundle\Annotation\Model;
-use Nelmio\ApiDocBundle\Annotation\Security;
 use OpenApi\Attributes as OA;
 
 class RessourceController extends AbstractController
@@ -94,20 +93,15 @@ class RessourceController extends AbstractController
             )
         )
     ])]
-    public function addRessource(Request $request,
-                                 SerializerInterface $serializer,
-                                 EntityManagerInterface $em,
-                                 UrlGeneratorInterface $urlGenerator,
-                                 UserRepository $userRepository,
-                                 CategoryRepository $categoryRepository) : JsonResponse
+    public function addRessource(Request $request, SerializerInterface $serializer, EntityManagerInterface $em, UrlGeneratorInterface $urlGenerator, UserRepository $userRepository, CategoryRepository $categoryRepository) : JsonResponse
     {
-
+        /* Creation de la ressource */
         $ressource = $serializer->deserialize($request->getContent(), Ressource::class, "json");
 
         $content = $request->toArray();
 
-        $creatorId = $content["creatorid"];
-        $categoryId = $content["categoryid"];
+        $creatorId = $content["creator_id"];
+        $categoryId = $content["category_id"];
 
         $user = $userRepository->find($creatorId);
         $category = $categoryRepository->find($categoryId);
@@ -124,6 +118,9 @@ class RessourceController extends AbstractController
             $em->persist($category);
         }
 
+        /* Upload */
+        // TODO: Upload file at resource creation
+        
         $em->persist($ressource);
         $em->flush();
 

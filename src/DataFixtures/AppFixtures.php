@@ -34,6 +34,20 @@ class AppFixtures extends Fixture
     }
     public function load(ObjectManager $manager): void
     {
+        // Delete all file in the media folder
+        $folder_path = "/var/www/public/uploads/media";
+        $files = glob($folder_path.'/*');
+        foreach($files as $file) {
+
+            if(is_file($file))
+
+                // Delete the given file
+                unlink($file);
+        }
+
+        $role = new Role();
+        $role->setName("ROLE_USER_CONNECTED");
+        $manager->persist($role);
 
         $relationTypes = [];
         for ($r = 0; $r < 5; $r++) {
@@ -125,7 +139,9 @@ class AppFixtures extends Fixture
             {
                 $media = new Media();
                 $media->setTitle($this->faker->word())
-                    ->setLink($this->faker->imageUrl(640, 480, 'media', true))
+                    ->setTitle($this->faker->word())
+                    ->setMimetype($this->faker->mimeType())
+                    ->setFilePath($this->faker->file('/var/www/github','/var/www/public/uploads/media' , false))
                     ->setRessource($ressource);
 
                 $manager->persist($media);
