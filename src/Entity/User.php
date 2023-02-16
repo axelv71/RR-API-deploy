@@ -19,11 +19,11 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     #[ORM\Id]
     #[ORM\GeneratedValue]
     #[ORM\Column]
-    #[Groups(["getUsers", "getRessources","getRoles", "getComments", "getRelationTypesDetails","getFavorites", "createFavorite", "getLikes", "createLike"])]
+    #[Groups(["getUsers", "getRessources", "getRoles", "getComments", "getRelationTypesDetails", "getFavorites", "createFavorite", "getLikes", "createLike"])]
     private ?int $id = null;
 
     #[ORM\Column(length: 180, unique: true)]
-    #[Groups(["getUsers","getRessources","getRoles", "getRelationTypesDetails"])]
+    #[Groups(["getUsers", "getRessources", "getRoles", "getRelationTypesDetails"])]
     private ?string $email = null;
 
 
@@ -41,15 +41,15 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     private ?string $password = null;
 
     #[ORM\Column(length: 255)]
-    #[Groups(["getUsers", "getRelationTypesDetails","getFavorites"])]
+    #[Groups(["getUsers", "getRelationTypesDetails", "getFavorites"])]
     private ?string $name = null;
 
     #[ORM\Column(length: 255)]
-    #[Groups(["getUsers", "getRelationTypesDetails","getFavorites"])]
+    #[Groups(["getUsers", "getRelationTypesDetails", "getFavorites"])]
     private ?string $surname = null;
 
     #[ORM\Column(length: 255)]
-    #[Groups(["getUsers","getRessources","getRoles", "getRelationTypesDetails","getFavorites", "getLikes"])]
+    #[Groups(["getUsers", "getRessources", "getRoles", "getRelationTypesDetails", "getFavorites", "getLikes"])]
     private ?string $pseudo = null;
 
     #[ORM\Column(nullable: true)]
@@ -60,7 +60,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     #[Groups(["getUsers"])]
     private ?\DateTimeImmutable $createdAt = null;
 
-    #[ORM\OneToOne(mappedBy: 'user', targetEntity: Settings::class ,cascade: ['persist', 'remove'])]
+    #[ORM\OneToOne(mappedBy: 'user', targetEntity: Settings::class, cascade: ['persist', 'remove'])]
     #[Groups(["getUsers"])]
     private ?Settings $settings = null;
 
@@ -85,9 +85,6 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
 
     #[ORM\OneToMany(mappedBy: 'user_favorite', targetEntity: Favorite::class, orphanRemoval: true)]
     private Collection $favorites;
-
-    #[ORM\ManyToOne(inversedBy: 'users')]
-    private ?Role $user_role = null;
 
     public function __construct()
     {
@@ -127,7 +124,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
      */
     public function getUserIdentifier(): string
     {
-        return (string) $this->email;
+        return (string)$this->email;
     }
 
     /**
@@ -145,7 +142,6 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     public function setRoles(array $roles): self
     {
         $this->roles = $roles;
-        //$this->role_name = $this->roles->getName();
 
         return $this;
     }
@@ -443,15 +439,4 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
         return $this;
     }
 
-    public function getUserRole(): ?Role
-    {
-        return $this->user_role;
-    }
-
-    public function setUserRole(?Role $user_role): self
-    {
-        $this->user_role = $user_role;
-
-        return $this;
-    }
 }

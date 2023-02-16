@@ -49,7 +49,6 @@ class AppFixtures extends Fixture
         $role->setName("ROLE_USER_CONNECTED");
         $manager->persist($role);
 
-
         $relationTypes = [];
         for ($r = 0; $r < 5; $r++) {
             $relationType = new RelationType();
@@ -71,8 +70,7 @@ class AppFixtures extends Fixture
             $user->setName($this->faker->name());
             $user->setSurname($this->faker->lastName());
             $user->setEmail($this->faker->email());
-            $user->setUserRole($role);
-            $user->setRoles([$user->getUserRole()->getName()]);
+            $user->setRoles(["ROLE_USER", "ROLE_USER_CONNECTED"]);
             $user->setPassword($this->userPasswordHasher->hashPassword($user, "password" . $i));
             $user->setPseudo($user->getPseudo().$user->getSurname());
             $user->setBirthday(new \DateTimeImmutable());
@@ -174,7 +172,6 @@ class AppFixtures extends Fixture
             $manager->persist($ressource);
             $ressources[] = $ressource;
         }
-
         $manager->flush();
     }
 }
