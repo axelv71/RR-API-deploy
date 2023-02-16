@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Controller;
+namespace App\Controller\EntityController;
 
 use App\Entity\Like;
 use App\Repository\LikeRepository;
@@ -8,12 +8,11 @@ use App\Repository\RessourceRepository;
 use App\Repository\UserRepository;
 use Doctrine\ORM\EntityManagerInterface;
 use Nelmio\ApiDocBundle\Annotation\Model;
+use OpenApi\Attributes as OA;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
-use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
-use OpenApi\Attributes as OA;
 
 class LikeController extends AbstractController
 {
@@ -24,14 +23,13 @@ class LikeController extends AbstractController
         description: "Returns all likes of one user",
         content: new Model(type: like::class)
     )]
-    #[Route('/api/like/{id}', name: 'all_likes', methods: ['GET'])]
+    #[Route('/api/like', name: 'all_likes', methods: ['GET'])]
     public function getAllLike(Request $request,
                                UserRepository$userRepository,
                                LikeRepository $likeRepository,
-                               $id): JsonResponse
+                               ): JsonResponse
     {
-        $user_id = $id;
-        $user = $userRepository->findOneBy(['id' => $user_id]);
+        $user = $this->getUser();
         $likes = $likeRepository->findBy(['user_like' => $user]);
         return $this->json($likes, 200, [], ['groups' => 'getLikes']);
     }
@@ -42,11 +40,6 @@ class LikeController extends AbstractController
         content: new OA\JsonContent(
             type: "object",
             properties: [
-                new OA\Property(
-                    property: "user_id",
-                    type: "integer",
-                    example: 1
-                ),
                 new OA\Property(
                     property: "ressource_id",
                     type: "integer",
@@ -67,9 +60,8 @@ class LikeController extends AbstractController
                                EntityManagerInterface $em): JsonResponse
     {
         $data = json_decode($request->getContent(), true);
-        $user_id = $data['user_id'];
         $resource_id = $data['ressource_id'];
-        $user = $userRepository->findOneBy(['id' => $user_id]);
+        $user = $this->getUser();
         $resource = $resourceRepository->findOneBy(['id' => $resource_id]);
         $like = new Like();
         $like->setUserLike($user);

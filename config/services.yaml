@@ -19,6 +19,9 @@ services:
             - '../src/DependencyInjection/'
             - '../src/Entity/'
             - '../src/Kernel.php'
-
+    App\Security\JwtSuccessHandler:
+        arguments:
+            $jwtEncoder: '@lexik_jwt_authentication.encoder'
+            $userRepository: '@App\Repository\UserRepository'
     # add more service definitions when explicit configuration is needed
     # please note that last definitions always *replace* previous ones

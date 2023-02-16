@@ -75,6 +75,7 @@ class AppFixtures extends Fixture
             $user->setPseudo($user->getPseudo().$user->getSurname());
             $user->setBirthday(new \DateTimeImmutable());
             $user->setIsActive(true);
+            $user->setIsVerified(true);
             $user->setSettings($setting);
             $manager->persist($user);
             $users[] = $user;
