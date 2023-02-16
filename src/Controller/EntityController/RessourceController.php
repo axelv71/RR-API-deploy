@@ -2,6 +2,7 @@
 
 namespace App\Controller\EntityController;
 
+use App\Entity\Media;
 use App\Entity\Ressource;
 use App\Repository\CategoryRepository;
 use App\Repository\RessourceRepository;
@@ -91,20 +92,15 @@ class RessourceController extends AbstractController
             )
         )
     ])]
-    public function addRessource(Request $request,
-                                 SerializerInterface $serializer,
-                                 EntityManagerInterface $em,
-                                 UrlGeneratorInterface $urlGenerator,
-                                 UserRepository $userRepository,
-                                 CategoryRepository $categoryRepository) : JsonResponse
+    public function addRessource(Request $request, SerializerInterface $serializer, EntityManagerInterface $em, UrlGeneratorInterface $urlGenerator, UserRepository $userRepository, CategoryRepository $categoryRepository) : JsonResponse
     {
-
+        /* Creation de la ressource */
         $ressource = $serializer->deserialize($request->getContent(), Ressource::class, "json");
 
         $content = $request->toArray();
 
-        $creatorId = $content["creatorid"];
-        $categoryId = $content["categoryid"];
+        $creatorId = $content["creator_id"];
+        $categoryId = $content["category_id"];
 
         $user = $userRepository->find($creatorId);
         $category = $categoryRepository->find($categoryId);
@@ -121,6 +117,9 @@ class RessourceController extends AbstractController
             $em->persist($category);
         }
 
+        /* Upload */
+        // TODO: Upload file at resource creation
+        
         $em->persist($ressource);
         $em->flush();
 
