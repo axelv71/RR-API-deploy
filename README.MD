@@ -13,14 +13,19 @@ Ainsi Docker va télécharger, construire et exécuter nos containeurs
 
 Et voilà notre backend ainsi que notre base de données sont lancer ! Pour le vérifier vous pouvez vous rendre à l'adresse suivante: [127.0.0.1:8000](127.0.0.1:8000)
 
-> ### *⚠️ Si vous venez de cloner le projet il est nécessaire d'installer les dépendances de celui-ci ⚠️*
+> ### *⚠️ Si vous venez de cloner le projet il est nécessaire d'installer les dépendances de celui-ci et d'initialiser JWT ⚠️*
 >
 > Pour faire cela il faut nous rendre à l'intérieur de notre container (www_cube). Ensuite tapez les commandes suivantes :
 > ```properties
+> // Installation des dépendances
 >> composer install
 >> symfony console doctrine:migrations:migrate
 >> symfony console doctrine:fixtures:load
 >```
+> ```properties
+> // Initialisation de JWT
+> symfony console lexik:jwt:generate-keypair
+> ```
 
 
 ## Rentrer dans un container

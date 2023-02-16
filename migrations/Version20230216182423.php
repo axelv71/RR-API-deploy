@@ -10,7 +10,7 @@ use Doctrine\Migrations\AbstractMigration;
 /**
  * Auto-generated Migration: Please modify to your needs!
  */
-final class Version20230214173906 extends AbstractMigration
+final class Version20230216182423 extends AbstractMigration
 {
     public function getDescription(): string
     {
@@ -25,6 +25,7 @@ final class Version20230214173906 extends AbstractMigration
         $this->addSql('CREATE SEQUENCE favorite_id_seq INCREMENT BY 1 MINVALUE 1 START 1');
         $this->addSql('CREATE SEQUENCE "like_id_seq" INCREMENT BY 1 MINVALUE 1 START 1');
         $this->addSql('CREATE SEQUENCE media_id_seq INCREMENT BY 1 MINVALUE 1 START 1');
+        $this->addSql('CREATE SEQUENCE refresh_tokens_id_seq INCREMENT BY 1 MINVALUE 1 START 1');
         $this->addSql('CREATE SEQUENCE relation_id_seq INCREMENT BY 1 MINVALUE 1 START 1');
         $this->addSql('CREATE SEQUENCE relation_type_id_seq INCREMENT BY 1 MINVALUE 1 START 1');
         $this->addSql('CREATE SEQUENCE ressource_id_seq INCREMENT BY 1 MINVALUE 1 START 1');
@@ -42,9 +43,12 @@ final class Version20230214173906 extends AbstractMigration
         $this->addSql('CREATE TABLE "like" (id INT NOT NULL, user_like_id INT DEFAULT NULL, ressource_like_id INT DEFAULT NULL, is_liked BOOLEAN NOT NULL, PRIMARY KEY(id))');
         $this->addSql('CREATE INDEX IDX_AC6340B3DD96E438 ON "like" (user_like_id)');
         $this->addSql('CREATE INDEX IDX_AC6340B330A174D0 ON "like" (ressource_like_id)');
-        $this->addSql('CREATE TABLE media (id INT NOT NULL, ressource_id INT DEFAULT NULL, title VARCHAR(255) NOT NULL, link TEXT NOT NULL, created_at TIMESTAMP(0) WITHOUT TIME ZONE NOT NULL, PRIMARY KEY(id))');
+        $this->addSql('CREATE TABLE media (id INT NOT NULL, ressource_id INT DEFAULT NULL, title VARCHAR(255) DEFAULT NULL, file_path VARCHAR(255) DEFAULT NULL, file_size INT DEFAULT NULL, mimetype VARCHAR(255) DEFAULT NULL, updated_at TIMESTAMP(0) WITHOUT TIME ZONE DEFAULT NULL, created_at TIMESTAMP(0) WITHOUT TIME ZONE NOT NULL, PRIMARY KEY(id))');
         $this->addSql('CREATE INDEX IDX_6A2CA10CFC6CD52A ON media (ressource_id)');
+        $this->addSql('COMMENT ON COLUMN media.updated_at IS \'(DC2Type:datetime_immutable)\'');
         $this->addSql('COMMENT ON COLUMN media.created_at IS \'(DC2Type:datetime_immutable)\'');
+        $this->addSql('CREATE TABLE refresh_tokens (id INT NOT NULL, refresh_token VARCHAR(128) NOT NULL, username VARCHAR(255) NOT NULL, valid TIMESTAMP(0) WITHOUT TIME ZONE NOT NULL, PRIMARY KEY(id))');
+        $this->addSql('CREATE UNIQUE INDEX UNIQ_9BACE7E1C74F2195 ON refresh_tokens (refresh_token)');
         $this->addSql('CREATE TABLE relation (id INT NOT NULL, sender_id INT NOT NULL, receiver_id INT NOT NULL, relation_type_id INT NOT NULL, is_accepted BOOLEAN NOT NULL, PRIMARY KEY(id))');
         $this->addSql('CREATE INDEX IDX_62894749F624B39D ON relation (sender_id)');
         $this->addSql('CREATE INDEX IDX_62894749CD53EDB6 ON relation (receiver_id)');
@@ -86,6 +90,7 @@ final class Version20230214173906 extends AbstractMigration
         $this->addSql('DROP SEQUENCE favorite_id_seq CASCADE');
         $this->addSql('DROP SEQUENCE "like_id_seq" CASCADE');
         $this->addSql('DROP SEQUENCE media_id_seq CASCADE');
+        $this->addSql('DROP SEQUENCE refresh_tokens_id_seq CASCADE');
         $this->addSql('DROP SEQUENCE relation_id_seq CASCADE');
         $this->addSql('DROP SEQUENCE relation_type_id_seq CASCADE');
         $this->addSql('DROP SEQUENCE ressource_id_seq CASCADE');
@@ -109,6 +114,7 @@ final class Version20230214173906 extends AbstractMigration
         $this->addSql('DROP TABLE favorite');
         $this->addSql('DROP TABLE "like"');
         $this->addSql('DROP TABLE media');
+        $this->addSql('DROP TABLE refresh_tokens');
         $this->addSql('DROP TABLE relation');
         $this->addSql('DROP TABLE relation_type');
         $this->addSql('DROP TABLE ressource');

@@ -45,10 +45,6 @@ class AppFixtures extends Fixture
                 unlink($file);
         }
 
-        $role = new Role();
-        $role->setName("ROLE_USER_CONNECTED");
-        $manager->persist($role);
-
         $relationTypes = [];
         for ($r = 0; $r < 5; $r++) {
             $relationType = new RelationType();

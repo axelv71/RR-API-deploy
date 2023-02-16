@@ -33,7 +33,7 @@ class RegistrationController extends AbstractController
     }
 
 
-    #[OA\Tag(name: "Register")]
+    #[OA\Tag(name: "Auth")]
     #[OA\RequestBody(
         content: new OA\JsonContent(
             type: "object",

@@ -15,7 +15,7 @@ use OpenApi\Attributes as OA;
 
 class LoginController extends AbstractController
 {
-    #[OA\Tag(name: "Login")]
+    #[OA\Tag(name: "Auth")]
     #[OA\RequestBody(
         content: new OA\JsonContent(
             type: "object",
