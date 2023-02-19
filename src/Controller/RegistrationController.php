@@ -111,17 +111,18 @@ class RegistrationController extends AbstractController
         $user->setPassword($userPasswordHasher->hashPassword($user, $data['password']));
         $user->setRoles(['ROLE_USER', 'ROLE_USER_AUTHENTICATED']);
         //change this after enabled email verification
-        $user->setIsVerified(true);
+        //$user->setIsVerified(true);
         $em->persist($user);
         $em->flush();
 
-        /*$signatureComponents = $this->verifyEmailHelper->generateSignature(
+        $signatureComponents = $this->verifyEmailHelper->generateSignature(
             'app_verify_email',
             $user->getId(),
-            $user->getEmail()
-        );*/
+            $user->getEmail(),
+            ['id' => $user->getId()]
+        );
 
-        /*// generate a signed url and email it to the user
+        // generate a signed url and email it to the user
         $this->emailVerifier->sendEmailConfirmation('app_verify_email', $user,
             (new TemplatedEmail())
                 ->from(new Address('resourcesrelationnelles@gmail.com', '(Re)Sources Relationnelles'))
@@ -130,11 +131,10 @@ class RegistrationController extends AbstractController
                 ->htmlTemplate('registration/confirmation_email.html.twig')
                 ->context(['signedUrl' => $signatureComponents->getSignedUrl()])
         );
-        */
+
         // do anything else you need here, like send an email
         $jsonData = [
             'message' => 'User created',
-            'user' => $user
         ];
 
         $jsonData = json_encode($jsonData);
@@ -142,20 +142,23 @@ class RegistrationController extends AbstractController
     }
 
 
-    /*#[Route('/api/register/verify', name: 'app_verify_email')]
-    public function verifyUserEmail(Request $request, UserRepository $userRepository): Response
+    #[OA\Tag(name: "Auth")]
+    #[Route('/api/verify', name: 'app_verify_email', methods: ['GET'])]
+    public function verifyUserEmail(Request $request, UserRepository $userRepository, EntityManagerInterface $em): Response
     {
-        $id = $request->get('id');
+        $id = $request->get('id'); // retrieve the user id from the url
 
-        if (null === $id) {
-            return $this->redirectToRoute('app_register');
-        }
+        // Verify the user id exists and is not null
+        if ($id === null) {
+            return $this->redirectToRoute('app_home');
+       }
 
-        $user = $userRepository->find($id);
+       $user = $userRepository->findOneBy(['id' => $id]);
 
-        if (null === $user) {
-            return $this->redirectToRoute('app_register');
-        }
+       // Ensure the user exists in persistence
+       if ($user === null) {
+            return $this->redirectToRoute('app_home');
+       }
 
         // validate email confirmation link, sets User::isVerified=true and persists
         try {
@@ -163,12 +166,17 @@ class RegistrationController extends AbstractController
         } catch (VerifyEmailExceptionInterface $exception) {
             $this->addFlash('verify_email_error', $exception->getReason());
 
-            return $this->redirectToRoute('app_register');
+            return $this->redirectToRoute('app_home');
         }
+
+       /*$user->setIsVerified(true);
+       $em->persist($user);
+       $em->flush();*/
+
 
         // @TODO Change the redirect on success and handle or remove the flash message in your templates
         $this->addFlash('success', 'Your email address has been verified.');
 
-        return $this->redirectToRoute('app_register');
-    }*/
+        return new Response('Your email address has been verified.');
+    }
 }
