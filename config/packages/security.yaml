@@ -15,8 +15,8 @@ security:
             stateless: true
             json_login:
                 check_path: /api/login # or api_login_check as defined in config/routes.yaml
-                success_handler: lexik_jwt_authentication.handler.authentication_success
-                failure_handler: App\Security\JwtSuccessHandler
+                success_handler: App\Security\JwtSuccessHandler
+                failure_handler: App\Security\JwtFailureHandler
         register:
             pattern: ^/api/register
             stateless: true
@@ -49,7 +49,7 @@ security:
     access_control:
         - { path: ^/admin, roles: ROLE_ADMIN }
         - { path: ^/api/doc, roles: PUBLIC_ACCESS }
-        - { path: ^/api/(register|login|token/refresh), roles: PUBLIC_ACCESS }
+        - { path: ^/api/(register|login|token/refresh|verify), roles: PUBLIC_ACCESS }
         - { path: ^/api, roles: ROLE_USER_AUTHENTICATED }
 
 when@test:
