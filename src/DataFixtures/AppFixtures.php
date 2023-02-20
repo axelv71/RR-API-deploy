@@ -83,23 +83,24 @@ class AppFixtures extends Fixture
 
 
         // Relation
-        $relations = [];
+        /*$relations = [];
         for ($i = 0; $i < 30; $i++) {
             $sender = $users[mt_rand(0, count($users) - 1)];
             $receiver = $users[mt_rand(0, count($users) - 1)];
+            //dd($receiver);
 
-            /**
+
             while ($sender === $receiver) {
                 $receiver = $users[mt_rand(0, count($users) - 1)];
             }
-             **/
+
 
             $relation = new Relation($sender, $receiver, $relationTypes[mt_rand(0, count($relationTypes) - 1)]);
             $relation->setIsAccepted(mt_rand(0, 1));
 
             $relations[] = $relation;
             $manager->persist($relation);
-        }
+        } */
 
         $categories = [];
         for ($c = 0; $c < 10; $c++) {
