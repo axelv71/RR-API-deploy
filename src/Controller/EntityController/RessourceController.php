@@ -29,9 +29,11 @@ class RessourceController extends AbstractController
      */
     #[Route("/api/resources", name: "resources", methods: ["GET"])]
     #[OA\Tag(name: "Ressource")]
+    #[OA\Parameter(name: "page", description: "Page number", in: "query", required: false, example: 1)]
+    #[OA\Parameter(name: "pageSize", description: "Number of ressources per page", in: "query", required: false, example: 10)]
     public function getAllRessources(RessourceRepository $repository, SerializerInterface $serializer, Request $request) : JsonResponse
     {
-        $ressourceList = $repository->findAll();
+        $ressourceList = $repository->getAllWithPagination($request->query->getInt('page', 1), $request->query->getInt('pageSize', 10));
         $jsonRessourceList = $serializer->serialize($ressourceList, "json", ["groups"=>"getRessources"]);
         return new JsonResponse($jsonRessourceList, Response::HTTP_OK, [], true);
     }
