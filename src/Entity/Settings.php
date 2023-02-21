@@ -27,6 +27,12 @@ class Settings
     #[ORM\JoinColumn(nullable: false)]
     private ?User $user = null;
 
+    #[ORM\Column]
+    private ?bool $allowNotifications = null;
+
+    #[ORM\Column]
+    private ?bool $useDeviceMode = null;
+
     public function __construct ()
     {
         $this->createdAt = new \DateTimeImmutable();
@@ -69,6 +75,30 @@ class Settings
     public function setUser(User $user): self
     {
         $this->user = $user;
+
+        return $this;
+    }
+
+    public function isAllowNotifications(): ?bool
+    {
+        return $this->allowNotifications;
+    }
+
+    public function setAllowNotifications(bool $allowNotifications): self
+    {
+        $this->allowNotifications = $allowNotifications;
+
+        return $this;
+    }
+
+    public function isUseDeviceMode(): ?bool
+    {
+        return $this->useDeviceMode;
+    }
+
+    public function setUseDeviceMode(bool $useDeviceMode): self
+    {
+        $this->useDeviceMode = $useDeviceMode;
 
         return $this;
     }

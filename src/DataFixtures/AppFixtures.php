@@ -59,6 +59,8 @@ class AppFixtures extends Fixture
             //Create a setting
             $setting = new Settings();
             $setting->setIsDark(false);
+            $setting->setAllowNotifications(false);
+            $setting->setUseDeviceMode(false);
 
 
             //Create a user
