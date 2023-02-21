@@ -12,33 +12,40 @@ class Relation
     #[ORM\Id]
     #[ORM\GeneratedValue]
     #[ORM\Column]
-    #[Groups(["getRelationTypesDetails"])]
+    #[Groups(["getRelationTypesDetails", "relation:read"])]
     private ?int $id = null;
 
     #[ORM\ManyToOne(inversedBy: 'Receiver')]
     #[ORM\JoinColumn(nullable: false)]
-    #[Groups(["getRelationTypesDetails"])]
+    #[Groups(["getRelationTypesDetails", "relation:read"])]
     private ?User $Sender = null;
 
     #[ORM\ManyToOne(inversedBy: "received_relation")]
     #[ORM\JoinColumn(nullable: false)]
-    #[Groups(["getRelationTypesDetails"])]
+    #[Groups(["getRelationTypesDetails", "relation:read"])]
     private ?User $Receiver = null;
 
     #[ORM\Column]
-    #[Groups(["getRelationTypesDetails"])]
+    #[Groups(["getRelationTypesDetails", "relation:read"])]
     private ?bool $isAccepted = null;
 
     #[ORM\ManyToOne(inversedBy: 'relations')]
     #[ORM\JoinColumn(nullable: false)]
+    #[Groups(["relation:read"])]
     private ?RelationType $relation_type = null;
 
-    public function __construct(User $Sender, User $Receiver, RelationType $relation_type)
+    #[ORM\Column]
+    #[Groups(["relation:read"])]
+    private ?\DateTimeImmutable $createdAt = null;
+
+    #[ORM\Column(nullable: true)]
+    #[Groups(["relation:read"])]
+    private ?\DateTimeImmutable $updatedAt = null;
+
+    public function __construct()
     {
-        $this->Sender = $Sender;
-        $this->Receiver = $Receiver;
         $this->isAccepted = False;
-        $this->relation_type = $relation_type;
+        $this->createdAt = new \DateTimeImmutable();
     }
 
     //public  function __construct() { }
@@ -92,6 +99,30 @@ class Relation
     public function setRelationType(?RelationType $relation_type): self
     {
         $this->relation_type = $relation_type;
+
+        return $this;
+    }
+
+    public function getCreatedAt(): ?\DateTimeImmutable
+    {
+        return $this->createdAt;
+    }
+
+    public function setCreatedAt(\DateTimeImmutable $createdAt): self
+    {
+        $this->createdAt = $createdAt;
+
+        return $this;
+    }
+
+    public function getUpdatedAt(): ?\DateTimeImmutable
+    {
+        return $this->updatedAt;
+    }
+
+    public function setUpdatedAt(?\DateTimeImmutable $updatedAt): self
+    {
+        $this->updatedAt = $updatedAt;
 
         return $this;
     }

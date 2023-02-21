@@ -22,11 +22,11 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     #[ORM\GeneratedValue]
     #[ORM\Column]
     #[Groups(["getUsers", "getRessources", "getRoles", "getComments", "getRelationTypesDetails",
-        "getFavorites", "createFavorite", "getLikes", "createLike", "userLogin"])]
+        "getFavorites", "createFavorite", "getLikes", "createLike", "userLogin", "relation:read"])]
     private ?int $id = null;
 
     #[ORM\Column(length: 180, unique: true)]
-    #[Groups(["getUsers", "getRessources", "getRoles", "getRelationTypesDetails", "userLogin"])]
+    #[Groups(["getUsers", "getRessources", "getRoles", "getRelationTypesDetails", "userLogin", "relation:read"])]
     private ?string $email = null;
 
 
@@ -44,15 +44,15 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     private ?string $password = null;
 
     #[ORM\Column(length: 255)]
-    #[Groups(["getUsers", "getRelationTypesDetails", "getFavorites", "userLogin"])]
+    #[Groups(["getUsers", "getRelationTypesDetails", "getFavorites", "userLogin", "relation:read"])]
     private ?string $name = null;
 
     #[ORM\Column(length: 255)]
-    #[Groups(["getUsers", "getRelationTypesDetails", "getFavorites", "userLogin"])]
+    #[Groups(["getUsers", "getRelationTypesDetails", "getFavorites", "userLogin", "relation:read"])]
     private ?string $surname = null;
 
     #[ORM\Column(length: 255)]
-    #[Groups(["getUsers", "getRessources", "getRoles", "getRelationTypesDetails", "getFavorites", "getLikes", "userLogin"])]
+    #[Groups(["getUsers", "getRessources", "getRoles", "getRelationTypesDetails", "getFavorites", "getLikes", "userLogin", "relation:read"])]
     private ?string $pseudo = null;
 
     #[ORM\Column(nullable: true)]
