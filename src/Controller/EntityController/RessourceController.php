@@ -8,6 +8,7 @@ use App\Repository\CategoryRepository;
 use App\Repository\RessourceRepository;
 use App\Repository\UserRepository;
 use Doctrine\ORM\EntityManagerInterface;
+use Nelmio\ApiDocBundle\Annotation\Model;
 use OpenApi\Attributes as OA;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
@@ -17,12 +18,13 @@ use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 use Symfony\Component\Serializer\Normalizer\AbstractNormalizer;
 use Symfony\Component\Serializer\SerializerInterface;
+use Symfony\Component\Validator\Constraints\Json;
 
 class RessourceController extends AbstractController
 {
     /**
      * This function allows us to get all ressources
-     * @param RessourceRepository $ressourceRepository
+     * @param RessourceRepository $repository
      * @param SerializerInterface $serializer
      * @param Request $request
      * @return JsonResponse
@@ -34,6 +36,17 @@ class RessourceController extends AbstractController
         $ressourceList = $repository->findAll();
         $jsonRessourceList = $serializer->serialize($ressourceList, "json", ["groups"=>"getRessources"]);
         return new JsonResponse($jsonRessourceList, Response::HTTP_OK, [], true);
+    }
+
+    #[OA\Tag(name: "Ressource")]
+    #[OA\Response(response: 200, description: "Return user's ressources", content: new Model(type: Ressource::class))]
+    #[Route('/api/resources/user_ressources', name: 'getRessourcesByUser', methods: ['GET'])]
+    public function getUserRessources(SerializerInterface $serializer, RessourceRepository $repository) : JsonResponse
+    {
+        $user = $this->getUser();
+        $ressources = $user->getRessources();
+        $jsonRessources = $serializer->serialize($ressources, "json", ["groups"=>"getRessources"]);
+        return new JsonResponse($jsonRessources, Response::HTTP_OK, [], true);
     }
 
     /**
@@ -72,8 +85,11 @@ class RessourceController extends AbstractController
     /**
      * This function allows us to create a ressource
      * @param Request $request
-     * @param EntityManagerInterface $em
      * @param SerializerInterface $serializer
+     * @param EntityManagerInterface $em
+     * @param UrlGeneratorInterface $urlGenerator
+     * @param UserRepository $userRepository
+     * @param CategoryRepository $categoryRepository
      * @return JsonResponse
      */
     #[Route("/api/resources", name: "addRessource", methods: ["POST"])]
@@ -86,8 +102,7 @@ class RessourceController extends AbstractController
                 type: "object",
                 properties: [
                     new OA\Property(property: "description", type: "string", example: "Ressource text content"),
-                    new OA\Property(property: "categoryid", type: "integer", example: 1),
-                    new OA\Property(property: "creatorid", type: "integer", example: 1),
+                    new OA\Property(property: "category_id", type: "integer", example: 1),
                 ]
             )
         )
@@ -97,12 +112,11 @@ class RessourceController extends AbstractController
         /* Creation de la ressource */
         $ressource = $serializer->deserialize($request->getContent(), Ressource::class, "json");
 
-        $content = $request->toArray();
+        $content = json_decode($request->getContent(), true);
 
-        $creatorId = $content["creator_id"];
+        $user = $this->getUser();
         $categoryId = $content["category_id"];
 
-        $user = $userRepository->find($creatorId);
         $category = $categoryRepository->find($categoryId);
 
         $ressource->setCreator($user);
@@ -161,4 +175,5 @@ class RessourceController extends AbstractController
         $em->flush();
         return new JsonResponse("Ressource updated", Response::HTTP_OK);
     }
+
 }
