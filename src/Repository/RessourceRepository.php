@@ -4,6 +4,7 @@ namespace App\Repository;
 
 use App\Entity\Ressource;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
+use Doctrine\ORM\Tools\Pagination\Paginator;
 use Doctrine\Persistence\ManagerRegistry;
 
 /**
@@ -37,6 +38,21 @@ class RessourceRepository extends ServiceEntityRepository
         if ($flush) {
             $this->getEntityManager()->flush();
         }
+    }
+
+    public function getAllWithPagination($page=0, $pageSize = 10): Paginator
+    {
+        $firstResult = ($page - 1) * $pageSize;
+
+        $query = $this->createQueryBuilder('r')
+            ->orderBy('r.createdAt', 'DESC');
+
+        $query->setFirstResult($firstResult);
+        $query->setMaxResults($pageSize);
+
+        $query->getQuery();
+
+        return new Paginator($query, true);
     }
 
 //    /**
