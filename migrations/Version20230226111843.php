@@ -10,7 +10,7 @@ use Doctrine\Migrations\AbstractMigration;
 /**
  * Auto-generated Migration: Please modify to your needs!
  */
-final class Version20230216182423 extends AbstractMigration
+final class Version20230226111843 extends AbstractMigration
 {
     public function getDescription(): string
     {
@@ -49,17 +49,19 @@ final class Version20230216182423 extends AbstractMigration
         $this->addSql('COMMENT ON COLUMN media.created_at IS \'(DC2Type:datetime_immutable)\'');
         $this->addSql('CREATE TABLE refresh_tokens (id INT NOT NULL, refresh_token VARCHAR(128) NOT NULL, username VARCHAR(255) NOT NULL, valid TIMESTAMP(0) WITHOUT TIME ZONE NOT NULL, PRIMARY KEY(id))');
         $this->addSql('CREATE UNIQUE INDEX UNIQ_9BACE7E1C74F2195 ON refresh_tokens (refresh_token)');
-        $this->addSql('CREATE TABLE relation (id INT NOT NULL, sender_id INT NOT NULL, receiver_id INT NOT NULL, relation_type_id INT NOT NULL, is_accepted BOOLEAN NOT NULL, PRIMARY KEY(id))');
+        $this->addSql('CREATE TABLE relation (id INT NOT NULL, sender_id INT NOT NULL, receiver_id INT NOT NULL, relation_type_id INT NOT NULL, is_accepted BOOLEAN NOT NULL, created_at TIMESTAMP(0) WITHOUT TIME ZONE NOT NULL, updated_at TIMESTAMP(0) WITHOUT TIME ZONE DEFAULT NULL, PRIMARY KEY(id))');
         $this->addSql('CREATE INDEX IDX_62894749F624B39D ON relation (sender_id)');
         $this->addSql('CREATE INDEX IDX_62894749CD53EDB6 ON relation (receiver_id)');
         $this->addSql('CREATE INDEX IDX_62894749DC379EE2 ON relation (relation_type_id)');
+        $this->addSql('COMMENT ON COLUMN relation.created_at IS \'(DC2Type:datetime_immutable)\'');
+        $this->addSql('COMMENT ON COLUMN relation.updated_at IS \'(DC2Type:datetime_immutable)\'');
         $this->addSql('CREATE TABLE relation_type (id INT NOT NULL, name VARCHAR(255) NOT NULL, created_at TIMESTAMP(0) WITHOUT TIME ZONE NOT NULL, PRIMARY KEY(id))');
         $this->addSql('COMMENT ON COLUMN relation_type.created_at IS \'(DC2Type:datetime_immutable)\'');
         $this->addSql('CREATE TABLE ressource (id INT NOT NULL, category_id INT NOT NULL, creator_id INT NOT NULL, description TEXT NOT NULL, is_valid BOOLEAN DEFAULT NULL, is_published BOOLEAN NOT NULL, created_at TIMESTAMP(0) WITHOUT TIME ZONE NOT NULL, PRIMARY KEY(id))');
         $this->addSql('CREATE INDEX IDX_939F454412469DE2 ON ressource (category_id)');
         $this->addSql('CREATE INDEX IDX_939F454461220EA6 ON ressource (creator_id)');
         $this->addSql('COMMENT ON COLUMN ressource.created_at IS \'(DC2Type:datetime_immutable)\'');
-        $this->addSql('CREATE TABLE settings (id INT NOT NULL, user_id INT NOT NULL, is_dark BOOLEAN NOT NULL, created_at TIMESTAMP(0) WITHOUT TIME ZONE NOT NULL, PRIMARY KEY(id))');
+        $this->addSql('CREATE TABLE settings (id INT NOT NULL, user_id INT NOT NULL, is_dark BOOLEAN NOT NULL, created_at TIMESTAMP(0) WITHOUT TIME ZONE NOT NULL, allow_notifications BOOLEAN NOT NULL, use_device_mode BOOLEAN NOT NULL, PRIMARY KEY(id))');
         $this->addSql('CREATE UNIQUE INDEX UNIQ_E545A0C5A76ED395 ON settings (user_id)');
         $this->addSql('COMMENT ON COLUMN settings.created_at IS \'(DC2Type:datetime_immutable)\'');
         $this->addSql('CREATE TABLE "user" (id INT NOT NULL, email VARCHAR(180) NOT NULL, roles JSON NOT NULL, password VARCHAR(255) NOT NULL, name VARCHAR(255) NOT NULL, surname VARCHAR(255) NOT NULL, pseudo VARCHAR(255) NOT NULL, birthday TIMESTAMP(0) WITHOUT TIME ZONE DEFAULT NULL, created_at TIMESTAMP(0) WITHOUT TIME ZONE NOT NULL, is_active BOOLEAN NOT NULL, is_verified BOOLEAN NOT NULL, PRIMARY KEY(id))');
