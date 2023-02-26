@@ -45,10 +45,11 @@ class AppFixtures extends Fixture
                 unlink($file);
         }
 
+        $relation_name = ["Ami", "Famille", "Collègue", "Connaissance", "Autre"];
         $relationTypes = [];
         for ($r = 0; $r < 5; $r++) {
             $relationType = new RelationType();
-            $relationType->setName($this->faker->word());
+            $relationType->setName($relation_name[$r]);
 
             $relationTypes[] = $relationType;
             $manager->persist($relationType);
@@ -85,24 +86,22 @@ class AppFixtures extends Fixture
 
 
         // Relation
-        /*$relations = [];
+        $relations = [];
         for ($i = 0; $i < 30; $i++) {
             $sender = $users[mt_rand(0, count($users) - 1)];
             $receiver = $users[mt_rand(0, count($users) - 1)];
             //dd($receiver);
 
-
             while ($sender === $receiver) {
                 $receiver = $users[mt_rand(0, count($users) - 1)];
             }
-
 
             $relation = new Relation($sender, $receiver, $relationTypes[mt_rand(0, count($relationTypes) - 1)]);
             $relation->setIsAccepted(mt_rand(0, 1));
 
             $relations[] = $relation;
             $manager->persist($relation);
-        } */
+        }
 
         $categories = [];
         for ($c = 0; $c < 10; $c++) {
@@ -134,13 +133,24 @@ class AppFixtures extends Fixture
                 $manager->persist($comment);
             }
 
+            $mime_type = [
+                "image/jpeg",
+                "image/png",
+                "image/gif",
+                "image/svg+xml",
+                "pdf",
+                "application/pdf",
+                "mp4",
+                "video/mp4",
+
+                "video/quicktime"];
             // Media
             for ($m = 0; $m < mt_rand(0, 3); $m++)
             {
                 $media = new Media();
                 $media->setTitle($this->faker->word())
                     ->setTitle($this->faker->word())
-                    ->setMimetype($this->faker->mimeType())
+                    ->setMimetype($mime_type[mt_rand(0, count($mime_type) - 1)])
                     ->setFilePath($this->faker->file('/var/www/github','/var/www/public/uploads/media' , false))
                     ->setRessource($ressource);
 

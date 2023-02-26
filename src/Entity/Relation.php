@@ -42,8 +42,11 @@ class Relation
     #[Groups(["relation:read"])]
     private ?\DateTimeImmutable $updatedAt = null;
 
-    public function __construct()
+    public function __construct($Sender, $Receiver, $relation_type)
     {
+        $this->Sender = $Sender;
+        $this->Receiver = $Receiver;
+        $this->relation_type = $relation_type;
         $this->isAccepted = False;
         $this->createdAt = new \DateTimeImmutable();
     }
