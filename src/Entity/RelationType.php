@@ -29,12 +29,17 @@ class RelationType
     #[Groups(['getRelationTypesDetails'])]
     private Collection $relations;
 
+    #[ORM\ManyToMany(targetEntity: Ressource::class, mappedBy: 'relationType')]
+    private Collection $ressources;
+
     public function __construct()
     {
         $this->relations = new ArrayCollection();
         $this->createdAt = new \DateTimeImmutable();
+        $this->ressources = new ArrayCollection();
     }
 
+    #[Groups(['getRelationType', 'getRelationTypesDetails', 'relation:read'])]
     public function getId(): ?int
     {
         return $this->id;
@@ -93,4 +98,32 @@ class RelationType
 
         return $this;
     }
+
+    /**
+     * @return Collection<int, Ressource>
+     */
+    public function getRessources(): Collection
+    {
+        return $this->ressources;
+    }
+
+    public function addRessource(Ressource $ressource): self
+    {
+        if (!$this->ressources->contains($ressource)) {
+            $this->ressources->add($ressource);
+            $ressource->addRelationType($this);
+        }
+
+        return $this;
+    }
+
+    public function removeRessource(Ressource $ressource): self
+    {
+        if ($this->ressources->removeElement($ressource)) {
+            $ressource->removeRelationType($this);
+        }
+
+        return $this;
+    }
+
 }

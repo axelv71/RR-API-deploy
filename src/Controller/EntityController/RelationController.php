@@ -82,10 +82,7 @@ class RelationController extends AbstractController
             return new JsonResponse($json, Response::HTTP_CONFLICT, [], true);
         }
 
-        $relation = new Relation();
-        $relation->setSender($sender);
-        $relation->setReceiver($receiver);
-        $relation->setRelationType($relationType);
+        $relation = new Relation($sender, $receiver, $relationType);
         $relation->setUpdatedAt(new \DateTimeImmutable());
 
         $entityManage->persist($relation);
@@ -109,9 +106,11 @@ class RelationController extends AbstractController
     public function getUserRelations(RelationRepository $relationRepository, SerializerInterface $serializer): JsonResponse
     {
         $user = $this->getUser();
-        $sender_relations = $relationRepository->findBy(['Sender' => $user]);
+        /*$sender_relations = $relationRepository->findBy(['Sender' => $user]);
         $receiver_relations = $relationRepository->findBy(['Receiver' => $user]);
-        $relations = array_merge($sender_relations, $receiver_relations);
+        $relations = array_merge($sender_relations, $receiver_relations);*/
+
+        $relations = $relationRepository->retrieveAllRelationsByUser($user);
 
         $jsonRelations = $serializer->serialize($relations, 'json', ['groups' => 'relation:read']);
 

@@ -39,6 +39,18 @@ class RelationRepository extends ServiceEntityRepository
         }
     }
 
+    public function retrieveAllRelationsByUser($user): array
+    {
+        return $this->createQueryBuilder('r')
+            ->andWhere('r.Sender = :user')
+            ->orWhere('r.Receiver = :user')
+            ->setParameter('user', $user)
+            ->getQuery()
+            ->getResult()
+        ;
+    }
+
+
 //    /**
 //     * @return Relation[] Returns an array of Relation objects
 //     */

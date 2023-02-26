@@ -69,7 +69,7 @@ class AppFixtures extends Fixture
             $user->setName($this->faker->name());
             $user->setSurname($this->faker->lastName());
             $user->setEmail($this->faker->email());
-            $user->setRoles(["ROLE_USER", "ROLE_USER_CONNECTED"]);
+            $user->setRoles(["ROLE_USER", "ROLE_USER_AUTHENTICATED"]);
             $user->setPassword($this->userPasswordHasher->hashPassword($user, "password" . $i));
             $user->setPseudo($user->getPseudo().$user->getSurname());
             $user->setBirthday(new \DateTimeImmutable());
@@ -119,8 +119,8 @@ class AppFixtures extends Fixture
                 ->setIsValid((bool)mt_rand(0, 1))
                 ->setIsPublished((bool)mt_rand(0, 1))
                 ->setCategory($categories[mt_rand(0, count($categories) - 1)])
-                ->setCreator($users[mt_rand(0, count($users) - 1)]);
-
+                ->setCreator($users[mt_rand(0, count($users) - 1)])
+                ->addRelationType($relationTypes[mt_rand(0, count($relationTypes) - 1)]);
 
 
             // Comments

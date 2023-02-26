@@ -5,6 +5,8 @@ namespace App\Controller\EntityController;
 use App\Entity\Media;
 use App\Entity\Ressource;
 use App\Repository\CategoryRepository;
+use App\Repository\RelationRepository;
+use App\Repository\RelationTypeRepository;
 use App\Repository\RessourceRepository;
 use App\Repository\UserRepository;
 use Doctrine\ORM\EntityManagerInterface;
@@ -19,17 +21,24 @@ use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 use Symfony\Component\Serializer\Normalizer\AbstractNormalizer;
 use Symfony\Component\Serializer\SerializerInterface;
 use Symfony\Component\Validator\Constraints\Json;
+use Psr\Log\LoggerInterface;
 
 class RessourceController extends AbstractController
 {
+
+    private LoggerInterface $logger;
+    public function __construct(EntityManagerInterface $em, LoggerInterface $logger)
+    {
+        $this->logger = $logger;
+    }
     /**
-     * This function allows us to get all ressources
+     * This function allows us to get all ressources for public access
      * @param RessourceRepository $repository
      * @param SerializerInterface $serializer
      * @param Request $request
      * @return JsonResponse
      */
-    #[Route("/api/resources", name: "resources", methods: ["GET"])]
+    #[Route("/api/public/resources", name: "resources", methods: ["GET"])]
     #[OA\Tag(name: "Ressource")]
     #[OA\Parameter(name: "page", description: "Page number", in: "query", required: false, example: 1)]
     #[OA\Parameter(name: "pageSize", description: "Number of ressources per page", in: "query", required: false, example: 10)]
@@ -39,6 +48,66 @@ class RessourceController extends AbstractController
         $jsonRessourceList = $serializer->serialize($ressourceList, "json", ["groups"=>"getRessources"]);
         return new JsonResponse($jsonRessourceList, Response::HTTP_OK, [], true);
     }
+
+    /**
+     * This function allows us to get all privates resources for user access
+     * @param RessourceRepository $repository
+     * @param SerializerInterface $serializer
+     * @param Request $request
+     * @return JsonResponse
+     */
+    #[OA\Tag(name: "Ressource")]
+    #[OA\Parameter(name: "page", description: "Page number", in: "query", required: false, example: 1)]
+    #[OA\Parameter(name: "pageSize", description: "Number of ressources per page", in: "query", required: false, example: 10)]
+    #[Route("/api/resources", name: "user_resources", methods: ["GET"])]
+    public function getAllRelationsRessources(RessourceRepository $ressourceRepository,
+                                              RelationRepository $relationRepository,
+                                              RelationTypeRepository $relationTypeRepository,
+                                              SerializerInterface $serializer,
+                                              Request $request) : JsonResponse
+    {
+        $user = $this->getUser();
+        $user_id = $user->getId();
+
+        $relations = $relationRepository->retrieveAllRelationsByUser($user);
+
+        $friends_ids = [];
+        $relations_type_id = [];
+
+        foreach ($relations as $relation){
+            $sender_id = $relation->getSender()->getId();
+            $receiver_id = $relation->getReceiver()->getId();
+            if (!in_array($relation->getRelationType()->getId(), $relations_type_id)){
+                $relations_type_id[] = $relation->getRelationType()->getId();
+            }
+            if($sender_id == $user_id){
+                $friends_ids[] = $receiver_id;
+            }else{
+                $friends_ids[] = $sender_id;
+            }
+        }
+
+        $all_relations_resources = $ressourceRepository->getAllWithPaginationByRelations($friends_ids, $request->query->getInt('page', 1), $request->query->getInt('pageSize', 10));
+        $all_relations_resources = $all_relations_resources->getQuery()->getResult();
+        $friends_resources = [];
+        foreach($all_relations_resources as $resource){
+            $resource_relations_type = $resource->getRelationType();
+            foreach ($resource_relations_type as $resource_relation_type){
+                $this->logger->info($resource_relation_type->getId());;
+                if(in_array($resource_relation_type->getId(), $relations_type_id)){
+                    $this->logger->info("Ressource ajoutée");
+                    $friends_resources[] = $resource;
+                }
+            }
+        }
+
+        $this->logger->info("Nombre de ressources : ".count($friends_resources));
+        /*$jsonResourceList = $serializer->serialize($resources, "json", ["groups"=>"getRessources"]);*/
+        $jsonResourceList = $serializer->serialize($friends_resources, "json", ["groups"=>"getRessources"]);
+        return new JsonResponse($jsonResourceList, Response::HTTP_OK, [], true);
+    }
+
+
 
     #[OA\Tag(name: "Ressource")]
     #[OA\Response(response: 200, description: "Return user's ressources", content: new Model(type: Ressource::class))]

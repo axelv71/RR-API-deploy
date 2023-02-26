@@ -58,6 +58,9 @@ class Ressource
     #[ORM\OneToMany(mappedBy: 'ressource_favorite', targetEntity: Favorite::class, orphanRemoval: true)]
     private Collection $favorites;
 
+    #[ORM\ManyToMany(targetEntity: RelationType::class, inversedBy: 'ressources', fetch: "EAGER")]
+    private Collection $relationType;
+
     public function __construct()
     {
         $this->comments = new ArrayCollection();
@@ -65,6 +68,7 @@ class Ressource
         $this->likes = new ArrayCollection();
         $this->favorites = new ArrayCollection();
         $this->createdAt = new \DateTimeImmutable();
+        $this->relationType = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -260,6 +264,30 @@ class Ressource
                 $favorite->setRessourceFavorite(null);
             }
         }
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, RelationType>
+     */
+    public function getRelationType(): Collection
+    {
+        return $this->relationType;
+    }
+
+    public function addRelationType(RelationType $relationType): self
+    {
+        if (!$this->relationType->contains($relationType)) {
+            $this->relationType->add($relationType);
+        }
+
+        return $this;
+    }
+
+    public function removeRelationType(RelationType $relationType): self
+    {
+        $this->relationType->removeElement($relationType);
 
         return $this;
     }
