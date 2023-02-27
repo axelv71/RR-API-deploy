@@ -83,6 +83,11 @@ class RelationController extends AbstractController
             'Receiver' => $receiver,
         ]);
 
+        if (!$existingRelations) $existingRelations = $relationRepository->findBy([
+            'Sender' => $receiver,
+            'Receiver' => $sender,
+        ]);
+
         if ($existingRelations) {
             foreach($existingRelations as $existingRelation)
             {
