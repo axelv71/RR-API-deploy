@@ -78,20 +78,21 @@ class RelationController extends AbstractController
         $receiver = $userRepository->find($requestData['receiver']);
         $relationType = $relationTypeRepository->find($requestData['relationType']);
 
-        $existingRelation = $relationRepository->findOneBy([
+        $existingRelations = $relationRepository->findBy([
             'Sender' => $sender,
             'Receiver' => $receiver,
         ]);
 
-        if ($existingRelation) {
-            $this->logger->info("Existing relation: " . $existingRelation->getRelationType()->getId() . "
-            New relation: " . $relationType->getId());
-            if ($existingRelation->getRelationType()->getId() === $relationType->getId())
+        if ($existingRelations) {
+            foreach($existingRelations as $existingRelation)
             {
-                $this->logger->info('Relation already exists between these two users');
+                if ($existingRelation->getRelationType()->getId() === $relationType->getId())
+                {
+                    $this->logger->info('Relation already exists between these two users');
 
-                $json = $serializer->serialize($existingRelation, 'json', ['groups' => 'relation:read']);
-                return new JsonResponse($json, Response::HTTP_CONFLICT, [], true);
+                    $json = $serializer->serialize($existingRelation, 'json', ['groups' => 'relation:read']);
+                    return new JsonResponse($json, Response::HTTP_CONFLICT, [], true);
+                }
             }
         }
 
