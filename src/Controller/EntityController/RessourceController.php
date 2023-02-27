@@ -31,6 +31,7 @@ class RessourceController extends AbstractController
     {
         $this->logger = $logger;
     }
+
     /**
      * This function allows us to get all ressources for public access
      * @param RessourceRepository $repository
@@ -50,8 +51,10 @@ class RessourceController extends AbstractController
     }
 
     /**
-     * This function allows us to get all privates resources for user access
-     * @param RessourceRepository $repository
+     * This function allows us to get all privates resources for user access from all type of relations
+     * @param RessourceRepository $ressourceRepository
+     * @param RelationRepository $relationRepository
+     * @param RelationTypeRepository $relationTypeRepository
      * @param SerializerInterface $serializer
      * @param Request $request
      * @return JsonResponse
@@ -59,6 +62,7 @@ class RessourceController extends AbstractController
     #[OA\Tag(name: "Ressource")]
     #[OA\Parameter(name: "page", description: "Page number", in: "query", required: false, example: 1)]
     #[OA\Parameter(name: "pageSize", description: "Number of ressources per page", in: "query", required: false, example: 10)]
+    #[OA\Parameter(name: "relation_type_id", description: "Relation type id (used to sort resources by relation type)", in: "query", required: false, example: 1)]
     #[Route("/api/resources", name: "user_resources", methods: ["GET"])]
     public function getAllRelationsRessources(RessourceRepository $ressourceRepository,
                                               RelationRepository $relationRepository,
@@ -69,40 +73,50 @@ class RessourceController extends AbstractController
         $user = $this->getUser();
         $user_id = $user->getId();
 
+        $relation_type_id = $request->query->getInt('relation_type_id', 0);
+
+        // Get all relations for user
         $relations = $relationRepository->retrieveAllRelationsByUser($user);
 
+        $friends_relations = [];
         $friends_ids = [];
-        $relations_type_id = [];
 
+        // Get all friends ids to get their resources
         foreach ($relations as $relation){
+            if ($relation->getRelationType()->getId() != $relation_type_id && $relation_type_id != 0){
+                continue;
+            }
             $sender_id = $relation->getSender()->getId();
             $receiver_id = $relation->getReceiver()->getId();
-            if (!in_array($relation->getRelationType()->getId(), $relations_type_id)){
-                $relations_type_id[] = $relation->getRelationType()->getId();
-            }
             if($sender_id == $user_id){
-                $friends_ids[] = $receiver_id;
+                $friend_id = $receiver_id;
             }else{
-                $friends_ids[] = $sender_id;
+                $friend_id = $sender_id;
             }
+            $friends_ids[] = $friend_id;
+            $friends_relations[] = [
+                $friend_id, $relation->getRelationType()->getId()
+            ];
         }
 
+        // Get all resources from friends
         $all_relations_resources = $ressourceRepository->getAllWithPaginationByRelations($friends_ids, $request->query->getInt('page', 1), $request->query->getInt('pageSize', 10));
         $all_relations_resources = $all_relations_resources->getQuery()->getResult();
+
+
         $friends_resources = [];
         foreach($all_relations_resources as $resource){
-            $resource_relations_type = $resource->getRelationType();
-            foreach ($resource_relations_type as $resource_relation_type){
-                $this->logger->info($resource_relation_type->getId());;
-                if(in_array($resource_relation_type->getId(), $relations_type_id)){
-                    $this->logger->info("Ressource ajoutée");
+            $creator_id = $resource->getCreator()->getId();
+            $relation_type_array = $resource->getRelationType();
+            foreach($relation_type_array as $relation_type){
+                $relation_type_id = $relation_type->getId();
+                if(in_array([$creator_id, $relation_type_id], $friends_relations)){
                     $friends_resources[] = $resource;
                 }
             }
         }
 
         $this->logger->info("Nombre de ressources : ".count($friends_resources));
-        /*$jsonResourceList = $serializer->serialize($resources, "json", ["groups"=>"getRessources"]);*/
         $jsonResourceList = $serializer->serialize($friends_resources, "json", ["groups"=>"getRessources"]);
         return new JsonResponse($jsonResourceList, Response::HTTP_OK, [], true);
     }
@@ -119,6 +133,7 @@ class RessourceController extends AbstractController
         $jsonRessources = $serializer->serialize($ressources, "json", ["groups"=>"getRessources"]);
         return new JsonResponse($jsonRessources, Response::HTTP_OK, [], true);
     }
+
 
     /**
      * This function allows us to get one ressource by his id
