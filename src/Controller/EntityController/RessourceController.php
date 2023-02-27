@@ -189,25 +189,35 @@ class RessourceController extends AbstractController
                 properties: [
                     new OA\Property(property: "description", type: "string", example: "Ressource text content"),
                     new OA\Property(property: "category_id", type: "integer", example: 1),
+                    new OA\Property(property: "relation_type_id", type: "integer", example: 1),
                 ]
             )
         )
     ])]
-    public function addRessource(Request $request, SerializerInterface $serializer, EntityManagerInterface $em, UrlGeneratorInterface $urlGenerator, UserRepository $userRepository, CategoryRepository $categoryRepository) : JsonResponse
+    public function addRessource(Request $request,
+                                 SerializerInterface $serializer,
+                                 EntityManagerInterface $em,
+                                 UrlGeneratorInterface $urlGenerator,
+                                 UserRepository $userRepository,
+                                 RelationTypeRepository $relationTypeRepository,
+                                 CategoryRepository $categoryRepository) : JsonResponse
     {
         /* Creation de la ressource */
-        $ressource = $serializer->deserialize($request->getContent(), Ressource::class, "json");
+        $ressource = new Ressource();
 
         $content = json_decode($request->getContent(), true);
 
         $user = $this->getUser();
         $categoryId = $content["category_id"];
+        $relation_type_id = $content["relation_type_id"];
 
         $category = $categoryRepository->find($categoryId);
 
         $ressource->setCreator($user);
         $ressource->setCategory($category);
         $ressource->setIsPublished(false);
+        $ressource->setDescription($content["description"]);
+        $ressource->setIsValid(false);
         if ($user){
             $user->addRessource($ressource);
             $em->persist($user);
@@ -216,6 +226,12 @@ class RessourceController extends AbstractController
             $category->addRessource($ressource);
             $em->persist($category);
         }
+        if($relation_type_id){
+            $relationType = $relationTypeRepository->find($relation_type_id);
+        } else {
+            $relationType = $relationTypeRepository->findBy(["name" => "Public"]);
+        }
+        $ressource->addRelationType($relationType);
 
         /* Upload */
         // TODO: Upload file at resource creation
