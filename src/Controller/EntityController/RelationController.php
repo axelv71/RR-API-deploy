@@ -8,6 +8,7 @@ use App\Repository\RelationRepository;
 use App\Repository\RelationTypeRepository;
 use App\Repository\UserRepository;
 use Doctrine\ORM\EntityManagerInterface;
+use Psr\Log\LoggerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
@@ -19,6 +20,11 @@ use Symfony\Component\Serializer\SerializerInterface;
 
 class RelationController extends AbstractController
 {
+    private LoggerInterface $logger;
+    public function __construct(EntityManagerInterface $em, LoggerInterface $logger)
+    {
+        $this->logger = $logger;
+    }
     /**
      * Get relation details
      *
@@ -78,8 +84,15 @@ class RelationController extends AbstractController
         ]);
 
         if ($existingRelation) {
-            $json = $serializer->serialize($existingRelation, 'json', ['groups' => 'relation:read']);
-            return new JsonResponse($json, Response::HTTP_CONFLICT, [], true);
+            $this->logger->info("Existing relation: " . $existingRelation->getRelationType()->getId() . "
+            New relation: " . $relationType->getId());
+            if ($existingRelation->getRelationType()->getId() === $relationType->getId())
+            {
+                $this->logger->info('Relation already exists between these two users');
+
+                $json = $serializer->serialize($existingRelation, 'json', ['groups' => 'relation:read']);
+                return new JsonResponse($json, Response::HTTP_CONFLICT, [], true);
+            }
         }
 
         $relation = new Relation($sender, $receiver, $relationType);
