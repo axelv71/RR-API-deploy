@@ -62,6 +62,8 @@ class AppFixtures extends Fixture
             $setting->setIsDark(false);
             $setting->setAllowNotifications(false);
             $setting->setUseDeviceMode(false);
+            $setting->setLanguage("fr");
+            $setting->setTheme("default");
 
 
             //Create a user

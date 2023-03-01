@@ -28,10 +28,20 @@ class Settings
     private ?User $user = null;
 
     #[ORM\Column]
+    #[Groups(["getUsers", "getSettings"])]
     private ?bool $allowNotifications = null;
 
     #[ORM\Column]
+    #[Groups(["getUsers", "getSettings"])]
     private ?bool $useDeviceMode = null;
+
+    #[ORM\Column(length: 255)]
+    #[Groups(["getUsers", "getSettings"])]
+    private ?string $language = null;
+
+    #[Groups(["getUsers", "getSettings"])]
+    #[ORM\Column(length: 255, nullable: true)]
+    private ?string $theme = null;
 
     public function __construct ()
     {
@@ -99,6 +109,30 @@ class Settings
     public function setUseDeviceMode(bool $useDeviceMode): self
     {
         $this->useDeviceMode = $useDeviceMode;
+
+        return $this;
+    }
+
+    public function getLanguage(): ?string
+    {
+        return $this->language;
+    }
+
+    public function setLanguage(string $language): self
+    {
+        $this->language = $language;
+
+        return $this;
+    }
+
+    public function getTheme(): ?string
+    {
+        return $this->theme;
+    }
+
+    public function setTheme(?string $theme): self
+    {
+        $this->theme = $theme;
 
         return $this;
     }
