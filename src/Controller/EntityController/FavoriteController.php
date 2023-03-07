@@ -3,6 +3,8 @@
 namespace App\Controller\EntityController;
 
 use App\Entity\Favorite;
+use App\Entity\Notification;
+use App\Entity\User;
 use App\Repository\FavoriteRepository;
 use App\Repository\RessourceRepository;
 use App\Repository\UserRepository;
@@ -61,12 +63,23 @@ class FavoriteController extends AbstractController
     {
         $data = json_decode($request->getContent(), true);
         $resource_id = $data['ressource_id'];
+        /** @var User $user */
         $user = $this->getUser();
+
         $resource = $resourceRepository->findOneBy(['id' => $resource_id]);
+        $resource_creator = $resource->getCreator();
+
         $favorite = new Favorite();
         $favorite->setUserFavorite($user);
         $favorite->setRessourceFavorite($resource);
         $em->persist($favorite);
+
+        $notification_content = $user->getPseudo() . ' a ajouté votre ressource à ses favoris';
+
+        $notification = new Notification($user, $resource_creator, 'favorite', $notification_content);
+        $notification->setResource($resource);
+        $em->persist($notification);
+
         $em->flush();
         return $this->json($favorite, 201, [], ['groups' => 'getFavorites']);
     }

@@ -4,6 +4,7 @@ namespace App\Controller\EntityController;
 
 use App\Entity\Media;
 use App\Entity\Ressource;
+use App\Entity\User;
 use App\Repository\CategoryRepository;
 use App\Repository\RelationRepository;
 use App\Repository\RelationTypeRepository;
@@ -70,6 +71,7 @@ class RessourceController extends AbstractController
                                               SerializerInterface $serializer,
                                               Request $request) : JsonResponse
     {
+        /** @var User $user */
         $user = $this->getUser();
         $user_id = $user->getId();
 
@@ -128,6 +130,7 @@ class RessourceController extends AbstractController
     #[Route('/api/resources/user_ressources', name: 'getRessourcesByUser', methods: ['GET'])]
     public function getUserRessources(SerializerInterface $serializer, RessourceRepository $repository) : JsonResponse
     {
+        /** @var User $user */
         $user = $this->getUser();
         $ressources = $user->getRessources();
         $jsonRessources = $serializer->serialize($ressources, "json", ["groups"=>"getRessources"]);
@@ -207,6 +210,7 @@ class RessourceController extends AbstractController
 
         $content = json_decode($request->getContent(), true);
 
+        /** @var User $user */
         $user = $this->getUser();
         $categoryId = $content["category_id"];
         $relation_type_id = $content["relation_type_id"];

@@ -3,6 +3,8 @@
 namespace App\Controller\EntityController;
 
 use App\Entity\Comment;
+use App\Entity\Notification;
+use App\Entity\User;
 use App\Repository\CommentRepository;
 use App\Repository\RessourceRepository;
 use App\Repository\UserRepository;
@@ -69,11 +71,6 @@ class CommentController extends AbstractController
                             example: "This is a comment"
                         ),
                         new OA\Property(
-                            property: "creatorid",
-                            type: "integer",
-                            example: 1
-                        ),
-                        new OA\Property(
                             property: "ressourceid",
                             type: "integer",
                             example: 1
@@ -93,10 +90,10 @@ class CommentController extends AbstractController
 
         $content = $request->toArray();
 
-        $creatorId = $content["creatorid"];
         $ressourceId = $content["ressourceid"];
 
-        $user = $userRepository->find($creatorId);
+        /** @var User $user */
+        $user = $this->getUser();
         $ressource = $ressourceRepository->find($ressourceId);
 
         $comment->setCreator($user);
@@ -111,6 +108,9 @@ class CommentController extends AbstractController
             $em->persist($ressource);
         }
 
+        $notification = new Notification($user, $ressource->getCreator(), "commentaire", $user->getPseudo() . " a commenté une de vos ressources ");
+        $notification->setResource($ressource);
+        $em->persist($notification);
 
         $em->persist($comment);
         $em->flush();

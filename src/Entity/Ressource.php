@@ -61,6 +61,9 @@ class Ressource
     #[ORM\ManyToMany(targetEntity: RelationType::class, inversedBy: 'ressources', fetch: "EAGER")]
     private Collection $relationType;
 
+    #[ORM\OneToMany(mappedBy: 'resource', targetEntity: Notification::class)]
+    private Collection $notifications;
+
     public function __construct()
     {
         $this->comments = new ArrayCollection();
@@ -69,6 +72,7 @@ class Ressource
         $this->favorites = new ArrayCollection();
         $this->createdAt = new \DateTimeImmutable();
         $this->relationType = new ArrayCollection();
+        $this->notifications = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -288,6 +292,36 @@ class Ressource
     public function removeRelationType(RelationType $relationType): self
     {
         $this->relationType->removeElement($relationType);
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, Notification>
+     */
+    public function getNotifications(): Collection
+    {
+        return $this->notifications;
+    }
+
+    public function addNotification(Notification $notification): self
+    {
+        if (!$this->notifications->contains($notification)) {
+            $this->notifications->add($notification);
+            $notification->setResource($this);
+        }
+
+        return $this;
+    }
+
+    public function removeNotification(Notification $notification): self
+    {
+        if ($this->notifications->removeElement($notification)) {
+            // set the owning side to null (unless already changed)
+            if ($notification->getResource() === $this) {
+                $notification->setResource(null);
+            }
+        }
 
         return $this;
     }

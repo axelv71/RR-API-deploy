@@ -2,8 +2,10 @@
 
 namespace App\Controller\EntityController;
 
+use App\Entity\Notification;
 use App\Entity\Relation;
 use App\Entity\RelationType;
+use App\Entity\User;
 use App\Repository\RelationRepository;
 use App\Repository\RelationTypeRepository;
 use App\Repository\UserRepository;
@@ -25,10 +27,11 @@ class RelationController extends AbstractController
     {
         $this->logger = $logger;
     }
+
     /**
      * Get relation details
      *
-     * @param RelationRepository $relationRepository
+     * @param Relation $relation
      * @param SerializerInterface $serializer
      * @return JsonResponse
      */
@@ -74,6 +77,7 @@ class RelationController extends AbstractController
     public function add(Request $request, EntityManagerInterface $entityManage, UserRepository $userRepository, RelationTypeRepository $relationTypeRepository, RelationRepository $relationRepository, SerializerInterface $serializer, UrlGeneratorInterface $urlGenerator): JsonResponse
     {
         $requestData = $request->toArray();
+        /** @var User $sender */
         $sender = $this->getUser();
         $receiver = $userRepository->find($requestData['receiver']);
         $relationType = $relationTypeRepository->find($requestData['relationType']);
@@ -103,6 +107,9 @@ class RelationController extends AbstractController
 
         $relation = new Relation($sender, $receiver, $relationType);
         $relation->setUpdatedAt(new \DateTimeImmutable());
+
+        $notification = new Notification($sender, $receiver, "amis", "Vous avez reçu une demande d'amis de la part de " . $sender->getPseudo());
+        $entityManage->persist($notification);
 
         $entityManage->persist($relation);
         $entityManage->flush();
@@ -184,6 +191,14 @@ class RelationController extends AbstractController
         $relation->setIsAccepted(true);
         $relation->setUpdatedAt(new \DateTimeImmutable());
         $entityManage->persist($relation);
+
+        $notification = new Notification($relation->getReceiver(),
+            $relation->getSender(),
+            "amis",
+            "Votre demande d'amis a été acceptée par " . $relation->getReceiver()->getPseudo());
+
+        $entityManage->persist($notification);
+
         $entityManage->flush();
 
         $json = $serializer->serialize(['success' => 'Relation has been accepted'], 'json');;

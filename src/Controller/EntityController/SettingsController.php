@@ -20,15 +20,17 @@ class SettingsController extends AbstractController
      * This function allows us to get all settings of a user
      * @param User $user
      * @param SettingsRepository $settingsRepository
-     * @return Response
+     * @param SerializerInterface $serializer
+     * @return JsonResponse
      */
-    #[Route("/api/settings/user/{id}", name: "userSettings", methods: ["GET"])]
+    #[Route("/api/settings/user", name: "userSettings", methods: ["GET"])]
     #[OA\Response(response: 200, description: "Returns user settings")]
     #[OA\Tag(name: "Settings")]
-    #[OA\Parameter(name: "id", description: "The id of the user", in: "path", required: true, example: 1)]
-    public function getUserSettings(User $user, SettingsRepository $settingsRepository, SerializerInterface $serializer): JsonResponse
+    public function getUserSettings(SettingsRepository $settingsRepository, SerializerInterface $serializer): JsonResponse
     {
         // Get user settings
+        /** @var User $user */
+        $user = $this->getUser();
         $settings = $settingsRepository->findOneBy(["user" => $user]);
         $jsonSettings = $serializer->serialize($settings, 'json', ["groups" => "getSettings"]);
 
@@ -38,7 +40,8 @@ class SettingsController extends AbstractController
     /**
      * This function allows us to get settings by id
      * @param Settings $settings
-     * @return Response
+     * @param SerializerInterface $serializer
+     * @return JsonResponse
      */
     #[Route("/api/settings/{id}", name: "settings", methods: ["GET"])]
     #[OA\Response(response: 200, description: "Returns settings")]
@@ -54,8 +57,8 @@ class SettingsController extends AbstractController
      * This function allows us to update settings
      * @param Settings $settings
      * @param EntityManagerInterface $entityManager
-     * @param SerializerInterface $serializer
-     * @return Response
+     * @param Request $request
+     * @return JsonResponse
      */
     #[Route("/api/settings/{id}", name: "updateSettings", methods: ["PUT"])]
     #[OA\Response(response: 200, description: "Returns updated settings")]
