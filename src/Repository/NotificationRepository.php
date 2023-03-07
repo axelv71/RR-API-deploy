@@ -5,6 +5,7 @@ namespace App\Repository;
 use App\Entity\Notification;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\Persistence\ManagerRegistry;
+use Psr\Log\LoggerInterface;
 
 /**
  * @extends ServiceEntityRepository<Notification>
@@ -16,6 +17,7 @@ use Doctrine\Persistence\ManagerRegistry;
  */
 class NotificationRepository extends ServiceEntityRepository
 {
+
     public function __construct(ManagerRegistry $registry)
     {
         parent::__construct($registry, Notification::class);
@@ -37,6 +39,20 @@ class NotificationRepository extends ServiceEntityRepository
         if ($flush) {
             $this->getEntityManager()->flush();
         }
+    }
+
+    public function findLastSevenDaysNotifications($user): array
+    {
+        $date = new \DateTimeImmutable();
+        $date = $date->sub(new \DateInterval('P7D'));
+        return $this->createQueryBuilder('n')
+            ->andWhere('n.receiver = :user')
+            ->andWhere('n.createdAt > :date')
+            ->setParameter('user', $user)
+            ->setParameter('date', $date)
+            ->orderBy('n.createdAt', 'DESC')
+            ->getQuery()
+            ->getResult();
     }
 
 //    /**

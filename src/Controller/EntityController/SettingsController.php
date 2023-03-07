@@ -18,7 +18,6 @@ class SettingsController extends AbstractController
 {
     /**
      * This function allows us to get all settings of a user
-     * @param User $user
      * @param SettingsRepository $settingsRepository
      * @param SerializerInterface $serializer
      * @return JsonResponse

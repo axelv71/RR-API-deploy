@@ -4,6 +4,7 @@ namespace App\Entity;
 
 use App\Repository\NotificationRepository;
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Component\Serializer\Annotation\Groups;
 
 #[ORM\Entity(repositoryClass: NotificationRepository::class)]
 class Notification
@@ -11,6 +12,7 @@ class Notification
     #[ORM\Id]
     #[ORM\GeneratedValue]
     #[ORM\Column]
+    #[Groups(['getNotifications'])]
     private ?int $id = null;
 
     #[ORM\ManyToOne(inversedBy: 'notifications')]
@@ -19,18 +21,23 @@ class Notification
 
     #[ORM\ManyToOne]
     #[ORM\JoinColumn(nullable: false)]
+    #[Groups(['getNotifications'])]
     private ?User $sender = null;
 
     #[ORM\Column(length: 255)]
+    #[Groups(['getNotifications'])]
     private ?string $type = null;
 
     #[ORM\Column(length: 255)]
+    #[Groups(['getNotifications'])]
     private ?string $content = null;
 
     #[ORM\Column]
+    #[Groups(['getNotifications'])]
     private ?\DateTimeImmutable $createdAt = null;
 
     #[ORM\ManyToOne(inversedBy: 'notifications')]
+    #[Groups(['getNotifications'])]
     private ?Ressource $resource = null;
 
     public function __construct ($sender, User $receiver, string $type, string $content)

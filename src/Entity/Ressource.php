@@ -19,7 +19,7 @@ class Ressource
     private ?int $id = null;
 
     #[ORM\Column(type: Types::TEXT)]
-    #[Groups(["getRessources","getMedia", 'getFavorites', "getLikes"])]
+    #[Groups(["getRessources","getMedia", 'getFavorites', "getLikes", "getNotifications"])]
     private ?string $description = null;
 
     #[ORM\Column(nullable: true)]
