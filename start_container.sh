@@ -1,4 +1,8 @@
 #!/bin/bash
+# Récupère les informations depuis le git
+git pull
+
+sleep 2
 
 # Démarrer le conteneur en arrière-plan
 docker compose up -d

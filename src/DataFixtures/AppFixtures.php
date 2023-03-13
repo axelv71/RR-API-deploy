@@ -12,6 +12,7 @@ use App\Entity\RelationType;
 use App\Entity\Ressource;
 use App\Entity\Role;
 use App\Entity\Settings;
+use App\Entity\Theme;
 use App\Entity\User;
 use Doctrine\Bundle\FixturesBundle\Fixture;
 use Doctrine\Persistence\ObjectManager;
@@ -45,6 +46,61 @@ class AppFixtures extends Fixture
                 unlink($file);
         }
 
+        $themes_array = [[
+            "label" => "Default",
+            "name" => "default",
+            "primary_color" => "#B1ACFF",
+            "secondary_color" => "#536DFE"
+        ],[
+            "label" => "Classic Lollipop",
+            "name" => "lollipop",
+            "primary_color" => "#CDB4DB",
+            "secondary_color" => "#FFC8DD"
+        ],[
+            "label" => "Endless Galaxy",
+            "name" => "galaxy",
+            "primary_color" => "#5A189A",
+            "secondary_color" => "#9D4EDD"
+        ],[
+            "label" => "Juicy Raspberry",
+            "name" => "raspberry",
+            "primary_color" => "#C71F37",
+            "secondary_color" => "#E01E37"
+        ],[
+            "label" => "Ocean View",
+            "name" => "ocean",
+            "primary_color" => "#2196F3",
+            "secondary_color" => "#90CAF9"
+        ],[
+            "label" => "Pumpkin Fall",
+            "name" => "fall",
+            "primary_color" => "#FF8800",
+            "secondary_color" => "#FFA200"
+        ],[
+            "label" => "Shiny Spring",
+            "name" => "spring",
+            "primary_color" => "#4F772D",
+            "secondary_color" => "#90A955"
+        ],[
+            "label" => "Sunny Summer",
+            "name" => "summer",
+            "primary_color" => "#FEC89A",
+            "secondary_color" => "#F9DCC4"
+        ],[
+            "label" => "Wet Winter",
+            "name" => "winter",
+            "primary_color" => "#A2D2FF",
+            "secondary_color" => "#BDE0FE"
+        ]];
+
+        $themes=[];
+        foreach ($themes_array as $theme) {
+            $theme = new Theme($theme["label"], $theme["name"], $theme["primary_color"], $theme["secondary_color"]);
+            $themes[] = $theme;
+            $manager->persist($theme);
+        }
+
+
         $relation_name = ["Ami", "Famille", "Collègue", "Connaissance", "Autre"];
         $relationTypes = [];
         for ($r = 0; $r < 5; $r++) {
@@ -63,7 +119,7 @@ class AppFixtures extends Fixture
             $setting->setAllowNotifications(false);
             $setting->setUseDeviceMode(false);
             $setting->setLanguage("fr");
-            $setting->setTheme("default");
+            $setting->setTheme($themes[mt_rand(0, count($themes) - 1)]);
 
 
             //Create a user

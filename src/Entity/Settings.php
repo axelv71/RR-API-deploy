@@ -39,9 +39,10 @@ class Settings
     #[Groups(["getUsers", "getSettings"])]
     private ?string $language = null;
 
-    #[Groups(["getUsers", "getSettings"])]
-    #[ORM\Column(length: 255, nullable: true)]
-    private ?string $theme = null;
+    #[ORM\ManyToOne(inversedBy: 'settings')]
+    #[ORM\JoinColumn(nullable: false)]
+    private ?Theme $theme = null;
+
 
     public function __construct ()
     {
@@ -125,12 +126,12 @@ class Settings
         return $this;
     }
 
-    public function getTheme(): ?string
+    public function getTheme(): ?Theme
     {
         return $this->theme;
     }
 
-    public function setTheme(?string $theme): self
+    public function setTheme(?Theme $theme): self
     {
         $this->theme = $theme;
 
