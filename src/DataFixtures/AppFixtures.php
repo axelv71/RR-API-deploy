@@ -101,7 +101,22 @@ class AppFixtures extends Fixture
         }
 
 
-        $relation_name = ["Ami", "Famille", "Collègue", "Connaissance", "Autre"];
+
+
+        $relation_name = [
+            "Public",
+            "Soi",
+            "Conjoints",
+            "Famille",
+            "Enfants",
+            "Parents",
+            "Frères et soeurs",
+            "Collègues",
+            "Collaborateurs",
+            "Managers",
+            "Amis",
+            "Inconnus"
+        ];
         $relationTypes = [];
         for ($r = 0; $r < 5; $r++) {
             $relationType = new RelationType();
@@ -161,13 +176,40 @@ class AppFixtures extends Fixture
             $manager->persist($relation);
         }
 
-        $categories = [];
-        for ($c = 0; $c < 10; $c++) {
-            $category = new Category();
-            $category->setTitle($this->faker->word());
+        // Communication
+        // Cultures
+        // Développement personnel
+        // Intelligence émotionnelle
+        // Loisirs
+        // Monde professionnel
+        // Parentalité
+        // Qualité de vie
+        // Recherche de sens
+        // Santé physique
+        // Santé psychique
+        // Spiritualité
+        // Vie affective
+        $categories_array = [
+            "Communication",
+            "Cultures",
+            "Développement personnel",
+            "Intelligence émotionnelle",
+            "Loisirs",
+            "Monde professionnel",
+            "Parentalité",
+            "Qualité de vie",
+            "Recherche de sens",
+            "Santé physique",
+            "Santé psychique",
+            "Spiritualité",
+            "Vie affective"
+        ];
 
-            $manager->persist($category);
+        $categories = [];
+        foreach ($categories_array as $category) {
+            $category = new Category($category);
             $categories[] = $category;
+            $manager->persist($category);
         }
 
         $ressources = [];
