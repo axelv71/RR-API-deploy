@@ -2,7 +2,9 @@
 
 namespace App\Controller\AuthController;
 
+use App\Entity\Settings;
 use App\Entity\User;
+use App\Repository\ThemeRepository;
 use App\Repository\UserRepository;
 use App\Security\EmailVerifier;
 use Doctrine\ORM\EntityManagerInterface;
@@ -80,6 +82,7 @@ class RegistrationController extends AbstractController
     public function register(Request $request,
                              UserRepository $userRepository,
                              UserPasswordHasherInterface $userPasswordHasher,
+                             ThemeRepository $themeRepository,
                              EntityManagerInterface $em): JsonResponse
     {
         $user = new User();
@@ -102,6 +105,8 @@ class RegistrationController extends AbstractController
             throw new NotFoundHttpException('Email already used!');
         }
 
+        $theme = $themeRepository->findOneBy(['name' => 'default']);
+
         $user->setEmail($data['email']);
         $user->setName($data['name']);
         $user->setSurname($data['surname']);
@@ -109,6 +114,11 @@ class RegistrationController extends AbstractController
         $user->setIsActive(true);
         $user->setPassword($userPasswordHasher->hashPassword($user, $data['password']));
         $user->setRoles(['ROLE_USER', 'ROLE_USER_AUTHENTICATED']);
+        $user->setSettings(new Settings(isDark: false,
+            allowNotifications: false,
+            useDeviceMode: false,
+            language: "fr",
+            theme: $theme));
         //change this after enabled email verification
         //$user->setIsVerified(true);
         $em->persist($user);

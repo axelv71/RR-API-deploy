@@ -44,8 +44,13 @@ class Settings
     private ?Theme $theme = null;
 
 
-    public function __construct ()
+    public function __construct ($isDark, $allowNotifications, $useDeviceMode, $language, $theme)
     {
+        $this->isDark = $isDark;
+        $this->allowNotifications = $allowNotifications;
+        $this->useDeviceMode = $useDeviceMode;
+        $this->language = $language;
+        $this->theme = $theme;
         $this->createdAt = new \DateTimeImmutable();
     }
 

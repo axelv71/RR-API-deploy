@@ -129,13 +129,11 @@ class AppFixtures extends Fixture
         $users = [];
         for ($i = 0; $i < 10; $i++) {
             //Create a setting
-            $setting = new Settings();
-            $setting->setIsDark(false);
-            $setting->setAllowNotifications(false);
-            $setting->setUseDeviceMode(false);
-            $setting->setLanguage("fr");
-            $setting->setTheme($themes[mt_rand(0, count($themes) - 1)]);
-
+            $setting = new Settings(isDark: false,
+                allowNotifications: false,
+                useDeviceMode: false,
+                language: "fr",
+                theme: $themes[mt_rand(0, count($themes) - 1)]);
 
             //Create a user
             $user = new User();
