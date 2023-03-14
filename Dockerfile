@@ -4,8 +4,6 @@ RUN set -ex \
   && apk --no-cache add \
     postgresql-dev
 
-RUN docker-php-ext-install pdo pdo_pgsql
-
 # Install http
 ADD https://github.com/mlocati/docker-php-extension-installer/releases/latest/download/install-php-extensions /usr/local/bin/
 
@@ -14,6 +12,10 @@ RUN chmod +x /usr/local/bin/install-php-extensions && sync && \
 
 
 RUN apk --no-cache update && apk --no-cache add bash && apk --no-cache add git
+
+RUN  apk add unzip && apk add icu-dev
+RUN docker-php-ext-install intl pdo pdo_pgsql
+RUN echo 'extension=intl.so' > /usr/local/etc/php/conf.d/docker-php-ext-intl.ini
 
 # Install composer
 RUN php -r "copy('https://getcomposer.org/installer', 'composer-setup.php');" && php composer-setup.php && php -r "unlink('composer-setup.php');" && mv composer.phar /usr/local/bin/composer
