@@ -155,6 +155,26 @@ class AppFixtures extends Fixture
             $manager->persist($setting);
         }
 
+        $setting = new Settings(isDark: false,
+            allowNotifications: false,
+            useDeviceMode: false,
+            language: "fr",
+            theme: $themes[mt_rand(0, count($themes) - 1)]);
+
+        $user = new User();
+        $user->setName("test");
+        $user->setSurname("test");
+        $user->setEmail("test@gmail.com");
+        $user->setRoles(["ROLE_USER", "ROLE_USER_AUTHENTICATED"]);
+        $user->setPassword($this->userPasswordHasher->hashPassword($user, "test"));
+        $user->setPseudo($user->getPseudo().$user->getSurname());
+        $user->setBirthday(new \DateTimeImmutable());
+        $user->setIsActive(true);
+        $user->setIsVerified(true);
+        $user->setSettings($setting);
+        $manager->persist($user);
+        $users[] = $user;
+
 
         // Relation
         $relations = [];
