@@ -35,9 +35,19 @@ class Category
         $this->createdAt = new \DateTimeImmutable();
     }
 
+    public function __toString()
+    {
+        return $this->title;
+    }
     public function getId(): ?int
     {
         return $this->id;
+    }
+
+    public function setId($id): self
+    {
+        $this->id = $id;
+        return $this;
     }
 
     public function getTitle(): ?string

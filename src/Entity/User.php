@@ -110,6 +110,10 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
         $this->notifications = new ArrayCollection();
     }
 
+    public function __toString()
+    {
+        return $this->getAccountName();
+    }
     public function getId(): ?int
     {
         return $this->id;

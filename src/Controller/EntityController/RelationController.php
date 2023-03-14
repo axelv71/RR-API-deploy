@@ -194,7 +194,7 @@ class RelationController extends AbstractController
 
         $notification = new Notification($relation->getReceiver(),
             $relation->getSender(),
-            "amis",
+            "relation",
             "Votre demande d'amis a été acceptée par " . $relation->getReceiver()->getAccountName());
 
         $entityManage->persist($notification);

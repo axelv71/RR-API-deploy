@@ -246,7 +246,8 @@ class AppFixtures extends Fixture
                 $comment = new Comment();
                 $comment->setContent($this->faker->paragraph())
                     ->setCreator($users[mt_rand(0, count($users) - 1)])
-                    ->setRessource($ressource);
+                    ->setRessource($ressource)
+                    ->setIsValid(true);
 
                 $manager->persist($comment);
             }
