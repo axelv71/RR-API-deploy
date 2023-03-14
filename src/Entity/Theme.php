@@ -6,6 +6,7 @@ use App\Repository\ThemeRepository;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Component\Serializer\Annotation\Groups;
 
 #[ORM\Entity(repositoryClass: ThemeRepository::class)]
 class Theme
@@ -13,17 +14,21 @@ class Theme
     #[ORM\Id]
     #[ORM\GeneratedValue]
     #[ORM\Column]
+    #[Groups(['getThemes', "getSettings"])]
     private ?int $id = null;
 
+    #[Groups(['getThemes', "getSettings"])]
     #[ORM\Column(length: 255)]
     private ?string $label = null;
-
+    #[Groups(['getThemes', "getSettings"])]
     #[ORM\Column(length: 255)]
     private ?string $name = null;
 
+    #[Groups(['getThemes', "getSettings"])]
     #[ORM\Column(length: 255)]
     private ?string $primary_color = null;
 
+    #[Groups(['getThemes', "getSettings"])]
     #[ORM\Column(length: 255)]
     private ?string $secondary_color = null;
 
@@ -80,14 +85,14 @@ class Theme
         return $this;
     }
 
-    public function getSecondaryColoro(): ?string
+    public function getSecondaryColor(): ?string
     {
-        return $this->secondary_coloro;
+        return $this->secondary_color;
     }
 
-    public function setSecondaryColoro(string $secondary_coloro): self
+    public function setSecondaryColor(string $secondary_color): self
     {
-        $this->secondary_coloro = $secondary_coloro;
+        $this->secondary_color = $secondary_color;
 
         return $this;
     }

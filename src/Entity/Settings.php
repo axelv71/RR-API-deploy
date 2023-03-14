@@ -39,6 +39,7 @@ class Settings
     #[Groups(["getUsers", "getSettings"])]
     private ?string $language = null;
 
+    #[Groups(["getUsers", "getSettings"])]
     #[ORM\ManyToOne(inversedBy: 'settings')]
     #[ORM\JoinColumn(nullable: false)]
     private ?Theme $theme = null;
