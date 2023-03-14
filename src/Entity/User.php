@@ -52,7 +52,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
 
     #[ORM\Column(length: 255)]
     #[Groups(["getUsers", "getRessources", "getRoles", "getRelationTypesDetails", "getFavorites", "getLikes", "userLogin", "relation:read", "getNotifications"])]
-    private ?string $username = null;
+    private ?string $account_name = null;
 
     #[ORM\Column(nullable: true)]
     #[Groups(["getUsers"])]
@@ -216,12 +216,12 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
 
     public function getPseudo(): ?string
     {
-        return $this->username;
+        return $this->account_name;
     }
 
     public function setPseudo(string $pseudo): self
     {
-        $this->username = $pseudo;
+        $this->account_name = $pseudo;
 
         return $this;
     }
