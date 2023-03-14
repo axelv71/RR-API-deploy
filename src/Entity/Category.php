@@ -28,8 +28,9 @@ class Category
     #[ORM\OneToMany(mappedBy: 'category', targetEntity: Ressource::class)]
     private Collection $ressources;
 
-    public function __construct()
+    public function __construct($name)
     {
+        $this->title = $name;
         $this->ressources = new ArrayCollection();
         $this->createdAt = new \DateTimeImmutable();
     }

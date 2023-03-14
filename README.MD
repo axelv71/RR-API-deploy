@@ -3,8 +3,10 @@ Pour exécuter le backend il est conseiller de le faire avec Docker afin que tou
 
 >Pour installer Docker veuillez vous référer aux documentations de [Docker](https://docs.docker.com/get-docker/) et [docker-compose](https://docs.docker.com/compose/install/)( si vous êtes sur Mac, Docker a directement installé docker-compose, il n'est donc pas nécessaire de l'installer à nouveau
 
-## Lancer le projet par script 
+## Lancer le projet par script avec la commande suivante : 
+```properties
 > ./start_container.sh
+```
 
 ## Lancer l'environnement de développement
 Lancer docker et dans le terminal, à la racine du projet, tapez:
