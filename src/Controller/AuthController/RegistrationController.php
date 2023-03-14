@@ -108,8 +108,8 @@ class RegistrationController extends AbstractController
         $theme = $themeRepository->findOneBy(['name' => 'default']);
 
         $user->setEmail($data['email']);
-        $user->setName($data['name']);
-        $user->setSurname($data['surname']);
+        $user->setFirstName($data['name']);
+        $user->setLastName($data['surname']);
         $user->setPseudo($data['pseudo']);
         $user->setIsActive(true);
         $user->setPassword($userPasswordHasher->hashPassword($user, $data['password']));

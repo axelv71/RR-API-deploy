@@ -44,15 +44,15 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
 
     #[ORM\Column(length: 255)]
     #[Groups(["getUsers","getRessources", "getRelationTypesDetails", "getFavorites", "userLogin", "relation:read"])]
-    private ?string $name = null;
+    private ?string $first_name = null;
 
     #[ORM\Column(length: 255)]
     #[Groups(["getUsers", "getRessources", "getRelationTypesDetails", "getFavorites", "userLogin", "relation:read"])]
-    private ?string $surname = null;
+    private ?string $last_name = null;
 
     #[ORM\Column(length: 255)]
     #[Groups(["getUsers", "getRessources", "getRoles", "getRelationTypesDetails", "getFavorites", "getLikes", "userLogin", "relation:read", "getNotifications"])]
-    private ?string $pseudo = null;
+    private ?string $username = null;
 
     #[ORM\Column(nullable: true)]
     #[Groups(["getUsers"])]
@@ -190,38 +190,38 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
         // $this->plainPassword = null;
     }
 
-    public function getName(): ?string
+    public function getFirstName(): ?string
     {
-        return $this->name;
+        return $this->first_name;
     }
 
-    public function setName(string $name): self
+    public function setFirstName(string $name): self
     {
-        $this->name = $name;
+        $this->first_name = $name;
 
         return $this;
     }
 
-    public function getSurname(): ?string
+    public function getLastName(): ?string
     {
-        return $this->surname;
+        return $this->last_name;
     }
 
-    public function setSurname(string $surname): self
+    public function setLastName(string $surname): self
     {
-        $this->surname = $surname;
+        $this->last_name= $surname;
 
         return $this;
     }
 
     public function getPseudo(): ?string
     {
-        return $this->pseudo;
+        return $this->username;
     }
 
     public function setPseudo(string $pseudo): self
     {
-        $this->pseudo = $pseudo;
+        $this->username = $pseudo;
 
         return $this;
     }

@@ -137,12 +137,12 @@ class AppFixtures extends Fixture
 
             //Create a user
             $user = new User();
-            $user->setName($this->faker->name());
-            $user->setSurname($this->faker->lastName());
+            $user->setFirstName($this->faker->name());
+            $user->setLastName($this->faker->lastName());
             $user->setEmail($this->faker->email());
             $user->setRoles(["ROLE_USER", "ROLE_USER_AUTHENTICATED"]);
             $user->setPassword($this->userPasswordHasher->hashPassword($user, "password" . $i));
-            $user->setPseudo($user->getPseudo().$user->getSurname());
+            $user->setPseudo($user->getPseudo().$user->getLastName());
             $user->setBirthday(new \DateTimeImmutable());
             $user->setIsActive(true);
             $user->setIsVerified(true);
@@ -162,12 +162,12 @@ class AppFixtures extends Fixture
             theme: $themes[mt_rand(0, count($themes) - 1)]);
 
         $user = new User();
-        $user->setName("test");
-        $user->setSurname("test");
+        $user->setFirstName("test");
+        $user->setLastName("test");
         $user->setEmail("test@gmail.com");
         $user->setRoles(["ROLE_USER", "ROLE_USER_AUTHENTICATED"]);
         $user->setPassword($this->userPasswordHasher->hashPassword($user, "test"));
-        $user->setPseudo($user->getPseudo().$user->getSurname());
+        $user->setPseudo($user->getPseudo().$user->getLastName());
         $user->setBirthday(new \DateTimeImmutable());
         $user->setIsActive(true);
         $user->setIsVerified(true);
