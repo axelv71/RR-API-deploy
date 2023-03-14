@@ -4,6 +4,13 @@ CWD=$(pwd)
 
 rm "$CWD"/migrations/*.php
 
+docker stop www_cube
+docker stop postgresql_cube
+docker stop mailer-1
+docker rm www_cube
+docker rm postgresql_cube
+docker rm mailer-1
+
 docker-compose up -d
 
 docker exec -ti www_cube /bin/bash -c "composer install"

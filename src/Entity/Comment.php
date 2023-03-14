@@ -36,6 +36,9 @@ class Comment
     #[Groups(["getComments"])]
     private ?Ressource $ressource = null;
 
+    #[ORM\Column]
+    private ?bool $isValid = null;
+
     public function __construct()
     {
         $this->createAt = new \DateTimeImmutable();
@@ -90,6 +93,18 @@ class Comment
     public function setRessource(?Ressource $ressource): self
     {
         $this->ressource = $ressource;
+
+        return $this;
+    }
+
+    public function isIsValid(): ?bool
+    {
+        return $this->isValid;
+    }
+
+    public function setIsValid(bool $isValid): self
+    {
+        $this->isValid = $isValid;
 
         return $this;
     }
