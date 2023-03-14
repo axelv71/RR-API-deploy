@@ -35,6 +35,21 @@ class UserController extends AbstractController
         return new JsonResponse($jsonUserList, Response::HTTP_OK , [], true);
     }
 
+    /**
+     * This function allows us to get the user profile
+     * @param SerializerInterface $serializer
+     * @return JsonResponse
+     */
+    #[Route("/api/profile", name: "profile", methods: ["GET"])]
+    #[OA\Response(response: 200, description: "Returns the user data", content: new Model(type: User::class))]
+    #[OA\Tag(name: "User")]
+    #[Security(name: "Bearer")]
+    public function getProfile(SerializerInterface $serializer): JsonResponse
+    {
+        $user = $this->getUser();
+        $jsonUser = $serializer->serialize($user, "json", ["groups" => "getUsers"]);
+        return new JsonResponse($jsonUser, Response::HTTP_OK, [], true);
+    }
 
     /**
      * This function allows us to get one user by his id
@@ -72,14 +87,5 @@ class UserController extends AbstractController
         return new JsonResponse(null, Response::HTTP_NO_CONTENT);
     }
 
-    #[Route("/api/profile", name: "profile", methods: ["GET"])]
-    #[OA\Response(response: 200, description: "Returns one user", content: new Model(type: User::class))]
-    #[OA\Tag(name: "User")]
-    #[Security(name: "Bearer")]
-    public function getProfile(SerializerInterface $serializer): JsonResponse
-    {
-        $user = $this->getUser();
-        $jsonUser = $serializer->serialize($user, "json", ["groups" => "getUsers"]);
-        return new JsonResponse($jsonUser, Response::HTTP_OK, [], true);
-    }
+
 }

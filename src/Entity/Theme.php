@@ -14,21 +14,21 @@ class Theme
     #[ORM\Id]
     #[ORM\GeneratedValue]
     #[ORM\Column]
-    #[Groups(['getThemes', "getSettings"])]
+    #[Groups(['getThemes', "getSettings", "getUsers"])]
     private ?int $id = null;
 
-    #[Groups(['getThemes', "getSettings"])]
+    #[Groups(['getThemes', "getSettings", "getUsers"])]
     #[ORM\Column(length: 255)]
     private ?string $label = null;
-    #[Groups(['getThemes', "getSettings"])]
+    #[Groups(['getThemes', "getSettings", "getUsers"])]
     #[ORM\Column(length: 255)]
     private ?string $name = null;
 
-    #[Groups(['getThemes', "getSettings"])]
+    #[Groups(['getThemes', "getSettings", "getUsers"])]
     #[ORM\Column(length: 255)]
     private ?string $primary_color = null;
 
-    #[Groups(['getThemes', "getSettings"])]
+    #[Groups(['getThemes', "getSettings", "getUsers"])]
     #[ORM\Column(length: 255)]
     private ?string $secondary_color = null;
 
