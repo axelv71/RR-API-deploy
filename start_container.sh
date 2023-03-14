@@ -1,17 +1,13 @@
-#!/bin/bash
-# Récupère les informations depuis le git
 git pull
 
-sleep 2
+docker exec -ti www_cube /bin/bash -c "php bin/console doctrine:database:drop --if-exists --force"
+docker exec -ti www_cube /bin/bash -c "php bin/console doctrine:database:create --if-not-exists"
+docker exec -ti www_cube /bin/bash -c "php bin/console doctrine:migrations:migrate --no-interaction"
+docker exec -ti www_cube /bin/bash -c "php bin/console doctrine:fixtures:load --no-interaction"
 
-# Démarrer le conteneur en arrière-plan
-docker compose up -d
 
-# Attendre 5 secondes pour permettre au conteneur de démarrer complètement
-sleep 3
 
-# Afficher les journaux en temps réel
-docker logs -f www_cube
+
 
 
 
