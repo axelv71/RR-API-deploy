@@ -108,7 +108,7 @@ class CommentController extends AbstractController
             $em->persist($ressource);
         }
 
-        $notification = new Notification($user, $ressource->getCreator(), "commentaire", $user->getPseudo() . " a commenté une de vos ressources ");
+        $notification = new Notification($user, $ressource->getCreator(), "commentaire", $user->getAccountName() . " a commenté une de vos ressources ");
         $notification->setResource($ressource);
         $em->persist($notification);
 

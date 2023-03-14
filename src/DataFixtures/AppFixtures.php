@@ -142,7 +142,7 @@ class AppFixtures extends Fixture
             $user->setEmail($this->faker->email());
             $user->setRoles(["ROLE_USER", "ROLE_USER_AUTHENTICATED"]);
             $user->setPassword($this->userPasswordHasher->hashPassword($user, "password" . $i));
-            $user->setPseudo($user->getPseudo().$user->getLastName());
+            $user->setAccountName($user->getAccountName().$user->getLastName());
             $user->setBirthday(new \DateTimeImmutable());
             $user->setIsActive(true);
             $user->setIsVerified(true);
@@ -167,7 +167,7 @@ class AppFixtures extends Fixture
         $user->setEmail("test@gmail.com");
         $user->setRoles(["ROLE_USER", "ROLE_USER_AUTHENTICATED"]);
         $user->setPassword($this->userPasswordHasher->hashPassword($user, "test"));
-        $user->setPseudo($user->getPseudo().$user->getLastName());
+        $user->setAccountName($user->getAccountName().$user->getLastName());
         $user->setBirthday(new \DateTimeImmutable());
         $user->setIsActive(true);
         $user->setIsVerified(true);

@@ -108,7 +108,7 @@ class RelationController extends AbstractController
         $relation = new Relation($sender, $receiver, $relationType);
         $relation->setUpdatedAt(new \DateTimeImmutable());
 
-        $notification = new Notification($sender, $receiver, "amis", "Vous avez reçu une demande d'amis de la part de " . $sender->getPseudo());
+        $notification = new Notification($sender, $receiver, "amis", "Vous avez reçu une demande d'amis de la part de " . $sender->getAccountName());
         $entityManage->persist($notification);
 
         $entityManage->persist($relation);
@@ -195,7 +195,7 @@ class RelationController extends AbstractController
         $notification = new Notification($relation->getReceiver(),
             $relation->getSender(),
             "amis",
-            "Votre demande d'amis a été acceptée par " . $relation->getReceiver()->getPseudo());
+            "Votre demande d'amis a été acceptée par " . $relation->getReceiver()->getAccountName());
 
         $entityManage->persist($notification);
 

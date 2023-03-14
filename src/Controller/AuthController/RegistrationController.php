@@ -110,7 +110,7 @@ class RegistrationController extends AbstractController
         $user->setEmail($data['email']);
         $user->setFirstName($data['name']);
         $user->setLastName($data['surname']);
-        $user->setPseudo($data['pseudo']);
+        $user->setAccountName($data['pseudo']);
         $user->setIsActive(true);
         $user->setPassword($userPasswordHasher->hashPassword($user, $data['password']));
         $user->setRoles(['ROLE_USER', 'ROLE_USER_AUTHENTICATED']);

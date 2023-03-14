@@ -214,12 +214,12 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
         return $this;
     }
 
-    public function getPseudo(): ?string
+    public function getAccountName(): ?string
     {
         return $this->account_name;
     }
 
-    public function setPseudo(string $pseudo): self
+    public function setAccountName(string $pseudo): self
     {
         $this->account_name = $pseudo;
 

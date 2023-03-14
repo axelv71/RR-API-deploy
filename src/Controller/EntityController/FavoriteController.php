@@ -74,7 +74,7 @@ class FavoriteController extends AbstractController
         $favorite->setRessourceFavorite($resource);
         $em->persist($favorite);
 
-        $notification_content = $user->getPseudo() . ' a ajouté votre ressource à ses favoris';
+        $notification_content = $user->getAccountName() . ' a ajouté votre ressource à ses favoris';
 
         $notification = new Notification($user, $resource_creator, 'favorite', $notification_content);
         $notification->setResource($resource);
