@@ -64,7 +64,7 @@ class RessourceController extends AbstractController
     #[OA\Parameter(name: "page", description: "Page number", in: "query", required: false, example: 1)]
     #[OA\Parameter(name: "pageSize", description: "Number of ressources per page", in: "query", required: false, example: 10)]
     #[OA\Parameter(name: "relation_type_id", description: "Relation type id (used to sort resources by relation type)", in: "query", required: false, example: 1)]
-    #[OA\Parameter(name: "category_id", description: "Category id (used to sort resources by category)", in: "query", required: false, example: 1)]
+    #[OA\Parameter(name: "category_id", description: "Category id (used to sort resources by category), leave empty to make request without filter", in: "query", required: false, example: 1)]
     #[Route("/api/resources", name: "user_resources", methods: ["GET"])]
     public function getAllRelationsRessources(RessourceRepository $ressourceRepository,
                                               RelationRepository $relationRepository,
@@ -76,8 +76,10 @@ class RessourceController extends AbstractController
         $user = $this->getUser();
         $user_id = $user->getId();
 
-        $relation_type_id = $request->query->getInt('relation_type_id', 0);
-        $category_id = $request->query->getInt('category_id', 0);
+        $relation_type_id = $request->query->getInt('relation_type_id', 1);
+        $category_id = $request->query->getInt('category_id');
+
+
 
         // Get all relations for user
         $relations = $relationRepository->retrieveAllRelationsByUser($user);
@@ -104,7 +106,11 @@ class RessourceController extends AbstractController
         }
 
         // Get all resources from friends
-        $all_relations_resources = $ressourceRepository->getAllWithPaginationByRelations($friends_ids, $request->query->getInt('page', 1), $request->query->getInt('pageSize', 10));
+        if ($category_id != 0) {
+            $all_relations_resources = $ressourceRepository->getAllWithPaginationByRelationsByCategory($friends_ids, $category_id ,$request->query->getInt('page', 1), $request->query->getInt('pageSize', 10));
+        } else {
+            $all_relations_resources = $ressourceRepository->getAllWithPaginationByRelations($friends_ids, $request->query->getInt('page', 1), $request->query->getInt('pageSize', 10));
+        }
         $all_relations_resources = $all_relations_resources->getQuery()->getResult();
 
 

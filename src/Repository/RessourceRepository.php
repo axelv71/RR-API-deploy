@@ -55,6 +55,25 @@ class RessourceRepository extends ServiceEntityRepository
         return new Paginator($query, true);
     }
 
+    public function getAllWithPaginationByRelationsByCategory($friends_ids, $category_id, $page=0, $pageSize=10) : Paginator
+    {
+        $firstResult = ($page - 1) * $pageSize;
+
+        $query = $this->createQueryBuilder('r')
+            ->andWhere('r.creator IN (:relations)')
+            ->andWhere('r.category = :category')
+            ->setParameter('category', $category_id)
+            ->setParameter('relations', $friends_ids)
+            ->orderBy('r.createdAt', 'DESC');
+
+        $query->setFirstResult($firstResult);
+        $query->setMaxResults($pageSize);
+
+        $query->getQuery();
+
+        return new Paginator($query, true);
+    }
+
     public function getAllWithPaginationByRelations($friends_ids, $page=0, $pageSize=10) : Paginator
     {
         $firstResult = ($page - 1) * $pageSize;
