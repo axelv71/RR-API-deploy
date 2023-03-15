@@ -40,7 +40,7 @@ class RessourceRepository extends ServiceEntityRepository
         }
     }
 
-    public function getAllWithPagination($page=0, $pageSize = 10): Paginator
+    public function getAllPublicWithPagination($page=0, $pageSize = 10): Paginator
     {
         $firstResult = ($page - 1) * $pageSize;
 

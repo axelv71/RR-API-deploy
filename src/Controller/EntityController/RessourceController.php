@@ -46,8 +46,18 @@ class RessourceController extends AbstractController
     #[OA\Parameter(name: "pageSize", description: "Number of ressources per page", in: "query", required: false, example: 10)]
     public function getAllRessources(RessourceRepository $repository, SerializerInterface $serializer, Request $request) : JsonResponse
     {
-        $ressourceList = $repository->getAllWithPagination($request->query->getInt('page', 1), $request->query->getInt('pageSize', 10));
-        $jsonRessourceList = $serializer->serialize($ressourceList, "json", ["groups"=>"getRessources"]);
+        $ressourceList = $repository->getAllPublicWithPagination($request->query->getInt('page', 1), $request->query->getInt('pageSize', 10));
+
+        $publicRessources = [];
+        foreach($ressourceList as $ressource) {
+            $ressource_relation_type_array = $ressource->getRelationType();
+            foreach($ressource_relation_type_array as $ressource_relation_type) {
+                if($ressource_relation_type->getId() == 1) {
+                    $publicRessources[] = $ressource;
+                }
+            }
+        }
+        $jsonRessourceList = $serializer->serialize($publicRessources, "json", ["groups"=>"getRessources"]);
         return new JsonResponse($jsonRessourceList, Response::HTTP_OK, [], true);
     }
 
