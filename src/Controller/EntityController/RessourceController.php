@@ -64,6 +64,7 @@ class RessourceController extends AbstractController
     #[OA\Parameter(name: "page", description: "Page number", in: "query", required: false, example: 1)]
     #[OA\Parameter(name: "pageSize", description: "Number of ressources per page", in: "query", required: false, example: 10)]
     #[OA\Parameter(name: "relation_type_id", description: "Relation type id (used to sort resources by relation type)", in: "query", required: false, example: 1)]
+    #[OA\Parameter(name: "category_id", description: "Category id (used to sort resources by category)", in: "query", required: false, example: 1)]
     #[Route("/api/resources", name: "user_resources", methods: ["GET"])]
     public function getAllRelationsRessources(RessourceRepository $ressourceRepository,
                                               RelationRepository $relationRepository,
@@ -76,6 +77,7 @@ class RessourceController extends AbstractController
         $user_id = $user->getId();
 
         $relation_type_id = $request->query->getInt('relation_type_id', 0);
+        $category_id = $request->query->getInt('category_id', 0);
 
         // Get all relations for user
         $relations = $relationRepository->retrieveAllRelationsByUser($user);
@@ -117,6 +119,7 @@ class RessourceController extends AbstractController
                 }
             }
         }
+
 
         $this->logger->info("Nombre de ressources : ".count($friends_resources));
         $jsonResourceList = $serializer->serialize($friends_resources, "json", ["groups"=>"getRessources"]);

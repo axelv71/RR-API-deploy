@@ -19,7 +19,11 @@ class Category
 
     #[ORM\Column(length: 255)]
     #[Groups(["getRessources","getCategories","createCategory"])]
-    private ?string $title = null;
+    private ?string $label = null;
+
+    #[ORM\Column(length: 255)]
+    #[Groups(["getRessources","getCategories","createCategory"])]
+    private ?string $name = null;
 
     #[ORM\Column]
     #[Groups(["getCategories"])]
@@ -28,16 +32,19 @@ class Category
     #[ORM\OneToMany(mappedBy: 'category', targetEntity: Ressource::class)]
     private Collection $ressources;
 
-    public function __construct($name)
+
+
+    public function __construct($label, $name)
     {
-        $this->title = $name;
+        $this->label = $label;
+        $this->name = $name;
         $this->ressources = new ArrayCollection();
         $this->createdAt = new \DateTimeImmutable();
     }
 
     public function __toString()
     {
-        return $this->title;
+        return $this->label;
     }
     public function getId(): ?int
     {
@@ -50,14 +57,14 @@ class Category
         return $this;
     }
 
-    public function getTitle(): ?string
+    public function getLabel(): ?string
     {
-        return $this->title;
+        return $this->label;
     }
 
-    public function setTitle(string $title): self
+    public function setLabel(string $label): self
     {
-        $this->title = $title;
+        $this->label = $label;
 
         return $this;
     }
@@ -100,6 +107,18 @@ class Category
                 $ressource->setCategory(null);
             }
         }
+
+        return $this;
+    }
+
+    public function getName(): ?string
+    {
+        return $this->name;
+    }
+
+    public function setName(string $name): self
+    {
+        $this->name = $name;
 
         return $this;
     }

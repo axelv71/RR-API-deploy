@@ -117,7 +117,7 @@ class RelationTypeController extends AbstractController
     public function update(RelationType $relationType, Request $request, EntityManagerInterface $entityManager, SerializerInterface $serializer): JsonResponse
     {
         $content = $request->toArray();
-        $relationType->setName($content['name']);
+        $relationType->setLabel($content['name']);
 
         $entityManager->persist($relationType);
         $entityManager->flush();

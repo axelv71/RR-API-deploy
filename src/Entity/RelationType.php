@@ -19,6 +19,10 @@ class RelationType
 
     #[ORM\Column(length: 255)]
     #[Groups(['getRelationType', 'getRelationTypesDetails', 'relation:read'])]
+    private ?string $label = null;
+
+    #[ORM\Column(length: 255)]
+    #[Groups(['getRelationType', 'getRelationTypesDetails', 'relation:read'])]
     private ?string $name = null;
 
     #[ORM\Column]
@@ -32,8 +36,12 @@ class RelationType
     #[ORM\ManyToMany(targetEntity: Ressource::class, mappedBy: 'relationType')]
     private Collection $ressources;
 
-    public function __construct()
+
+
+    public function __construct($label, $name)
     {
+        $this->label = $label;
+        $this->name = $name;
         $this->relations = new ArrayCollection();
         $this->createdAt = new \DateTimeImmutable();
         $this->ressources = new ArrayCollection();
@@ -52,14 +60,14 @@ class RelationType
         return $this;
     }
 
-    public function getName(): ?string
+    public function getLabel(): ?string
     {
-        return $this->name;
+        return $this->label;
     }
 
-    public function setName(string $name): self
+    public function setLabel(string $label): self
     {
-        $this->name = $name;
+        $this->label = $label;
 
         return $this;
     }
@@ -129,6 +137,18 @@ class RelationType
         if ($this->ressources->removeElement($ressource)) {
             $ressource->removeRelationType($this);
         }
+
+        return $this;
+    }
+
+    public function getName(): ?string
+    {
+        return $this->name;
+    }
+
+    public function setName(string $name): self
+    {
+        $this->name = $name;
 
         return $this;
     }

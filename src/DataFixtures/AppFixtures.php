@@ -10,6 +10,7 @@ use App\Entity\Media;
 use App\Entity\Relation;
 use App\Entity\RelationType;
 use App\Entity\Ressource;
+use App\Entity\RessourceType;
 use App\Entity\Role;
 use App\Entity\Settings;
 use App\Entity\Theme;
@@ -103,25 +104,23 @@ class AppFixtures extends Fixture
 
 
 
-        $relation_name = [
-            "Public",
-            "Soi",
-            "Conjoints",
-            "Famille",
-            "Enfants",
-            "Parents",
-            "Frères et soeurs",
-            "Collègues",
-            "Collaborateurs",
-            "Managers",
-            "Amis",
-            "Inconnus"
+        $relation_names = [
+            ["Public", "public"],
+            ["Soi", "self"],
+            ["Conjoint", "spouse"],
+            ["Famille", "family"],
+            ["Enfant", "child"],
+            ["Parent", "parent"],
+            ["Frère et soeur", "sibling"],
+            ["Collègue", "colleague"],
+            ["Collaborateur", "collaborator"],
+            ["Manager", "manager"],
+            ["Ami", "friend"],
+            ["Inconnu", "unknown"]
         ];
         $relationTypes = [];
-        for ($r = 0; $r < 5; $r++) {
-            $relationType = new RelationType();
-            $relationType->setName($relation_name[$r]);
-
+        foreach ($relation_names as $r => $relation_name) {
+            $relationType = new RelationType($relation_name[0], $relation_name[1]);
             $relationTypes[] = $relationType;
             $manager->persist($relationType);
         }
@@ -194,38 +193,47 @@ class AppFixtures extends Fixture
             $manager->persist($relation);
         }
 
-        // Communication
-        // Cultures
-        // Développement personnel
-        // Intelligence émotionnelle
-        // Loisirs
-        // Monde professionnel
-        // Parentalité
-        // Qualité de vie
-        // Recherche de sens
-        // Santé physique
-        // Santé psychique
-        // Spiritualité
-        // Vie affective
         $categories_array = [
-            "Communication",
-            "Cultures",
-            "Développement personnel",
-            "Intelligence émotionnelle",
-            "Loisirs",
-            "Monde professionnel",
-            "Parentalité",
-            "Qualité de vie",
-            "Recherche de sens",
-            "Santé physique",
-            "Santé psychique",
-            "Spiritualité",
-            "Vie affective"
+            ["Toutes", "all"],
+            ["Communication","communication"],
+            ["Cultures","cultures"],
+            ["Développement personnel", "personal_development"],
+            ["Intelligence émotionnelle", "emotional_intelligence"],
+            ["Loisirs", "hobbies"],
+            ["Monde professionnel", "professional_world"],
+            ["Parentalité", "parenthood"],
+            ["Qualité de vie", "quality_of_life"],
+            ["Recherche de sens", "search_for_meaning"],
+            ["Santé physique", "physical_health"],
+            ["Santé psychique", "mental_health"],
+            ["Spiritualité", "spirituality"],
+            ["Vie affective", "affective_life"]
         ];
+
+        $resource_type_array = [
+            "Activité / Jeu à réaliser",
+            "Article",
+            "Carte défi",
+            "Cours au format PDF",
+            "Exercice / Atelier",
+            "Fiche de lecture",
+            "Jeu en ligne",
+            "Vidéo",
+            "Image",
+            "Texte",
+            "Audio",
+        ];
+
+        $resource_types = [];
+        foreach ($resource_type_array as $resource_type) {
+            $resource_type = new RessourceType($resource_type);
+            $resource_types[] = $resource_type;
+            $manager->persist($resource_type);
+        }
 
         $categories = [];
         foreach ($categories_array as $category) {
-            $category = new Category($category);
+            $category = new Category($category[0], $category[1]);
             $categories[] = $category;
             $manager->persist($category);
         }
@@ -238,6 +246,8 @@ class AppFixtures extends Fixture
                 ->setIsPublished((bool)mt_rand(0, 1))
                 ->setCategory($categories[mt_rand(0, count($categories) - 1)])
                 ->setCreator($users[mt_rand(0, count($users) - 1)])
+                ->setTitle($this->faker->sentence(4, true))
+                ->setType($resource_types[mt_rand(0, count($resource_types) - 1)])
                 ->addRelationType($relationTypes[mt_rand(0, count($relationTypes) - 1)]);
 
 

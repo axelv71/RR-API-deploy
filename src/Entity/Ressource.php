@@ -18,6 +18,10 @@ class Ressource
     #[Groups(["getRessources","getMedia","getComments","getFavorites", "createFavorite", "getLikes", "createLike"])]
     private ?int $id = null;
 
+    #[ORM\Column(length: 255)]
+    #[Groups(["getRessources","getMedia", 'getFavorites', "getLikes", "getNotifications"])]
+    private ?string $title = null;
+
     #[ORM\Column(type: Types::TEXT)]
     #[Groups(["getRessources","getMedia", 'getFavorites', "getLikes", "getNotifications"])]
     private ?string $description = null;
@@ -63,6 +67,10 @@ class Ressource
 
     #[ORM\OneToMany(mappedBy: 'resource', targetEntity: Notification::class)]
     private Collection $notifications;
+
+    #[ORM\ManyToOne(inversedBy: 'ressources')]
+    private ?RessourceType $type = null;
+
 
     public function __construct()
     {
@@ -333,6 +341,30 @@ class Ressource
                 $notification->setResource(null);
             }
         }
+
+        return $this;
+    }
+
+    public function getTitle(): ?string
+    {
+        return $this->title;
+    }
+
+    public function setTitle(string $title): self
+    {
+        $this->title = $title;
+
+        return $this;
+    }
+
+    public function getType(): ?RessourceType
+    {
+        return $this->type;
+    }
+
+    public function setType(?RessourceType $type): self
+    {
+        $this->type = $type;
 
         return $this;
     }

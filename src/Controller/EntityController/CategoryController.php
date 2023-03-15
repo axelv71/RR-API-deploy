@@ -57,7 +57,7 @@ class CategoryController extends AbstractController
         //Create a new category
         $data = json_decode($request->getContent(), true);
         $category = new Category();
-        $category->setTitle($data['title']);
+        $category->setLabel($data['title']);
         $entityManager->persist($category);
         $entityManager->flush();
         return $this->json($category, 201, [], ['groups' => 'getCategories']);
