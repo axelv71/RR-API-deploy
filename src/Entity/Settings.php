@@ -35,17 +35,17 @@ class Settings
     #[Groups(["getUsers", "getSettings"])]
     private ?bool $useDeviceMode = null;
 
-    #[ORM\Column(length: 255)]
-    #[Groups(["getUsers", "getSettings"])]
-    private ?string $language = null;
-
     #[Groups(["getUsers", "getSettings"])]
     #[ORM\ManyToOne(inversedBy: 'settings')]
     #[ORM\JoinColumn(nullable: false)]
     private ?Theme $theme = null;
 
+    #[ORM\ManyToOne(inversedBy: 'settings')]
+    #[Groups(["getUsers", "getSettings"])]
+    private ?Language $language = null;
 
-    public function __construct ($isDark, $allowNotifications, $useDeviceMode, $language, $theme)
+
+    public function __construct ($isDark, $allowNotifications, $useDeviceMode, Language $language, $theme)
     {
         $this->isDark = $isDark;
         $this->allowNotifications = $allowNotifications;
@@ -120,18 +120,6 @@ class Settings
         return $this;
     }
 
-    public function getLanguage(): ?string
-    {
-        return $this->language;
-    }
-
-    public function setLanguage(string $language): self
-    {
-        $this->language = $language;
-
-        return $this;
-    }
-
     public function getTheme(): ?Theme
     {
         return $this->theme;
@@ -140,6 +128,18 @@ class Settings
     public function setTheme(?Theme $theme): self
     {
         $this->theme = $theme;
+
+        return $this;
+    }
+
+    public function getLanguage(): ?Language
+    {
+        return $this->language;
+    }
+
+    public function setLanguage(?Language $language): self
+    {
+        $this->language = $language;
 
         return $this;
     }

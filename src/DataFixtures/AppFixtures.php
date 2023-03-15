@@ -5,6 +5,7 @@ namespace App\DataFixtures;
 use App\Entity\Category;
 use App\Entity\Comment;
 use App\Entity\Favorite;
+use App\Entity\Language;
 use App\Entity\Like;
 use App\Entity\Media;
 use App\Entity\Relation;
@@ -101,7 +102,16 @@ class AppFixtures extends Fixture
             $manager->persist($theme);
         }
 
-
+        $languages_array = [
+            ["Français","fr"],
+            ["Anglais", "en"]
+        ];
+        $languages = [];
+        foreach ($languages_array as $language) {
+            $language = new Language($language[0], $language[1]);
+            $languages[] = $language;
+            $manager->persist($language);
+        }
 
 
         $relation_names = [
@@ -131,7 +141,7 @@ class AppFixtures extends Fixture
             $setting = new Settings(isDark: false,
                 allowNotifications: false,
                 useDeviceMode: false,
-                language: "fr",
+                language: $languages[mt_rand(0, count($languages) - 1)],
                 theme: $themes[mt_rand(0, count($themes) - 1)]);
 
             //Create a user
@@ -140,8 +150,8 @@ class AppFixtures extends Fixture
             $user->setLastName($this->faker->lastName());
             $user->setEmail($this->faker->email());
             $user->setRoles(["ROLE_USER", "ROLE_USER_AUTHENTICATED"]);
-            $user->setPassword($this->userPasswordHasher->hashPassword($user, "password" . $i));
-            $user->setAccountName($user->getAccountName().$user->getLastName());
+            $user->setPassword($this->userPasswordHasher->hashPassword($user, "password"));
+            $user->setAccountName($user->getFirstName().$user->getLastName());
             $user->setBirthday(new \DateTimeImmutable());
             $user->setIsActive(true);
             $user->setIsVerified(true);
@@ -157,7 +167,7 @@ class AppFixtures extends Fixture
         $setting = new Settings(isDark: false,
             allowNotifications: false,
             useDeviceMode: false,
-            language: "fr",
+            language: $languages[mt_rand(0, count($languages) - 1)],
             theme: $themes[mt_rand(0, count($themes) - 1)]);
 
         $user = new User();
