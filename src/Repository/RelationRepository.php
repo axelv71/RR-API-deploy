@@ -44,6 +44,7 @@ class RelationRepository extends ServiceEntityRepository
         return $this->createQueryBuilder('r')
             ->andWhere('r.Sender = :user')
             ->orWhere('r.Receiver = :user')
+            ->andWhere('r.isAccepted = true')
             ->setParameter('user', $user)
             ->getQuery()
             ->getResult()

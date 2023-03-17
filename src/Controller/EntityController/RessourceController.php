@@ -2,6 +2,9 @@
 
 namespace App\Controller\EntityController;
 
+use App\Entity\Comment;
+use App\Entity\Favorite;
+use App\Entity\Like;
 use App\Entity\Media;
 use App\Entity\Ressource;
 use App\Entity\User;
@@ -9,8 +12,11 @@ use App\Repository\CategoryRepository;
 use App\Repository\RelationRepository;
 use App\Repository\RelationTypeRepository;
 use App\Repository\RessourceRepository;
+use App\Repository\RessourceTypeRepository;
 use App\Repository\UserRepository;
 use Doctrine\ORM\EntityManagerInterface;
+use Faker\Factory;
+use Faker\Generator as FakerGenerator;
 use Nelmio\ApiDocBundle\Annotation\Model;
 use OpenApi\Attributes as OA;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
@@ -28,10 +34,113 @@ class RessourceController extends AbstractController
 {
 
     private LoggerInterface $logger;
+    private FakerGenerator $faker;
     public function __construct(EntityManagerInterface $em, LoggerInterface $logger)
     {
         $this->logger = $logger;
+        $this->faker = Factory::create("fr_FR");
+
     }
+
+
+    /***
+     * Create 20 ressources
+     * @param RessourceRepository $ressourceRepository
+     * @param UserRepository $repository
+     * @param CategoryRepository $categoryRepository
+     * @param RessourceTypeRepository $ressourceTypeRepository
+     * @param EntityManagerInterface $manager
+     * @param RelationTypeRepository $relationTypeRepository
+     * @return JsonResponse
+     */
+    #[OA\Tag(name: "Ressource")]
+    #[Route('/api/ressources/create', name: 'create_ressources', methods: ['GET'])]
+    public function createRessources(RessourceRepository $ressourceRepository,
+                                     UserRepository$repository,
+                                     CategoryRepository $categoryRepository,
+                                     RessourceTypeRepository $ressourceTypeRepository,
+                                     EntityManagerInterface $manager,
+                                     RelationTypeRepository $relationTypeRepository) : JsonResponse
+    {
+        $users = $repository->findAll();
+        $categories = $categoryRepository->findAll();
+        $resource_types = $ressourceTypeRepository->findAll();
+        $relationTypes = $relationTypeRepository->findAll();
+
+        $ressources = [];
+        for ($r = 0; $r < 50; $r++) {
+            $ressource = new Ressource();
+            $ressource->setDescription($this->faker->paragraph())
+                ->setIsValid((bool)mt_rand(0, 1))
+                ->setIsPublished((bool)mt_rand(0, 1))
+                ->setCategory($categories[mt_rand(0, count($categories) - 1)])
+                ->setCreator($users[mt_rand(0, count($users) - 1)])
+                ->setTitle($this->faker->sentence(4, true))
+                ->setType($resource_types[mt_rand(0, count($resource_types) - 1)])
+                ->addRelationType($relationTypes[mt_rand(0, count($relationTypes) - 1)]);
+
+
+            // Comments
+            for ($c = 0; $c < mt_rand(0, 3); $c++) {
+                $comment = new Comment();
+                $comment->setContent($this->faker->paragraph())
+                    ->setCreator($users[mt_rand(0, count($users) - 1)])
+                    ->setRessource($ressource)
+                    ->setIsValid(true);
+
+                $manager->persist($comment);
+            }
+
+            $mime_type = [
+                "image/jpeg",
+                "image/png",
+                "image/gif",
+                "image/svg+xml",
+                "pdf",
+                "application/pdf",
+                "mp4",
+                "video/mp4",
+
+                "video/quicktime"];
+            /*// Media
+            for ($m = 0; $m < mt_rand(0, 3); $m++)
+            {
+                $media = new Media();
+                $media->setTitle($this->faker->word())
+                    ->setTitle($this->faker->word())
+                    ->setMimetype($mime_type[mt_rand(0, count($mime_type) - 1)])
+                    ->setFilePath($this->faker->file('/var/www/github','/var/www/public/uploads/media' , false))
+                    ->setRessource($ressource);
+
+                $manager->persist($media);
+            }*/
+
+            $manager->persist($ressource);
+            $ressources[] = $ressource;
+        }
+        for ($u = 0; $u < count($users) - 1; $u++) {
+            for ($r = 0; $r < count($ressources) - 1; $r++) {
+                if ((bool)mt_rand(0, 1)) {
+                    $like = new Like();
+                    $like->setUserLike($users[$u])
+                        ->setRessourceLike($ressources[$r])
+                        ->setIsLiked((bool)mt_rand(0, 1));
+
+                    $favorite = new Favorite();
+                    $favorite->setUserFavorite($users[$u])
+                        ->setRessourceFavorite($ressources[$r]);
+
+                    $manager->persist($favorite);
+                    $manager->persist($like);
+                }
+            }
+        }
+        $manager->flush();
+
+        return new JsonResponse("Ressources created", Response::HTTP_CREATED);
+    }
+
+
 
     /**
      * This function allows us to get all ressources for public access
@@ -52,6 +161,7 @@ class RessourceController extends AbstractController
         foreach($ressourceList as $ressource) {
             $ressource_relation_type_array = $ressource->getRelationType();
             foreach($ressource_relation_type_array as $ressource_relation_type) {
+                $this->logger->info($ressource_relation_type->getId());
                 if($ressource_relation_type->getId() == 1) {
                     $publicRessources[] = $ressource;
                 }

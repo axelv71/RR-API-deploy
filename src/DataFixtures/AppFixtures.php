@@ -39,10 +39,10 @@ class AppFixtures extends Fixture
     {
         // Delete all file in the media folder
         $folder_path = "/var/www/public/uploads/media";
-        $files = glob($folder_path.'/*');
-        foreach($files as $file) {
+        $files = glob($folder_path . '/*');
+        foreach ($files as $file) {
 
-            if(is_file($file))
+            if (is_file($file))
 
                 // Delete the given file
                 unlink($file);
@@ -53,49 +53,49 @@ class AppFixtures extends Fixture
             "name" => "default",
             "primary_color" => "#B1ACFF",
             "secondary_color" => "#536DFE"
-        ],[
+        ], [
             "label" => "Classic Lollipop",
             "name" => "lollipop",
             "primary_color" => "#CDB4DB",
             "secondary_color" => "#FFC8DD"
-        ],[
+        ], [
             "label" => "Endless Galaxy",
             "name" => "galaxy",
             "primary_color" => "#5A189A",
             "secondary_color" => "#9D4EDD"
-        ],[
+        ], [
             "label" => "Juicy Raspberry",
             "name" => "raspberry",
             "primary_color" => "#C71F37",
             "secondary_color" => "#E01E37"
-        ],[
+        ], [
             "label" => "Ocean View",
             "name" => "ocean",
             "primary_color" => "#2196F3",
             "secondary_color" => "#90CAF9"
-        ],[
+        ], [
             "label" => "Pumpkin Fall",
             "name" => "fall",
             "primary_color" => "#FF8800",
             "secondary_color" => "#FFA200"
-        ],[
+        ], [
             "label" => "Shiny Spring",
             "name" => "spring",
             "primary_color" => "#4F772D",
             "secondary_color" => "#90A955"
-        ],[
+        ], [
             "label" => "Sunny Summer",
             "name" => "summer",
             "primary_color" => "#FEC89A",
             "secondary_color" => "#F9DCC4"
-        ],[
+        ], [
             "label" => "Wet Winter",
             "name" => "winter",
             "primary_color" => "#A2D2FF",
             "secondary_color" => "#BDE0FE"
         ]];
 
-        $themes=[];
+        $themes = [];
         foreach ($themes_array as $theme) {
             $theme = new Theme($theme["label"], $theme["name"], $theme["primary_color"], $theme["secondary_color"]);
             $themes[] = $theme;
@@ -103,7 +103,7 @@ class AppFixtures extends Fixture
         }
 
         $languages_array = [
-            ["Français","fr"],
+            ["Français", "fr"],
             ["Anglais", "en"]
         ];
         $languages = [];
@@ -151,7 +151,7 @@ class AppFixtures extends Fixture
             $user->setEmail($this->faker->email());
             $user->setRoles(["ROLE_USER", "ROLE_USER_AUTHENTICATED"]);
             $user->setPassword($this->userPasswordHasher->hashPassword($user, "password"));
-            $user->setAccountName($user->getFirstName().$user->getLastName());
+            $user->setAccountName($user->getFirstName() . $user->getLastName());
             $user->setBirthday(new \DateTimeImmutable());
             $user->setIsActive(true);
             $user->setIsVerified(true);
@@ -176,7 +176,7 @@ class AppFixtures extends Fixture
         $user->setEmail("test@gmail.com");
         $user->setRoles(["ROLE_USER", "ROLE_USER_AUTHENTICATED"]);
         $user->setPassword($this->userPasswordHasher->hashPassword($user, "test"));
-        $user->setAccountName($user->getAccountName().$user->getLastName());
+        $user->setAccountName($user->getAccountName() . $user->getLastName());
         $user->setBirthday(new \DateTimeImmutable());
         $user->setIsActive(true);
         $user->setIsVerified(true);
@@ -197,7 +197,7 @@ class AppFixtures extends Fixture
             }
 
             $relation = new Relation($sender, $receiver, $relationTypes[mt_rand(0, count($relationTypes) - 1)]);
-            $relation->setIsAccepted(mt_rand(0, 1));
+            $relation->setIsAccepted(true);
 
             $relations[] = $relation;
             $manager->persist($relation);
@@ -205,8 +205,8 @@ class AppFixtures extends Fixture
 
         $categories_array = [
             ["Toutes", "all"],
-            ["Communication","communication"],
-            ["Cultures","cultures"],
+            ["Communication", "communication"],
+            ["Cultures", "cultures"],
             ["Développement personnel", "personal_development"],
             ["Intelligence émotionnelle", "emotional_intelligence"],
             ["Loisirs", "hobbies"],
@@ -249,7 +249,7 @@ class AppFixtures extends Fixture
         }
 
         $ressources = [];
-        for ($r = 0; $r < 25; $r++) {
+        for ($r = 0; $r < 20; $r++) {
             $ressource = new Ressource();
             $ressource->setDescription($this->faker->paragraph())
                 ->setIsValid((bool)mt_rand(0, 1))
@@ -262,7 +262,7 @@ class AppFixtures extends Fixture
 
 
             // Comments
-            for ($c = 0; $c < mt_rand(0, 10); $c++) {
+            for ($c = 0; $c < mt_rand(0, 3); $c++) {
                 $comment = new Comment();
                 $comment->setContent($this->faker->paragraph())
                     ->setCreator($users[mt_rand(0, count($users) - 1)])
@@ -283,7 +283,7 @@ class AppFixtures extends Fixture
                 "video/mp4",
 
                 "video/quicktime"];
-            // Media
+            /*// Media
             for ($m = 0; $m < mt_rand(0, 3); $m++)
             {
                 $media = new Media();
@@ -294,33 +294,31 @@ class AppFixtures extends Fixture
                     ->setRessource($ressource);
 
                 $manager->persist($media);
-            }
-
-            // Like
-            for ($u = 0; $u < count($users) - 1; $u++)
-            {
-                for ($r =0; $r < count($ressources) - 1; $r++) {
-                    if ((bool)mt_rand(0,1)) {
-                        $like = new Like();
-                        $like->setUserLike($users[$u])
-                            ->setRessourceLike($ressources[$r])
-                            ->setIsLiked((bool)mt_rand(0, 1));
-
-                        $favorite = new Favorite();
-                        $favorite->setUserFavorite($users[$u])
-                            ->setRessourceFavorite($ressources[$r]);
-
-                        $manager->persist($favorite);
-                        $manager->persist($like);
-                    }
-                }
-            }
-
-
+            }*/
 
             $manager->persist($ressource);
             $ressources[] = $ressource;
         }
+        // Like
+        for ($u = 0; $u < count($users) - 1; $u++) {
+            for ($r = 0; $r < count($ressources) - 1; $r++) {
+                if ((bool)mt_rand(0, 1)) {
+                    $like = new Like();
+                    $like->setUserLike($users[$u])
+                        ->setRessourceLike($ressources[$r])
+                        ->setIsLiked((bool)mt_rand(0, 1));
+
+                    $favorite = new Favorite();
+                    $favorite->setUserFavorite($users[$u])
+                        ->setRessourceFavorite($ressources[$r]);
+
+                    $manager->persist($favorite);
+                    $manager->persist($like);
+                }
+            }
+        }
         $manager->flush();
+
     }
+
 }
