@@ -45,6 +45,9 @@ class RessourceRepository extends ServiceEntityRepository
         $firstResult = ($page - 1) * $pageSize;
 
         $query = $this->createQueryBuilder('r')
+            ->innerJoin('r.relationType', 'rtt')
+            ->andWhere('rtt.id = :relationType')
+            ->setParameter('relationType', 1)
             ->orderBy('r.createdAt', 'DESC');
 
         $query->setFirstResult($firstResult);
