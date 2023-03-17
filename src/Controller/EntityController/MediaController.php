@@ -25,6 +25,8 @@ class MediaController extends AbstractController
      * @param Request $request
      * @param SerializerInterface $serializer
      * @param EntityManagerInterface $entityManager
+     * @param UrlGeneratorInterface $urlGenerator
+     * @param ValidatorInterface $validator
      * @return JsonResponse
      */
     #[Route('/api/{id}/upload', name: 'upload_media', methods: ['POST'])]

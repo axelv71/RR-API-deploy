@@ -86,7 +86,7 @@ class RessourceController extends AbstractController
         $user = $this->getUser();
         $user_id = $user->getId();
 
-        $relation_type_id = $request->query->getInt('relation_type_id', 1);
+        $relation_type_id = $request->query->getInt('relation_type_id');
         $category_id = $request->query->getInt('category_id');
 
 
@@ -209,9 +209,10 @@ class RessourceController extends AbstractController
             schema: new OA\Schema(
                 type: "object",
                 properties: [
+                    new OA\Property(property: "title", type: "string", example: "Ressource title"),
                     new OA\Property(property: "description", type: "string", example: "Ressource text content"),
                     new OA\Property(property: "category_id", type: "integer", example: 1),
-                    new OA\Property(property: "relation_type_id", type: "integer", example: 1),
+                    new OA\Property(property: "relation_type_id", type: "integer", example: 1)
                 ]
             )
         )
@@ -233,10 +234,12 @@ class RessourceController extends AbstractController
         $user = $this->getUser();
         $categoryId = $content["category_id"];
         $relation_type_id = $content["relation_type_id"];
+        $ressource_title = $content["title"];
 
         $category = $categoryRepository->find($categoryId);
 
         $ressource->setCreator($user);
+        $ressource->setTitle($ressource_title);
         $ressource->setCategory($category);
         $ressource->setIsPublished(false);
         $ressource->setDescription($content["description"]);
