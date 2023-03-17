@@ -249,7 +249,7 @@ class AppFixtures extends Fixture
         }
 
         $ressources = [];
-        for ($r = 0; $r < 20; $r++) {
+        for ($r = 0; $r < 25; $r++) {
             $ressource = new Ressource();
             $ressource->setDescription($this->faker->paragraph())
                 ->setIsValid((bool)mt_rand(0, 1))
