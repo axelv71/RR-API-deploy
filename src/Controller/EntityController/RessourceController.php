@@ -14,6 +14,7 @@ use App\Repository\RelationTypeRepository;
 use App\Repository\RessourceRepository;
 use App\Repository\RessourceTypeRepository;
 use App\Repository\UserRepository;
+use Doctrine\DBAL\Exception;
 use Doctrine\ORM\EntityManagerInterface;
 use Faker\Factory;
 use Faker\Generator as FakerGenerator;
@@ -179,6 +180,7 @@ class RessourceController extends AbstractController
      * @param SerializerInterface $serializer
      * @param Request $request
      * @return JsonResponse
+     * @throws Exception
      */
     #[OA\Tag(name: "Ressource")]
     #[OA\Parameter(name: "page", description: "Page number", in: "query", required: false, example: 1)]
@@ -198,8 +200,6 @@ class RessourceController extends AbstractController
 
         $relation_type_id = $request->query->getInt('relation_type_id');
         $category_id = $request->query->getInt('category_id');
-
-
 
         // Get all relations for user
         $relations = $relationRepository->retrieveAllRelationsByUser($user);
@@ -226,16 +226,32 @@ class RessourceController extends AbstractController
             ];
         }
 
+
         // Get all resources from friends
-        if ($category_id != 0) {
-            $all_relations_resources = $ressourceRepository->getAllWithPaginationByRelationsByCategory($friends_ids, $category_id ,$request->query->getInt('page', 1), $request->query->getInt('pageSize', 10));
+        if ($category_id != 0  && $relation_type_id != 0) {
+            $all_relations_resources = $ressourceRepository->getAllResourcesByRelationsByCategory($user_id, $relation_type_id, $category_id);
+        } else if ($category_id === 0 && $relation_type_id != 0) {
+            $this->logger->info("Relation type id " . $relation_type_id);
+            $this->logger->info("Category id " . $category_id);
+            $this->logger->info("User id " . $user_id);
+            $all_relations_resources = $ressourceRepository->getAllResourcesByRelationsType($user_id, $relation_type_id);
+        } else if ($category_id !=0 && $relation_type_id === 0 ) {
+            $all_relations_resources = $ressourceRepository->getAllResourcesByCategoryWithourRelationType($user_id, $category_id);
         } else {
-            $all_relations_resources = $ressourceRepository->getAllWithPaginationByRelations($friends_ids, $request->query->getInt('page', 1), $request->query->getInt('pageSize', 10));
+            $all_relations_resources = $ressourceRepository->getAllResourcesWithoutRelationTypeWithoutCategory($user_id);
         }
-        $all_relations_resources = $all_relations_resources->getQuery()->getResult();
+
+        $resources_id = [];
+        $this->logger->info("Nombre de ressources : ".count($all_relations_resources));
+        foreach ($all_relations_resources as $resource) {
+            $resources_id[] = $resource["id"];
+        }
+
+        $friends_resources = $ressourceRepository->getAllWithPaginationById($resources_id, $request->query->getInt('page', 1), $request->query->getInt('pageSize', 10));
 
 
-        $friends_resources = [];
+
+        /*$friends_resources = [];
         foreach($all_relations_resources as $resource){
             $creator_id = $resource->getCreator()->getId();
             $relation_type_array = $resource->getRelationType();
@@ -245,7 +261,7 @@ class RessourceController extends AbstractController
                     $friends_resources[] = $resource;
                 }
             }
-        }
+        }*/
 
 
         $this->logger->info("Nombre de ressources : ".count($friends_resources));

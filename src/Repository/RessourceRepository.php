@@ -4,6 +4,7 @@ namespace App\Repository;
 
 use App\Entity\Ressource;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
+use Doctrine\DBAL\Exception;
 use Doctrine\ORM\Tools\Pagination\Paginator;
 use Doctrine\Persistence\ManagerRegistry;
 
@@ -58,14 +59,227 @@ class RessourceRepository extends ServiceEntityRepository
         return new Paginator($query, true);
     }
 
-    public function getAllWithPaginationByRelationsByCategory($friends_ids, $category_id, $page=0, $pageSize=10) : Paginator
+    /**
+     * @throws Exception
+     */
+    public function getAllResourcesByRelationsByCategory($user_id, $relation_type_id, $category_id) : array
+    {
+
+        /*$query = $this->createQueryBuilder('r')
+            ->andWhere('r.creator IN (:relations)')
+            ->andWhere('r.category = :category')
+            ->setParameter('category', $category_id)
+            ->setParameter('relations', $friends_ids)
+            ->orderBy('r.createdAt', 'DESC');
+
+        $query->setFirstResult($firstResult);
+        $query->setMaxResults($pageSize);
+
+        $query->getQuery();*/
+
+        $conn = $this->getEntityManager()->getConnection();
+
+        $sql = '
+            SELECT *
+            FROM ressource
+            INNER JOIN ressource_relation_type ON ressource.id = ressource_relation_type.ressource_id
+            WHERE ressource.creator_id IN (
+                SELECT 
+                    CASE 
+                        WHEN relation.sender_id = "user".id THEN relation.receiver_id
+                        ELSE relation.sender_id
+                    END as other_user_id
+                FROM "user"
+                INNER JOIN relation ON "user".id = relation.receiver_id OR "user".id = relation.sender_id
+                INNER JOIN relation_type ON relation.relation_type_id = relation_type.id
+                WHERE "user".id = :user_id
+                AND relation.relation_type_id = :relation_type_id
+            )
+            AND ressource_relation_type.relation_type_id = (
+                SELECT relation_type_id
+                FROM (
+                    SELECT 
+                        CASE 
+                            WHEN relation.sender_id = "user".id THEN relation.receiver_id
+                            ELSE relation.sender_id
+                        END as other_user_id, 
+                        relation_type.id as relation_type_id
+                    FROM "user"
+                    INNER JOIN relation ON "user".id = relation.receiver_id OR "user".id = relation.sender_id
+                    INNER JOIN relation_type ON relation.relation_type_id = relation_type.id
+                    WHERE "user".id = :user_id
+                ) as subquery
+                WHERE subquery.other_user_id = ressource.creator_id
+            )
+            AND ressource.category_id = :category_id
+        ';
+
+        $stmt = $conn->prepare($sql);
+        $resultSet = $stmt->executeQuery([
+            'user_id' => $user_id,
+            'relation_type_id' => $relation_type_id,
+            'category_id' => $category_id,
+        ]);
+
+        return $resultSet->fetchAllAssociative();
+    }
+
+    /**
+     * @throws Exception
+     */
+    public function getAllResourcesByRelationsType($user_id, $relation_type_id) : array
+    {
+        $conn = $this->getEntityManager()->getConnection();
+
+        $sql = '
+            SELECT *
+            FROM ressource
+            INNER JOIN ressource_relation_type ON ressource.id = ressource_relation_type.ressource_id
+            WHERE ressource.creator_id IN (
+                SELECT 
+                    CASE 
+                        WHEN relation.sender_id = "user".id THEN relation.receiver_id
+                        ELSE relation.sender_id
+                    END as other_user_id
+                FROM "user"
+                INNER JOIN relation ON "user".id = relation.receiver_id OR "user".id = relation.sender_id
+                INNER JOIN relation_type ON relation.relation_type_id = relation_type.id
+                WHERE "user".id = :user_id
+                AND relation.relation_type_id = :relation_type_id
+            )
+            AND ressource_relation_type.relation_type_id = (
+                SELECT relation_type_id
+                FROM (
+                    SELECT 
+                        CASE 
+                            WHEN relation.sender_id = "user".id THEN relation.receiver_id
+                            ELSE relation.sender_id
+                        END as other_user_id, 
+                        relation_type.id as relation_type_id
+                    FROM "user"
+                    INNER JOIN relation ON "user".id = relation.receiver_id OR "user".id = relation.sender_id
+                    INNER JOIN relation_type ON relation.relation_type_id = relation_type.id
+                    WHERE "user".id = :user_id
+                ) as subquery
+                WHERE subquery.other_user_id = ressource.creator_id
+            )
+        ';
+
+        $stmt = $conn->prepare($sql);
+        $resultSet = $stmt->executeQuery([
+            'user_id' => $user_id,
+            'relation_type_id' => $relation_type_id,
+        ]);
+
+        return $resultSet->fetchAllAssociative();
+    }
+
+    /**
+     * @throws Exception
+     */
+    public function getAllResourcesWithoutRelationTypeWithoutCategory($user_id) : array
+    {
+        $conn = $this->getEntityManager()->getConnection();
+
+        $sql = '
+            SELECT *
+            FROM ressource
+            INNER JOIN ressource_relation_type ON ressource.id = ressource_relation_type.ressource_id
+            WHERE ressource.creator_id IN (
+                SELECT 
+                    CASE 
+                        WHEN relation.sender_id = "user".id THEN relation.receiver_id
+                        ELSE relation.sender_id
+                    END as other_user_id
+                FROM "user"
+                INNER JOIN relation ON "user".id = relation.receiver_id OR "user".id = relation.sender_id
+                INNER JOIN relation_type ON relation.relation_type_id = relation_type.id
+                WHERE "user".id = :user_id
+            )
+            AND ressource_relation_type.relation_type_id = (
+                SELECT relation_type_id
+                FROM (
+                    SELECT 
+                        CASE 
+                            WHEN relation.sender_id = "user".id THEN relation.receiver_id
+                            ELSE relation.sender_id
+                        END as other_user_id, 
+                        relation_type.id as relation_type_id
+                    FROM "user"
+                    INNER JOIN relation ON "user".id = relation.receiver_id OR "user".id = relation.sender_id
+                    INNER JOIN relation_type ON relation.relation_type_id = relation_type.id
+                    WHERE "user".id = :user_id
+                ) as subquery
+                WHERE subquery.other_user_id = ressource.creator_id
+            )
+        ';
+
+        $stmt = $conn->prepare($sql);
+        $resultSet = $stmt->executeQuery([
+            'user_id' => $user_id,
+        ]);
+
+        return $resultSet->fetchAllAssociative();
+    }
+
+    /**
+     * @throws Exception
+     */
+    public function getAllResourcesByCategoryWithourRelationType($user_id, $category_id) : array
+    {
+        $conn = $this->getEntityManager()->getConnection();
+
+        $sql = '
+            SELECT *
+            FROM ressource
+            INNER JOIN ressource_relation_type ON ressource.id = ressource_relation_type.ressource_id
+            WHERE ressource.creator_id IN (
+                SELECT 
+                    CASE 
+                        WHEN relation.sender_id = "user".id THEN relation.receiver_id
+                        ELSE relation.sender_id
+                    END as other_user_id
+                FROM "user"
+                INNER JOIN relation ON "user".id = relation.receiver_id OR "user".id = relation.sender_id
+                INNER JOIN relation_type ON relation.relation_type_id = relation_type.id
+                WHERE "user".id = :user_id
+            )
+            AND ressource_relation_type.relation_type_id = (
+                SELECT relation_type_id
+                FROM (
+                    SELECT 
+                        CASE 
+                            WHEN relation.sender_id = "user".id THEN relation.receiver_id
+                            ELSE relation.sender_id
+                        END as other_user_id, 
+                        relation_type.id as relation_type_id
+                    FROM "user"
+                    INNER JOIN relation ON "user".id = relation.receiver_id OR "user".id = relation.sender_id
+                    INNER JOIN relation_type ON relation.relation_type_id = relation_type.id
+                    WHERE "user".id = :user_id
+                ) as subquery
+                WHERE subquery.other_user_id = ressource.creator_id
+            )
+            AND ressource.category_id = :category_id
+        ';
+
+        $stmt = $conn->prepare($sql);
+        $resultSet = $stmt->executeQuery([
+            'user_id' => $user_id,
+            'category_id' => $category_id,
+        ]);
+
+        return $resultSet->fetchAllAssociative();
+    }
+
+
+
+    public function getAllWithPaginationByRelations($friends_ids, $page=0, $pageSize=10) : Paginator
     {
         $firstResult = ($page - 1) * $pageSize;
 
         $query = $this->createQueryBuilder('r')
             ->andWhere('r.creator IN (:relations)')
-            ->andWhere('r.category = :category')
-            ->setParameter('category', $category_id)
             ->setParameter('relations', $friends_ids)
             ->orderBy('r.createdAt', 'DESC');
 
@@ -77,13 +291,13 @@ class RessourceRepository extends ServiceEntityRepository
         return new Paginator($query, true);
     }
 
-    public function getAllWithPaginationByRelations($friends_ids, $page=0, $pageSize=10) : Paginator
+    public function getAllWithPaginationById($ids, $page=0, $pageSize=10) : Paginator
     {
         $firstResult = ($page - 1) * $pageSize;
 
         $query = $this->createQueryBuilder('r')
-            ->andWhere('r.creator IN (:relations)')
-            ->setParameter('relations', $friends_ids)
+            ->andWhere('r.id IN (:ids)')
+            ->setParameter('ids', $ids)
             ->orderBy('r.createdAt', 'DESC');
 
         $query->setFirstResult($firstResult);
