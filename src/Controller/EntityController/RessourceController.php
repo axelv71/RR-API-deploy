@@ -157,7 +157,7 @@ class RessourceController extends AbstractController
     {
         $ressourceList = $repository->getAllPublicWithPagination($request->query->getInt('page', 1), $request->query->getInt('pageSize', 10));
 
-        $publicRessources = [];
+        /*$publicRessources = [];
         foreach($ressourceList as $ressource) {
             $ressource_relation_type_array = $ressource->getRelationType();
             foreach($ressource_relation_type_array as $ressource_relation_type) {
@@ -166,8 +166,8 @@ class RessourceController extends AbstractController
                     $publicRessources[] = $ressource;
                 }
             }
-        }
-        $jsonRessourceList = $serializer->serialize($publicRessources, "json", ["groups"=>"getRessources"]);
+        }*/
+        $jsonRessourceList = $serializer->serialize($ressourceList, "json", ["groups"=>"getRessources"]);
         return new JsonResponse($jsonRessourceList, Response::HTTP_OK, [], true);
     }
 
@@ -220,6 +220,7 @@ class RessourceController extends AbstractController
                 $friend_id = $sender_id;
             }
             $friends_ids[] = $friend_id;
+            $this->logger->info("friend id : " . $friend_id . " relation type id : " . $relation->getRelationType()->getId());
             $friends_relations[] = [
                 $friend_id, $relation->getRelationType()->getId()
             ];
