@@ -35,12 +35,18 @@ class Theme
     #[ORM\OneToMany(mappedBy: 'theme', targetEntity: Settings::class, orphanRemoval: true)]
     private Collection $settings;
 
-    public function __construct($label, $name, $primary_color, $secondary_color)
+    public static function create(string $label, string $name, string $primary_color, string $secondary_color): self
     {
-        $this->label = $label;
-        $this->name = $name;
-        $this->primary_color = $primary_color;
-        $this->secondary_color = $secondary_color;
+        $theme = new self();
+        $theme->label = $label;
+        $theme->name = $name;
+        $theme->primary_color = $primary_color;
+        $theme->secondary_color = $secondary_color;
+        return $theme;
+    }
+
+    public function __construct()
+    {
         $this->settings = new ArrayCollection();
     }
 

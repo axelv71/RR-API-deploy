@@ -29,7 +29,7 @@ class CategoryCrudController extends AbstractCrudController
     {
         return [
             IdField::new('id'),
-            TextField::new('title'),
+            TextField::new('label'),
         ];
     }
 

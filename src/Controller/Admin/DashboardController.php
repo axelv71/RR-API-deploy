@@ -43,18 +43,27 @@ class DashboardController extends AbstractDashboardController
     {
         return Dashboard::new()
             ->setTitle('Ressources Relationnelles - Admin')
+            ->setLocales(['fr', 'en'])
             ->renderContentMaximized();
     }
 
     public function configureMenuItems(): iterable
     {
         yield MenuItem::linkToDashboard('Dashboard', 'fa fa-home');
-        yield MenuItem::linkToCrud('Utilisateurs', 'fas fa-user', User::class);
-        yield MenuItem::linkToCrud('Categories', 'fas fa-list', Category::class);
-        yield MenuItem::linkToCrud('Commentaires', 'fas fa-comment', Comment::class);
-        yield MenuItem::linkToCrud('Types de relation', 'fas fa-user-group', RelationType::class);
-        yield MenuItem::linkToCrud('Ressources', 'fas fa-book', Ressource::class);
+        if ($this->isGranted('ROLE_ADMIN')) {
+            yield MenuItem::linkToCrud('Utilisateurs', 'fas fa-user', User::class);
+        }
 
+        if ($this->isGranted('ROLE_ADMIN')) {
+            yield MenuItem::linkToCrud('Categories', 'fas fa-list', Category::class);
+        }
+
+        if ($this->isGranted('ROLE_SUPER_ADMIN')) {
+            yield MenuItem::linkToCrud('Types de relation', 'fas fa-user-group', RelationType::class);
+        }
+
+        yield MenuItem::linkToCrud('Commentaires', 'fas fa-comment', Comment::class);
+        yield MenuItem::linkToCrud('Ressources', 'fas fa-book', Ressource::class);
 
     }
 }

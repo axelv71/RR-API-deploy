@@ -33,11 +33,16 @@ class Category
     private Collection $ressources;
 
 
-
-    public function __construct($label, $name)
+    public static function create (string $label, string $name): self
     {
-        $this->label = $label;
-        $this->name = $name;
+        $category = new self();
+        $category->label = $label;
+        $category->name = $name;
+        return $category;
+    }
+
+    public function __construct()
+    {
         $this->ressources = new ArrayCollection();
         $this->createdAt = new \DateTimeImmutable();
     }

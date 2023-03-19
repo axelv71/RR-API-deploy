@@ -28,10 +28,15 @@ class Language
     #[ORM\OneToMany(mappedBy: 'language', targetEntity: Settings::class)]
     private Collection $settings;
 
-    public function __construct(string $label, string $name)
+    public static function create(string $label, string $name): self
     {
-        $this->label = $label;
-        $this->name = $name;
+        $language = new self();
+        $language->label = $label;
+        $language->name = $name;
+        return $language;
+    }
+    public function __construct()
+    {
         $this->settings = new ArrayCollection();
     }
 

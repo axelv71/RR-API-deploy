@@ -45,13 +45,18 @@ class Settings
     private ?Language $language = null;
 
 
-    public function __construct ($isDark, $allowNotifications, $useDeviceMode, Language $language, $theme)
+    public static function create($isDark, $allowNotifications, $useDeviceMode, $language, $theme) : self
     {
-        $this->isDark = $isDark;
-        $this->allowNotifications = $allowNotifications;
-        $this->useDeviceMode = $useDeviceMode;
-        $this->language = $language;
-        $this->theme = $theme;
+        $settings = new self();
+        $settings->isDark = $isDark;
+        $settings->allowNotifications = $allowNotifications;
+        $settings->useDeviceMode = $useDeviceMode;
+        $settings->language = $language;
+        $settings->theme = $theme;
+        return $settings;
+    }
+    public function __construct ()
+    {
         $this->createdAt = new \DateTimeImmutable();
     }
 

@@ -114,7 +114,7 @@ class RegistrationController extends AbstractController
         $user->setIsActive(true);
         $user->setPassword($userPasswordHasher->hashPassword($user, $data['password']));
         $user->setRoles(['ROLE_USER', 'ROLE_USER_AUTHENTICATED']);
-        $user->setSettings(new Settings(isDark: false,
+        $user->setSettings(Settings::create(isDark: false,
             allowNotifications: false,
             useDeviceMode: false,
             language: "fr",

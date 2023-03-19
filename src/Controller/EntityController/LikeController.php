@@ -79,7 +79,7 @@ class LikeController extends AbstractController
 
         $notification_content = $user->getAccountName() . ' a aimé votre ressource';
 
-        $notification = new Notification($user, $resource_creator, 'like', $notification_content);
+        $notification = Notification::create($user, $resource_creator, 'like', $notification_content);
         $notification->setResource($resource);
         $em->persist($notification);
 

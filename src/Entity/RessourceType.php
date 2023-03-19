@@ -21,8 +21,15 @@ class RessourceType
     #[ORM\OneToMany(mappedBy: 'type', targetEntity: Ressource::class)]
     private Collection $ressources;
 
-    public function __construct($name) {
-        $this->name = $name;
+
+    public static function create(string $name): self
+    {
+        $ressourceType = new self();
+        $ressourceType->name = $name;
+        return $ressourceType;
+    }
+
+    public function __construct() {
         $this->ressources = new ArrayCollection();
     }
 
