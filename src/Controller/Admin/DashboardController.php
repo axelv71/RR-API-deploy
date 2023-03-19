@@ -15,6 +15,9 @@ use Symfony\Component\Routing\Annotation\Route;
 
 class DashboardController extends AbstractDashboardController
 {
+    /**
+     * @Route("/admin", name="admin")
+     */
     #[Route('/admin', name: 'admin')]
     public function index(): Response
     {
@@ -43,8 +46,8 @@ class DashboardController extends AbstractDashboardController
     {
         return Dashboard::new()
             ->setTitle('Ressources Relationnelles - Admin')
-            ->setLocales(['fr', 'en'])
-            ->renderContentMaximized();
+            ->renderContentMaximized()
+            ->setTranslationDomain('admin');
     }
 
     public function configureMenuItems(): iterable

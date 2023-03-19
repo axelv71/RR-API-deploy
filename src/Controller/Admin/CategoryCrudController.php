@@ -30,8 +30,8 @@ class CategoryCrudController extends AbstractCrudController
         return [
             IdField::new('id')
                 ->onlyOnIndex(),
-            TextField::new('label'),
-            TextField::new('name'),
+            TextField::new('label', 'Libellé'),
+            TextField::new('name', 'Nom'),
         ];
     }
 
