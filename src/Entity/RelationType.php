@@ -38,10 +38,15 @@ class RelationType
 
 
 
-    public function __construct($label, $name)
+    public static function create (string $label, string $name): self
     {
-        $this->label = $label;
-        $this->name = $name;
+        $relationType = new self();
+        $relationType->label = $label;
+        $relationType->name = $name;
+        return $relationType;
+    }
+    public function __construct()
+    {
         $this->relations = new ArrayCollection();
         $this->createdAt = new \DateTimeImmutable();
         $this->ressources = new ArrayCollection();

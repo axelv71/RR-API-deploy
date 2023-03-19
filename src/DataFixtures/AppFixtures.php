@@ -97,7 +97,7 @@ class AppFixtures extends Fixture
 
         $themes = [];
         foreach ($themes_array as $theme) {
-            $theme = new Theme($theme["label"], $theme["name"], $theme["primary_color"], $theme["secondary_color"]);
+            $theme = Theme::create($theme["label"], $theme["name"], $theme["primary_color"], $theme["secondary_color"]);
             $themes[] = $theme;
             $manager->persist($theme);
         }
@@ -108,7 +108,7 @@ class AppFixtures extends Fixture
         ];
         $languages = [];
         foreach ($languages_array as $language) {
-            $language = new Language($language[0], $language[1]);
+            $language = Language::create($language[0], $language[1]);
             $languages[] = $language;
             $manager->persist($language);
         }
@@ -130,7 +130,7 @@ class AppFixtures extends Fixture
         ];
         $relationTypes = [];
         foreach ($relation_names as $r => $relation_name) {
-            $relationType = new RelationType($relation_name[0], $relation_name[1]);
+            $relationType = RelationType::create($relation_name[0], $relation_name[1]);
             $relationTypes[] = $relationType;
             $manager->persist($relationType);
         }
@@ -138,7 +138,7 @@ class AppFixtures extends Fixture
         $users = [];
         for ($i = 0; $i < 10; $i++) {
             //Create a setting
-            $setting = new Settings(isDark: false,
+            $setting = Settings::create(isDark: false,
                 allowNotifications: false,
                 useDeviceMode: false,
                 language: $languages[mt_rand(0, count($languages) - 1)],
@@ -164,7 +164,7 @@ class AppFixtures extends Fixture
             $manager->persist($setting);
         }
 
-        $setting = new Settings(isDark: false,
+        $setting = Settings::create(isDark: false,
             allowNotifications: false,
             useDeviceMode: false,
             language: $languages[mt_rand(0, count($languages) - 1)],
@@ -196,7 +196,7 @@ class AppFixtures extends Fixture
                 $receiver = $users[mt_rand(0, count($users) - 1)];
             }
 
-            $relation = new Relation($sender, $receiver, $relationTypes[mt_rand(0, count($relationTypes) - 1)]);
+            $relation = Relation::create($sender, $receiver, $relationTypes[mt_rand(0, count($relationTypes) - 1)]);
             $relation->setIsAccepted(true);
 
             $relations[] = $relation;
@@ -236,14 +236,14 @@ class AppFixtures extends Fixture
 
         $resource_types = [];
         foreach ($resource_type_array as $resource_type) {
-            $resource_type = new RessourceType($resource_type);
+            $resource_type = RessourceType::create($resource_type);
             $resource_types[] = $resource_type;
             $manager->persist($resource_type);
         }
 
         $categories = [];
         foreach ($categories_array as $category) {
-            $category = new Category($category[0], $category[1]);
+            $category = Category::create($category[0], $category[1]);
             $categories[] = $category;
             $manager->persist($category);
         }

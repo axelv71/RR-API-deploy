@@ -91,9 +91,9 @@ class RegistrationController extends AbstractController
         if (empty($data['email']) ||
             empty($data['password']) ||
             empty($data['passwordConfirm']) ||
-            empty($data['name']) ||
-            empty($data['surname']) ||
-            empty($data['pseudo'])){
+            empty($data['first_name']) ||
+            empty($data['last_name']) ||
+            empty($data['account_name'])) {
             throw new NotFoundHttpException('Expecting mandatory parameters!');
         }
 
@@ -108,13 +108,13 @@ class RegistrationController extends AbstractController
         $theme = $themeRepository->findOneBy(['name' => 'default']);
 
         $user->setEmail($data['email']);
-        $user->setFirstName($data['name']);
-        $user->setLastName($data['surname']);
-        $user->setAccountName($data['pseudo']);
+        $user->setFirstName($data['first_name']);
+        $user->setLastName($data['last_name']);
+        $user->setAccountName($data['account_name']);
         $user->setIsActive(true);
         $user->setPassword($userPasswordHasher->hashPassword($user, $data['password']));
-        $user->setRoles(['ROLE_USER', 'ROLE_USER_AUTHENTICATED']);
-        $user->setSettings(new Settings(isDark: false,
+        $user->setRoles(['ROLE_USER_AUTHENTICATED']);
+        $user->setSettings(Settings::create(isDark: false,
             allowNotifications: false,
             useDeviceMode: false,
             language: "fr",
