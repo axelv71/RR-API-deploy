@@ -14,72 +14,81 @@ use Symfony\Component\Routing\Annotation\Route;
 
 class CategoryController extends AbstractController
 {
-    #[OA\Tag(name: 'Category')]
+
+    /***
+     * This function allows us to create a category
+     * @param CategoryRepository $categoryRepository
+     * @return JsonResponse
+     */
+    #[OA\Tag(name: "Category")]
     #[OA\Response(
         response: 200,
-        description: 'Returns all categories',
-        content: new Model(type: Category::class, groups: ['getCategories'])
+        description: "Returns all categories",
+        content: new Model(type: Category::class, groups: ["getCategories"])
     )]
     #[Route('/api/categories', name: 'categories', methods: ['GET'])]
-    public function getAllCategories(CategoryRepository $categoryRepository): JsonResponse
+    public function getAllCategories(CategoryRepository $categoryRepository,): JsonResponse
     {
-        // Return all categories in JSON format
+        //Return all categories in JSON format
         $categories = $categoryRepository->findAll();
-
         return $this->json($categories, 200, [], ['groups' => 'getCategories']);
     }
 
-    #[OA\Tag(name: 'Category')]
-    #[OA\Parameter(name: 'id', description: 'Id of the category', in: 'path', required: true, example: 1)]
+    /***
+     * This function allows us to create a category
+     * @param CategoryRepository $categoryRepository
+     * @param $id
+     * @return JsonResponse
+     */
+    #[OA\Tag(name: "Category")]
+    #[OA\Parameter(name: "id", description: "Id of the category", in: "path", required: true, example: 1)]
     #[OA\Response(
         response: 200,
-        description: 'Returns one category',
-        content: new Model(type: Category::class, groups: ['getCategories'])
+        description: "Returns one category",
+        content: new Model(type: Category::class, groups: ["getCategories"])
     )]
     #[Route('/api/categories/{id}', name: 'oneCategory', methods: ['GET'])]
     public function getOneCategory(CategoryRepository $categoryRepository, $id): JsonResponse
     {
-        // Return one category in JSON format
+        //Return one category in JSON format
         $category = $categoryRepository->find($id);
 
         return $this->json($category, 200, [], ['groups' => 'getCategories']);
     }
 
-    #[OA\Tag(name: 'Category')]
-    #[OA\RequestBody(content: new Model(type: Category::class, groups: ['createCategory']))]
+    #[OA\Tag(name: "Category")]
+    #[OA\RequestBody(content: new Model(type: Category::class, groups: ["createCategory"]))]
     #[OA\Response(
         response: 201,
-        description: 'Returns the created category',
-        content: new Model(type: Category::class, groups: ['getCategories'])
+        description: "Returns the created category",
+        content: new Model(type: Category::class, groups: ["getCategories"])
     )]
     #[Route('/api/categories', name: 'createCategory', methods: ['POST'])]
     public function createCategory(Request $request, EntityManagerInterface $entityManager): JsonResponse
     {
-        // Create a new category
+        //Create a new category
         $data = json_decode($request->getContent(), true);
         $category = new Category();
         $category->setLabel($data['title']);
         $entityManager->persist($category);
         $entityManager->flush();
-
         return $this->json($category, 201, [], ['groups' => 'getCategories']);
     }
 
-    #[OA\Tag(name: 'Category')]
-    #[OA\Parameter(name: 'id', description: 'Id of the category', in: 'path', required: true, example: 1)]
-    #[OA\Response(
+    #[OA\Tag(name: "Category")]
+    #[OA\Parameter(name: "id", description: "Id of the category", in: "path", required: true, example: 1)]
+    #[OA\Response (
         response: 204,
-        description: 'Returns nothing',
-        content: new Model(type: Category::class, groups: ['default'])
+        description: "Returns nothing",
+        content: new Model(type: Category::class, groups: ["default"])
     )]
     #[Route('/api/categories/{id}', name: 'deleteCategory', methods: ['DELETE'])]
     public function deleteCategory(CategoryRepository $categoryRepository, $id, EntityManagerInterface $entityManager): JsonResponse
     {
-        // Delete a category
+        //Delete a category
         $category = $categoryRepository->find($id);
         $entityManager->remove($category);
         $entityManager->flush();
-
         return $this->json($category, 204, [], ['groups' => 'getCategories']);
     }
 }
