@@ -13,15 +13,15 @@ class Like
     #[ORM\Id]
     #[ORM\GeneratedValue]
     #[ORM\Column]
-    #[Groups(["getLikes"])]
+    #[Groups(['getLikes'])]
     private ?int $id = null;
 
     #[ORM\ManyToOne(inversedBy: 'likes')]
-    #[Groups(["getLikes", "createLike"])]
+    #[Groups(['getLikes', 'createLike'])]
     private ?User $user_like = null;
 
     #[ORM\ManyToOne(inversedBy: 'likes')]
-    #[Groups(["getLikes", "createLike"])]
+    #[Groups(['getLikes', 'createLike'])]
     private ?Ressource $ressource_like = null;
 
     #[ORM\Column]

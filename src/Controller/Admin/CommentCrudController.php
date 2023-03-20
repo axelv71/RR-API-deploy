@@ -11,7 +11,6 @@ use EasyCorp\Bundle\EasyAdminBundle\Field\AssociationField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\BooleanField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\IdField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\TextareaField;
-use EasyCorp\Bundle\EasyAdminBundle\Field\TextField;
 
 class CommentCrudController extends AbstractCrudController
 {
@@ -31,10 +30,10 @@ class CommentCrudController extends AbstractCrudController
         return $crud
             ->setEntityLabelInPlural('Commentaires')
             ->setEntityLabelInSingular('Commentaire')
-            ->setPageTitle("index","Administration des commentaires")
+            ->setPageTitle('index', 'Administration des commentaires')
             ->setPaginatorPageSize(100);
-
     }
+
     public function configureFields(string $pageName): iterable
     {
         return [
@@ -49,8 +48,7 @@ class CommentCrudController extends AbstractCrudController
                     'attr' => ['rows' => 10],
                 ])
             ->setMaxLength(255),
-            BooleanField::new('is_valid', 'Validé')
+            BooleanField::new('is_valid', 'Validé'),
         ];
     }
-
 }

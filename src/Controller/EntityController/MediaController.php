@@ -19,19 +19,11 @@ use Symfony\Component\Validator\Validator\ValidatorInterface;
 class MediaController extends AbstractController
 {
     /**
-     * Add media to a resource
-     *
-     * @param Ressource $ressource
-     * @param Request $request
-     * @param SerializerInterface $serializer
-     * @param EntityManagerInterface $entityManager
-     * @param UrlGeneratorInterface $urlGenerator
-     * @param ValidatorInterface $validator
-     * @return JsonResponse
+     * Add media to a resource.
      */
     #[Route('/api/{id}/upload', name: 'upload_media', methods: ['POST'])]
     #[OA\Tag('Media')]
-    #[OA\Parameter(name: "id", description: "The id of the resource", in: "path", required: true, example: 1)]
+    #[OA\Parameter(name: 'id', description: 'The id of the resource', in: 'path', required: true, example: 1)]
     #[OA\Response(response: 201, description: 'Media has been uploaded successfully')]
     #[OA\Response(response: 400, description: 'Bad request')]
     #[OA\Response(response: 404, description: 'Resource not found')]
@@ -46,10 +38,10 @@ class MediaController extends AbstractController
                         type: 'string',
                         format: 'binary',
                         description: 'The file to upload. File accepted: jpeg, png, gif, pdf, mp4, quicktime. (max 100Mo)'
-                    )
+                    ),
                 ]
             )
-        )
+        ),
     ])]
     public function upload(Ressource $ressource, Request $request, SerializerInterface $serializer, EntityManagerInterface $entityManager, UrlGeneratorInterface $urlGenerator, ValidatorInterface $validator): JsonResponse
     {
@@ -65,6 +57,7 @@ class MediaController extends AbstractController
         $errors = $validator->validate($media);
         if (count($errors) > 0) {
             $jsonErrors = $serializer->serialize($errors, 'json');
+
             return new JsonResponse($jsonErrors, Response::HTTP_BAD_REQUEST, [], true);
         }
 
@@ -80,11 +73,7 @@ class MediaController extends AbstractController
     }
 
     /**
-     * Get all media
-     *
-     * @param MediaRepository $mediaRepository
-     * @param SerializerInterface $serializer
-     * @return JsonResponse
+     * Get all media.
      */
     #[Route('/api/media', methods: ['GET'])]
     #[OA\Tag('Media')]
@@ -97,15 +86,11 @@ class MediaController extends AbstractController
     }
 
     /**
-     * Get media by id
-     *
-     * @param Media $media
-     * @param SerializerInterface $serializer
-     * @return JsonResponse
+     * Get media by id.
      */
     #[Route('/api/media/{id}', name: 'detail_media', methods: ['GET'])]
     #[OA\Tag('Media')]
-    #[OA\Parameter(name: "id", description: "The id of the media", in: "path", required: true, example: 1)]
+    #[OA\Parameter(name: 'id', description: 'The id of the media', in: 'path', required: true, example: 1)]
     #[OA\Response(response: 200, description: 'Return media')]
     public function getOne(Media $media, SerializerInterface $serializer): JsonResponse
     {
@@ -115,21 +100,17 @@ class MediaController extends AbstractController
     }
 
     /**
-     * Delete a media
-     *
-     * @param Media $media
-     * @param EntityManagerInterface $entityManager
-     * @return JsonResponse
+     * Delete a media.
      */
     #[Route('/api/media/{id}', name: 'delete_media', methods: ['DELETE'])]
     #[OA\Tag('Media')]
-    #[OA\Parameter(name: "id", description: "The id of the media", in: "path", required: true, example: 1)]
+    #[OA\Parameter(name: 'id', description: 'The id of the media', in: 'path', required: true, example: 1)]
     #[OA\Response(response: 204, description: 'The media has been deleted successfully')]
     public function delete(Media $media, EntityManagerInterface $entityManager): JsonResponse
     {
         $entityManager->remove($media);
         $entityManager->flush();
 
-        return new JsonResponse("The media has been deleted successfully", Response::HTTP_NO_CONTENT, [], true);
+        return new JsonResponse('The media has been deleted successfully', Response::HTTP_NO_CONTENT, [], true);
     }
 }

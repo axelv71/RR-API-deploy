@@ -33,49 +33,47 @@ class RegistrationController extends AbstractController
         $this->verifyEmailHelper = $helper;
     }
 
-
-    #[OA\Tag(name: "Auth")]
+    #[OA\Tag(name: 'Auth')]
     #[OA\RequestBody(
         content: new OA\JsonContent(
-            type: "object",
+            type: 'object',
             properties: [
                 new OA\Property(
-                    property: "email",
-                    type: "string",
-                    example: "test@gmail.com"
+                    property: 'email',
+                    type: 'string',
+                    example: 'test@gmail.com'
                 ),
                 new OA\Property(
-                property: "password",
-                type: "string",
-                example: "test"
+                    property: 'password',
+                    type: 'string',
+                    example: 'test'
                 ),
                 new OA\Property(
-                    property: "passwordConfirm",
-                    type: "string",
-                    example: "test"
+                    property: 'passwordConfirm',
+                    type: 'string',
+                    example: 'test'
                 ),
                 new OA\Property(
-                    property: "name",
-                    type: "string",
-                    example: "test_name"
+                    property: 'name',
+                    type: 'string',
+                    example: 'test_name'
                 ),
                 new OA\Property(
-                    property: "surname",
-                    type: "string",
-                    example: "test_surname"
+                    property: 'surname',
+                    type: 'string',
+                    example: 'test_surname'
                 ),
                 new OA\Property(
-                    property: "pseudo",
-                    type: "string",
-                    example: "test_pseudo"
+                    property: 'pseudo',
+                    type: 'string',
+                    example: 'test_pseudo'
                 ),
-
             ]
         )
     )]
     #[OA\Response(
         response: 201,
-        description: "Returns the user created",
+        description: 'Returns the user created',
         content: new Model(type: User::class)
     )]
     #[Route('/api/register', name: 'app_register', methods: ['POST'])]
@@ -117,10 +115,10 @@ class RegistrationController extends AbstractController
         $user->setSettings(Settings::create(isDark: false,
             allowNotifications: false,
             useDeviceMode: false,
-            language: "fr",
+            language: 'fr',
             theme: $theme));
-        //change this after enabled email verification
-        //$user->setIsVerified(true);
+        // change this after enabled email verification
+        // $user->setIsVerified(true);
         $em->persist($user);
         $em->flush();
 
@@ -147,27 +145,27 @@ class RegistrationController extends AbstractController
         ];
 
         $jsonData = json_encode($jsonData);
+
         return new JsonResponse($jsonData, Response::HTTP_CREATED, [], true);
     }
 
-
-    #[OA\Tag(name: "Auth")]
+    #[OA\Tag(name: 'Auth')]
     #[Route('/api/verify', name: 'app_verify_email', methods: ['GET'])]
     public function verifyUserEmail(Request $request, UserRepository $userRepository, EntityManagerInterface $em): Response
     {
         $id = $request->get('id'); // retrieve the user id from the url
 
         // Verify the user id exists and is not null
-        if ($id === null) {
+        if (null === $id) {
             return $this->redirectToRoute('app_home');
-       }
+        }
 
-       $user = $userRepository->findOneBy(['id' => $id]);
+        $user = $userRepository->findOneBy(['id' => $id]);
 
-       // Ensure the user exists in persistence
-       if ($user === null) {
+        // Ensure the user exists in persistence
+        if (null === $user) {
             return $this->redirectToRoute('app_home');
-       }
+        }
 
         // validate email confirmation link, sets User::isVerified=true and persists
         try {
@@ -181,7 +179,6 @@ class RegistrationController extends AbstractController
        /*$user->setIsVerified(true);
        $em->persist($user);
        $em->flush();*/
-
 
         // @TODO Change the redirect on success and handle or remove the flash message in your templates
         $this->addFlash('success', 'Your email address has been verified.');

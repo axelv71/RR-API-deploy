@@ -15,45 +15,45 @@ class Ressource
     #[ORM\Id]
     #[ORM\GeneratedValue]
     #[ORM\Column]
-    #[Groups(["getRessources","getMedia","getComments","getFavorites", "createFavorite", "getLikes", "createLike"])]
+    #[Groups(['getRessources', 'getMedia', 'getComments', 'getFavorites', 'createFavorite', 'getLikes', 'createLike'])]
     private ?int $id = null;
 
     #[ORM\Column(length: 255)]
-    #[Groups(["getRessources","getMedia", 'getFavorites', "getLikes", "getNotifications"])]
+    #[Groups(['getRessources', 'getMedia', 'getFavorites', 'getLikes', 'getNotifications'])]
     private ?string $title = null;
 
     #[ORM\Column(type: Types::TEXT)]
-    #[Groups(["getRessources","getMedia", 'getFavorites', "getLikes", "getNotifications"])]
+    #[Groups(['getRessources', 'getMedia', 'getFavorites', 'getLikes', 'getNotifications'])]
     private ?string $description = null;
 
     #[ORM\Column(nullable: true)]
-    #[Groups(["getRessources","getMedia","getFavorites", "getLikes"])]
+    #[Groups(['getRessources', 'getMedia', 'getFavorites', 'getLikes'])]
     private ?bool $isValid = null;
 
     #[ORM\Column]
-    #[Groups(["getRessources","getMedia","getFavorites", "getLikes"])]
+    #[Groups(['getRessources', 'getMedia', 'getFavorites', 'getLikes'])]
     private ?bool $isPublished = null;
 
     #[ORM\Column]
-    #[Groups(["getRessources","getMedia","getFavorites", "getLikes"])]
+    #[Groups(['getRessources', 'getMedia', 'getFavorites', 'getLikes'])]
     private ?\DateTimeImmutable $createdAt = null;
 
     #[ORM\ManyToOne(inversedBy: 'ressources')]
     #[ORM\JoinColumn(nullable: false)]
-    #[Groups(["getRessources","getMedia","getFavorites", "getLikes"])]
+    #[Groups(['getRessources', 'getMedia', 'getFavorites', 'getLikes'])]
     private ?Category $category = null;
 
     #[ORM\ManyToOne(inversedBy: 'ressources')]
     #[ORM\JoinColumn(nullable: false)]
-    #[Groups(["getRessources","getMedia","getFavorites"])]
+    #[Groups(['getRessources', 'getMedia', 'getFavorites'])]
     private ?User $creator = null;
 
     #[ORM\OneToMany(mappedBy: 'ressource', targetEntity: Comment::class, orphanRemoval: true)]
-    #[Groups(["getRessources"])]
+    #[Groups(['getRessources'])]
     private Collection $comments;
 
     #[ORM\OneToMany(mappedBy: 'ressource', targetEntity: Media::class, orphanRemoval: true)]
-    #[Groups(["getRessources"])]
+    #[Groups(['getRessources'])]
     private Collection $media;
 
     #[ORM\OneToMany(mappedBy: 'ressource_like', targetEntity: Like::class, orphanRemoval: true)]
@@ -62,7 +62,7 @@ class Ressource
     #[ORM\OneToMany(mappedBy: 'ressource_favorite', targetEntity: Favorite::class, orphanRemoval: true)]
     private Collection $favorites;
 
-    #[ORM\ManyToMany(targetEntity: RelationType::class, inversedBy: 'ressources', fetch: "EAGER")]
+    #[ORM\ManyToMany(targetEntity: RelationType::class, inversedBy: 'ressources', fetch: 'EAGER')]
     private Collection $relationType;
 
     #[ORM\OneToMany(mappedBy: 'resource', targetEntity: Notification::class)]
@@ -70,7 +70,6 @@ class Ressource
 
     #[ORM\ManyToOne(inversedBy: 'ressources')]
     private ?RessourceType $type = null;
-
 
     public function __construct()
     {
@@ -85,7 +84,7 @@ class Ressource
 
     public function __toString(): string
     {
-       return $this->getId();
+        return $this->getId();
     }
 
     public function getId(): ?int
@@ -96,6 +95,7 @@ class Ressource
     public function setId($id): self
     {
         $this->id = $id;
+
         return $this;
     }
 

@@ -47,6 +47,7 @@
     },
     "require-dev": {
         "doctrine/doctrine-fixtures-bundle": "^3.4",
+        "friendsofphp/php-cs-fixer": "^3.14",
         "symfony/maker-bundle": "^1.47"
     },
     "config": {

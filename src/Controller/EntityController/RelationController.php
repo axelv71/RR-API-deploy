@@ -10,35 +10,32 @@ use App\Repository\RelationRepository;
 use App\Repository\RelationTypeRepository;
 use App\Repository\UserRepository;
 use Doctrine\ORM\EntityManagerInterface;
+use OpenApi\Attributes as OA;
 use Psr\Log\LoggerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
-use OpenApi\Attributes as OA;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 use Symfony\Component\Serializer\SerializerInterface;
 
 class RelationController extends AbstractController
 {
     private LoggerInterface $logger;
+
     public function __construct(EntityManagerInterface $em, LoggerInterface $logger)
     {
         $this->logger = $logger;
     }
 
     /**
-     * Get relation details
-     *
-     * @param Relation $relation
-     * @param SerializerInterface $serializer
-     * @return JsonResponse
+     * Get relation details.
      */
     #[Route('/api/relation/{id}', name: 'relation_details', methods: ['GET'])]
-    #[OA\Tag(name: "Relation")]
-    #[OA\Response(response: 200, description: "Return details of one relation")]
-    #[OA\Parameter(name: "id", description: "The id of the relation", in: "path", required: true, example: 1)]
+    #[OA\Tag(name: 'Relation')]
+    #[OA\Response(response: 200, description: 'Return details of one relation')]
+    #[OA\Parameter(name: 'id', description: 'The id of the relation', in: 'path', required: true, example: 1)]
     public function getOneRelation(Relation $relation, SerializerInterface $serializer): JsonResponse
     {
         $jsonRelation = $serializer->serialize($relation, 'json', ['groups' => 'relation:read']);
@@ -47,16 +44,7 @@ class RelationController extends AbstractController
     }
 
     /**
-     * Add friend
-     *
-     * @param Request $request
-     * @param EntityManagerInterface $entityManage
-     * @param UserRepository $userRepository
-     * @param RelationTypeRepository $relationTypeRepository
-     * @param RelationRepository $relationRepository
-     * @param SerializerInterface $serializer
-     * @param UrlGeneratorInterface $urlGenerator
-     * @return JsonResponse
+     * Add friend.
      */
     #[Route('/api/relation/add', name: 'add_relation', methods: ['POST'])]
     #[OA\Tag('Relation')]
@@ -70,7 +58,7 @@ class RelationController extends AbstractController
                     new OA\Property(property: 'receiver', type: 'int', example: 1),
                 ]
             )
-        )
+        ),
     ])]
     #[OA\Response(response: 201, description: 'Relation has been created successfully')]
     #[OA\Response(response: 409, description: 'A relation already exists between these two users')]
@@ -87,19 +75,20 @@ class RelationController extends AbstractController
             'Receiver' => $receiver,
         ]);
 
-        if (!$existingRelations) $existingRelations = $relationRepository->findBy([
-            'Sender' => $receiver,
-            'Receiver' => $sender,
-        ]);
+        if (!$existingRelations) {
+            $existingRelations = $relationRepository->findBy([
+                'Sender' => $receiver,
+                'Receiver' => $sender,
+            ]);
+        }
 
         if ($existingRelations) {
-            foreach($existingRelations as $existingRelation)
-            {
-                if ($existingRelation->getRelationType()->getId() === $relationType->getId())
-                {
+            foreach ($existingRelations as $existingRelation) {
+                if ($existingRelation->getRelationType()->getId() === $relationType->getId()) {
                     $this->logger->info('Relation already exists between these two users');
 
                     $json = $serializer->serialize($existingRelation, 'json', ['groups' => 'relation:read']);
+
                     return new JsonResponse($json, Response::HTTP_CONFLICT, [], true);
                 }
             }
@@ -108,7 +97,7 @@ class RelationController extends AbstractController
         $relation = Relation::create($sender, $receiver, $relationType);
         $relation->setUpdatedAt(new \DateTimeImmutable());
 
-        $notification = Notification::create($sender, $receiver, "amis", "Vous avez reçu une demande d'amis de la part de " . $sender->getAccountName());
+        $notification = Notification::create($sender, $receiver, 'amis', "Vous avez reçu une demande d'amis de la part de ".$sender->getAccountName());
         $entityManage->persist($notification);
 
         $entityManage->persist($relation);
@@ -116,15 +105,12 @@ class RelationController extends AbstractController
 
         $url = $urlGenerator->generate('relation_details', ['id' => $relation->getId()], UrlGeneratorInterface::ABSOLUTE_URL);
         $json = $serializer->serialize($relation, 'json', ['groups' => 'relation:read']);
+
         return new JsonResponse($json, 201, ['location' => $url], true);
     }
 
     /**
-     * Get all user relations
-     *
-     * @param RelationRepository $relationRepository
-     * @param SerializerInterface $serializer
-     * @return JsonResponse
+     * Get all user relations.
      */
     #[Route('/api/relations', name: 'user_relations', methods: ['GET'])]
     #[OA\Tag('Relation')]
@@ -144,19 +130,14 @@ class RelationController extends AbstractController
     }
 
     /**
-     * Get all user relations by relation type
-     *
-     * @param RelationType $relationType
-     * @param RelationRepository $relationRepository
-     * @param SerializerInterface $serializer
-     * @return JsonResponse
+     * Get all user relations by relation type.
      */
     #[Route('/api/relations/{id}/relationtype', name: 'user_relations_relationtype', methods: ['GET'])]
     #[OA\Tag('Relation')]
     #[OA\Response(response: 200, description: 'Return all relations of the user')]
     public function getUserRelationByRelationType(RelationType $relationType, RelationRepository $relationRepository, SerializerInterface $serializer): JsonResponse
     {
-        //dd($relationType);
+        // dd($relationType);
 
         $user = $this->getUser();
         $sender_relations = $relationRepository->findBy(['Sender' => $user, 'relation_type' => $relationType]);
@@ -169,12 +150,7 @@ class RelationController extends AbstractController
     }
 
     /**
-     * Accept friend request
-     *
-     * @param Relation $relation
-     * @param EntityManagerInterface $entityManage
-     * @param SerializerInterface $serializer
-     * @return JsonResponse
+     * Accept friend request.
      */
     #[Route('/api/relation/{id}', name: 'relation_accept', methods: ['POST'])]
     #[OA\Tag('Relation')]
@@ -185,6 +161,7 @@ class RelationController extends AbstractController
     {
         if ($relation->getReceiver() !== $this->getUser()) {
             $json = $serializer->serialize(['error' => 'You are not the receiver of this relation'], 'json');
+
             return new JsonResponse($json, Response::HTTP_UNAUTHORIZED, [], true);
         }
 
@@ -194,23 +171,20 @@ class RelationController extends AbstractController
 
         $notification = Notification::create($relation->getReceiver(),
             $relation->getSender(),
-            "relation",
-            "Votre demande d'amis a été acceptée par " . $relation->getReceiver()->getAccountName());
+            'relation',
+            "Votre demande d'amis a été acceptée par ".$relation->getReceiver()->getAccountName());
 
         $entityManage->persist($notification);
 
         $entityManage->flush();
 
-        $json = $serializer->serialize(['success' => 'Relation has been accepted'], 'json');;
+        $json = $serializer->serialize(['success' => 'Relation has been accepted'], 'json');
+
         return new JsonResponse($json, Response::HTTP_OK, [], true);
     }
 
     /**
-     * Get not accepted user relations
-     *
-     * @param RelationRepository $relationRepository
-     * @param SerializerInterface $serializer
-     * @return JsonResponse
+     * Get not accepted user relations.
      */
     #[Route('/api/relations/notaccepted', name: 'relation_notaccepted', methods: ['GET'])]
     #[OA\Tag('Relation')]
@@ -220,15 +194,12 @@ class RelationController extends AbstractController
         $user = $this->getUser();
         $relations = $relationRepository->findBy(['Receiver' => $user, 'isAccepted' => false]);
         $jsonRelations = $serializer->serialize($relations, 'json', ['groups' => 'relation:read']);
+
         return new JsonResponse($jsonRelations, Response::HTTP_OK, [], true);
     }
 
     /**
-     * Get user accepted relations
-     *
-     * @param RelationRepository $relationRepository
-     * @param SerializerInterface $serializer
-     * @return JsonResponse
+     * Get user accepted relations.
      */
     #[Route('/api/relations/accepted', name: 'relation_accepted', methods: ['GET'])]
     #[OA\Tag('Relation')]
@@ -238,16 +209,12 @@ class RelationController extends AbstractController
         $user = $this->getUser();
         $relations = $relationRepository->findBy(['Receiver' => $user, 'isAccepted' => true]);
         $jsonRelations = $serializer->serialize($relations, 'json', ['groups' => 'relation:read']);
+
         return new JsonResponse($jsonRelations, Response::HTTP_OK, [], true);
     }
 
     /**
-     *  Delete relation
-     *
-     * @param Relation $relation
-     * @param EntityManagerInterface $entityManage
-     * @param SerializerInterface $serializer
-     * @return JsonResponse
+     *  Delete relation.
      */
     #[Route('/api/relations/{id}', name: 'relation_delete', methods: ['DELETE'])]
     #[OA\Tag('Relation')]
@@ -258,13 +225,15 @@ class RelationController extends AbstractController
     {
         if ($relation->getReceiver() !== $this->getUser() && $relation->getSender() !== $this->getUser()) {
             $json = $serializer->serialize(['error' => 'You are not allowed to delete this relation'], 'json');
+
             return new JsonResponse($json, Response::HTTP_UNAUTHORIZED, [], true);
         }
 
         $entityManage->remove($relation);
         $entityManage->flush();
 
-        $json = $serializer->serialize(['success' => 'Relation has been deleted'], 'json');;
+        $json = $serializer->serialize(['success' => 'Relation has been deleted'], 'json');
+
         return new JsonResponse($json, Response::HTTP_OK, [], true);
     }
 }

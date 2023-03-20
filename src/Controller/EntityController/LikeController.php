@@ -19,40 +19,39 @@ use Symfony\Component\Routing\Annotation\Route;
 
 class LikeController extends AbstractController
 {
-    #[OA\Tag(name: "Like")]
+    #[OA\Tag(name: 'Like')]
     #[OA\Response(
         response: 200,
-        description: "Returns all likes of one user",
+        description: 'Returns all likes of one user',
         content: new Model(type: like::class)
     )]
     #[Route('/api/like', name: 'all_likes', methods: ['GET'])]
     public function getAllLike(Request $request,
-                               UserRepository$userRepository,
+                               UserRepository $userRepository,
                                LikeRepository $likeRepository,
-                               ): JsonResponse
-    {
+                               ): JsonResponse {
         $user = $this->getUser();
         $likes = $likeRepository->findBy(['user_like' => $user]);
+
         return $this->json($likes, 200, [], ['groups' => 'getLikes']);
     }
 
-
-    #[OA\Tag(name: "Like")]
+    #[OA\Tag(name: 'Like')]
     #[OA\RequestBody(
         content: new OA\JsonContent(
-            type: "object",
+            type: 'object',
             properties: [
                 new OA\Property(
-                    property: "ressource_id",
-                    type: "integer",
+                    property: 'ressource_id',
+                    type: 'integer',
                     example: 1
-                )
+                ),
             ]
         )
     )]
     #[OA\Response(
         response: 201,
-        description: "Returns the created like",
+        description: 'Returns the created like',
         content: new Model(type: Like::class)
     )]
     #[Route('/api/like', name: 'create_like', methods: ['POST'])]
@@ -77,21 +76,22 @@ class LikeController extends AbstractController
         $like->setIsLiked(true);
         $em->persist($like);
 
-        $notification_content = $user->getAccountName() . ' a aimé votre ressource';
+        $notification_content = $user->getAccountName().' a aimé votre ressource';
 
         $notification = Notification::create($user, $resource_creator, 'like', $notification_content);
         $notification->setResource($resource);
         $em->persist($notification);
 
         $em->flush();
+
         return $this->json($like, 201, [], ['groups' => 'createLike']);
     }
 
-    #[OA\Tag(name: "Like")]
-    #[OA\Parameter(name: "id", description: "like id", in: "path", required: true, example: 1)]
+    #[OA\Tag(name: 'Like')]
+    #[OA\Parameter(name: 'id', description: 'like id', in: 'path', required: true, example: 1)]
     #[OA\Response(
         response: 204,
-        description: "Returns the deleted like",
+        description: 'Returns the deleted like',
     )]
     #[Route('/api/like/{id}', name: 'delete_like', methods: ['DELETE'])]
     public function deleteLike(Request $request,
@@ -102,6 +102,7 @@ class LikeController extends AbstractController
         $like = $likeRepository->findOneBy(['id' => $id]);
         $em->remove($like);
         $em->flush();
+
         return $this->json($like, 204, [], ['groups' => 'getLikes']);
     }
 }

@@ -12,43 +12,44 @@ class Relation
     #[ORM\Id]
     #[ORM\GeneratedValue]
     #[ORM\Column]
-    #[Groups(["getRelationTypesDetails", "relation:read"])]
+    #[Groups(['getRelationTypesDetails', 'relation:read'])]
     private ?int $id = null;
 
     #[ORM\ManyToOne(inversedBy: 'Receiver')]
     #[ORM\JoinColumn(nullable: false)]
-    #[Groups(["getRelationTypesDetails", "relation:read"])]
+    #[Groups(['getRelationTypesDetails', 'relation:read'])]
     private ?User $Sender = null;
 
-    #[ORM\ManyToOne(inversedBy: "received_relation")]
+    #[ORM\ManyToOne(inversedBy: 'received_relation')]
     #[ORM\JoinColumn(nullable: false)]
-    #[Groups(["getRelationTypesDetails", "relation:read"])]
+    #[Groups(['getRelationTypesDetails', 'relation:read'])]
     private ?User $Receiver = null;
 
     #[ORM\Column]
-    #[Groups(["getRelationTypesDetails", "relation:read"])]
+    #[Groups(['getRelationTypesDetails', 'relation:read'])]
     private ?bool $isAccepted = null;
 
     #[ORM\ManyToOne(inversedBy: 'relations')]
     #[ORM\JoinColumn(nullable: false)]
-    #[Groups(["relation:read"])]
+    #[Groups(['relation:read'])]
     private ?RelationType $relation_type = null;
 
     #[ORM\Column]
-    #[Groups(["relation:read"])]
+    #[Groups(['relation:read'])]
     private ?\DateTimeImmutable $createdAt = null;
 
     #[ORM\Column(nullable: true)]
-    #[Groups(["relation:read"])]
+    #[Groups(['relation:read'])]
     private ?\DateTimeImmutable $updatedAt = null;
 
-    public static function create($Sender, $Receiver, $relation_type) : self
+    public static function create($Sender, $Receiver, $relation_type): self
     {
         $relation = new self();
         $relation->Sender = $Sender;
         $relation->Receiver = $Receiver;
         $relation->relation_type = $relation_type;
-        $relation->isAccepted = False;
+        $relation->isAccepted = false;
+
         return $relation;
     }
 
@@ -57,7 +58,7 @@ class Relation
         $this->createdAt = new \DateTimeImmutable();
     }
 
-    //public  function __construct() { }
+    // public  function __construct() { }
 
     public function getId(): ?int
     {
@@ -135,6 +136,4 @@ class Relation
 
         return $this;
     }
-
-
 }

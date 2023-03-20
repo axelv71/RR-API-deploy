@@ -19,6 +19,7 @@ class JwtFailureHandler implements AuthenticationFailureHandlerInterface
         $this->jwtEncoder = $jwtEncoder;
         $this->userRepository = $userRepository;
     }
+
     public function onAuthenticationFailure(Request $request, AuthenticationException $exception): Response
     {
         $data = json_decode($request->getContent(), true);
@@ -34,7 +35,7 @@ class JwtFailureHandler implements AuthenticationFailureHandlerInterface
             throw new AuthenticationException('Your account is not active');
         }
 
-        if (!$user->isVerified()){
+        if (!$user->isVerified()) {
             throw new AuthenticationException('Your account is not verified');
         }
         // Génération du token JWT

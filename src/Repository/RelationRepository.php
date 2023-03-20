@@ -51,7 +51,6 @@ class RelationRepository extends ServiceEntityRepository
         ;
     }
 
-
 //    /**
 //     * @return Relation[] Returns an array of Relation objects
 //     */

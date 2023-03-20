@@ -18,41 +18,39 @@ use Symfony\Component\Routing\Annotation\Route;
 
 class FavoriteController extends AbstractController
 {
-    #[OA\Tag(name: "Favorite")]
+    #[OA\Tag(name: 'Favorite')]
     #[OA\Response(
         response: 200,
-        description: "Returns all favorite of one user",
+        description: 'Returns all favorite of one user',
         content: new Model(type: Favorite::class)
     )]
     #[Route('/api/favorite', name: 'all_favorite', methods: ['GET'])]
     public function getAllFavorite(Request $request,
-                                   UserRepository$userRepository,
+                                   UserRepository $userRepository,
                                    FavoriteRepository $favoriteRepository,
-                                   ): JsonResponse
-    {
-
+                                   ): JsonResponse {
         $user = $this->getUser();
         $favorites = $favoriteRepository->findBy(['user_favorite' => $user]);
+
         return $this->json($favorites, 200, [], ['groups' => 'getFavorites']);
     }
 
-
-    #[OA\Tag(name: "Favorite")]
+    #[OA\Tag(name: 'Favorite')]
     #[OA\RequestBody(
         content: new OA\JsonContent(
-            type: "object",
+            type: 'object',
             properties: [
                 new OA\Property(
-                    property: "ressource_id",
-                    type: "integer",
+                    property: 'ressource_id',
+                    type: 'integer',
                     example: 1
-                )
+                ),
             ]
         )
     )]
     #[OA\Response(
         response: 201,
-        description: "Returns the created favorite",
+        description: 'Returns the created favorite',
         content: new Model(type: Favorite::class)
     )]
     #[Route('/api/favorite', name: 'create_favorite', methods: ['POST'])]
@@ -74,21 +72,22 @@ class FavoriteController extends AbstractController
         $favorite->setRessourceFavorite($resource);
         $em->persist($favorite);
 
-        $notification_content = $user->getAccountName() . ' a ajouté votre ressource à ses favoris';
+        $notification_content = $user->getAccountName().' a ajouté votre ressource à ses favoris';
 
         $notification = Notification::create($user, $resource_creator, 'favorite', $notification_content);
         $notification->setResource($resource);
         $em->persist($notification);
 
         $em->flush();
+
         return $this->json($favorite, 201, [], ['groups' => 'getFavorites']);
     }
 
-    #[OA\Tag(name: "Favorite")]
-    #[OA\Parameter(name: "id", description: "Favorite id", in: "path", required: true, example: 1)]
+    #[OA\Tag(name: 'Favorite')]
+    #[OA\Parameter(name: 'id', description: 'Favorite id', in: 'path', required: true, example: 1)]
     #[OA\Response(
         response: 204,
-        description: "Delete a favorite",
+        description: 'Delete a favorite',
     )]
     #[Route('/api/favorite/{id}', name: 'delete_favorite', methods: ['DELETE'])]
     public function deleteFavorite(Request $request,
@@ -99,7 +98,7 @@ class FavoriteController extends AbstractController
         $favorite = $favoriteRepository->findOneBy(['id' => $id]);
         $em->remove($favorite);
         $em->flush();
+
         return $this->json($favorite, 204, [], ['groups' => 'getFavorites']);
     }
-
 }

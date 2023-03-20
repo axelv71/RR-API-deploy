@@ -12,15 +12,15 @@ class Settings
     #[ORM\Id]
     #[ORM\GeneratedValue]
     #[ORM\Column]
-    #[Groups(["getUsers", "getSettings"])]
+    #[Groups(['getUsers', 'getSettings'])]
     private ?int $id = null;
 
     #[ORM\Column]
-    #[Groups(["getUsers", "getSettings"])]
+    #[Groups(['getUsers', 'getSettings'])]
     private ?bool $isDark = null;
 
     #[ORM\Column]
-    #[Groups(["getSettings"])]
+    #[Groups(['getSettings'])]
     private ?\DateTimeImmutable $createdAt = null;
 
     #[ORM\OneToOne(inversedBy: 'settings', cascade: ['persist', 'remove'])]
@@ -28,24 +28,23 @@ class Settings
     private ?User $user = null;
 
     #[ORM\Column]
-    #[Groups(["getUsers", "getSettings"])]
+    #[Groups(['getUsers', 'getSettings'])]
     private ?bool $allowNotifications = null;
 
     #[ORM\Column]
-    #[Groups(["getUsers", "getSettings"])]
+    #[Groups(['getUsers', 'getSettings'])]
     private ?bool $useDeviceMode = null;
 
-    #[Groups(["getUsers", "getSettings"])]
+    #[Groups(['getUsers', 'getSettings'])]
     #[ORM\ManyToOne(inversedBy: 'settings')]
     #[ORM\JoinColumn(nullable: false)]
     private ?Theme $theme = null;
 
     #[ORM\ManyToOne(inversedBy: 'settings')]
-    #[Groups(["getUsers", "getSettings"])]
+    #[Groups(['getUsers', 'getSettings'])]
     private ?Language $language = null;
 
-
-    public static function create($isDark, $allowNotifications, $useDeviceMode, $language, $theme) : self
+    public static function create($isDark, $allowNotifications, $useDeviceMode, $language, $theme): self
     {
         $settings = new self();
         $settings->isDark = $isDark;
@@ -53,9 +52,11 @@ class Settings
         $settings->useDeviceMode = $useDeviceMode;
         $settings->language = $language;
         $settings->theme = $theme;
+
         return $settings;
     }
-    public function __construct ()
+
+    public function __construct()
     {
         $this->createdAt = new \DateTimeImmutable();
     }

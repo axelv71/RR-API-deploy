@@ -41,7 +41,7 @@ class RessourceRepository extends ServiceEntityRepository
         }
     }
 
-    public function getAllPublicWithPagination($page=0, $pageSize = 10): Paginator
+    public function getAllPublicWithPagination($page = 0, $pageSize = 10): Paginator
     {
         $firstResult = ($page - 1) * $pageSize;
 
@@ -62,9 +62,8 @@ class RessourceRepository extends ServiceEntityRepository
     /**
      * @throws Exception
      */
-    public function getAllResourcesByRelationsByCategory($user_id, $relation_type_id, $category_id) : array
+    public function getAllResourcesByRelationsByCategory($user_id, $relation_type_id, $category_id): array
     {
-
         /*$query = $this->createQueryBuilder('r')
             ->andWhere('r.creator IN (:relations)')
             ->andWhere('r.category = :category')
@@ -127,7 +126,7 @@ class RessourceRepository extends ServiceEntityRepository
     /**
      * @throws Exception
      */
-    public function getAllResourcesByRelationsType($user_id, $relation_type_id) : array
+    public function getAllResourcesByRelationsType($user_id, $relation_type_id): array
     {
         $conn = $this->getEntityManager()->getConnection();
 
@@ -177,7 +176,7 @@ class RessourceRepository extends ServiceEntityRepository
     /**
      * @throws Exception
      */
-    public function getAllResourcesWithoutRelationTypeWithoutCategory($user_id) : array
+    public function getAllResourcesWithoutRelationTypeWithoutCategory($user_id): array
     {
         $conn = $this->getEntityManager()->getConnection();
 
@@ -225,7 +224,7 @@ class RessourceRepository extends ServiceEntityRepository
     /**
      * @throws Exception
      */
-    public function getAllResourcesByCategoryWithourRelationType($user_id, $category_id) : array
+    public function getAllResourcesByCategoryWithourRelationType($user_id, $category_id): array
     {
         $conn = $this->getEntityManager()->getConnection();
 
@@ -272,9 +271,7 @@ class RessourceRepository extends ServiceEntityRepository
         return $resultSet->fetchAllAssociative();
     }
 
-
-
-    public function getAllWithPaginationByRelations($friends_ids, $page=0, $pageSize=10) : Paginator
+    public function getAllWithPaginationByRelations($friends_ids, $page = 0, $pageSize = 10): Paginator
     {
         $firstResult = ($page - 1) * $pageSize;
 
@@ -291,7 +288,7 @@ class RessourceRepository extends ServiceEntityRepository
         return new Paginator($query, true);
     }
 
-    public function getAllWithPaginationById($ids, $page=0, $pageSize=10) : Paginator
+    public function getAllWithPaginationById($ids, $page = 0, $pageSize = 10): Paginator
     {
         $firstResult = ($page - 1) * $pageSize;
 

@@ -6,8 +6,6 @@ use App\Repository\CommentRepository;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Serializer\Annotation\Groups;
-use Nelmio\ApiDocBundle\Annotation\Model;
-use OpenApi\Attributes as OA;
 
 #[ORM\Entity(repositoryClass: CommentRepository::class)]
 class Comment
@@ -15,25 +13,25 @@ class Comment
     #[ORM\Id]
     #[ORM\GeneratedValue]
     #[ORM\Column]
-    #[Groups(["getRessources", "getComments"])]
+    #[Groups(['getRessources', 'getComments'])]
     private ?int $id = null;
 
     #[ORM\Column(type: Types::TEXT)]
-    #[Groups(["getRessources", "getComments"])]
+    #[Groups(['getRessources', 'getComments'])]
     private ?string $content = null;
 
     #[ORM\Column]
-    #[Groups(["getRessources", "getComments"])]
+    #[Groups(['getRessources', 'getComments'])]
     private ?\DateTimeImmutable $createAt = null;
 
     #[ORM\ManyToOne(inversedBy: 'comments')]
     #[ORM\JoinColumn(nullable: false)]
-    #[Groups(["getRessources", "getComments"])]
+    #[Groups(['getRessources', 'getComments'])]
     private ?User $creator = null;
 
     #[ORM\ManyToOne(inversedBy: 'comments')]
     #[ORM\JoinColumn(nullable: false)]
-    #[Groups(["getComments"])]
+    #[Groups(['getComments'])]
     private ?Ressource $ressource = null;
 
     #[ORM\Column]

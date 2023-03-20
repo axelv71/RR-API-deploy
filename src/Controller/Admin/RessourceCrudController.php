@@ -13,7 +13,6 @@ use EasyCorp\Bundle\EasyAdminBundle\Field\DateTimeField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\IdField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\TextareaField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\TextField;
-use function Symfony\Component\Translation\t;
 
 class RessourceCrudController extends AbstractCrudController
 {
@@ -24,7 +23,7 @@ class RessourceCrudController extends AbstractCrudController
 
     public function configureActions(Actions $actions): Actions
     {
-        if(!$this->isGranted('ROLE_ADMIN')) {
+        if (!$this->isGranted('ROLE_ADMIN')) {
             return $actions
                 ->disable(Action::NEW, Action::DELETE);
         } else {
@@ -37,9 +36,8 @@ class RessourceCrudController extends AbstractCrudController
         return $crud
             ->setEntityLabelInPlural('Ressources')
             ->setEntityLabelInSingular('Ressource')
-            ->setPageTitle("index","Administration des ressources")
+            ->setPageTitle('index', 'Administration des ressources')
             ->setPaginatorPageSize(50);
-
     }
 
     public function configureFields(string $pageName): iterable
@@ -50,31 +48,32 @@ class RessourceCrudController extends AbstractCrudController
             ->hideOnForm();
         $creator = AssociationField::new('creator', 'Créateur')
             ->hideOnForm();
-        if ($this->isGranted('ROLE_ADMIN')){
+        if ($this->isGranted('ROLE_ADMIN')) {
             $title = TextField::new('title', 'Titre');
         } else {
             $title = TextField::new('title', 'Titre')
                 ->setFormTypeOptions([
-                    'disabled' => true
+                    'disabled' => true,
                 ]);
         }
 
-        if($this->isGranted('ROLE_ADMIN')) {
+        if ($this->isGranted('ROLE_ADMIN')) {
             $description = TextareaField::new('description', 'Description');
         } else {
             $description = TextareaField::new('description', 'Description')
                 ->setFormTypeOptions([
-                    'disabled' => true
+                    'disabled' => true,
                 ]);
         }
 
         $isValid = BooleanField::new('isValid', 'Validé');
-        $isPublished = BooleanField::new('isPublished','Publié');
+        $isPublished = BooleanField::new('isPublished', 'Publié');
         $createdAt = DateTimeField::new('createdAt', 'Créé le')
             ->hideOnIndex()
             ->setFormTypeOptions([
-                'disabled' => true
+                'disabled' => true,
             ]);
+
         return [
             $id,
             $category,
@@ -83,8 +82,7 @@ class RessourceCrudController extends AbstractCrudController
             $description,
             $isValid,
             $isPublished,
-            $createdAt
+            $createdAt,
         ];
     }
-
 }

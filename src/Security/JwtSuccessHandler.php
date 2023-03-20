@@ -2,9 +2,9 @@
 
 namespace App\Security;
 
-
 use App\Repository\UserRepository;
 use Doctrine\ORM\EntityManagerInterface;
+use Gesdinet\JWTRefreshTokenBundle\Generator\RefreshTokenGeneratorInterface;
 use Lexik\Bundle\JWTAuthenticationBundle\Encoder\JWTEncoderInterface;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
@@ -12,7 +12,6 @@ use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Security\Core\Authentication\Token\TokenInterface;
 use Symfony\Component\Security\Core\Exception\AuthenticationException;
 use Symfony\Component\Security\Http\Authentication\AuthenticationSuccessHandlerInterface;
-use Gesdinet\JWTRefreshTokenBundle\Generator\RefreshTokenGeneratorInterface;
 
 class JwtSuccessHandler implements AuthenticationSuccessHandlerInterface
 {
@@ -20,7 +19,6 @@ class JwtSuccessHandler implements AuthenticationSuccessHandlerInterface
     private $userRepository;
     private $refreshTokenGenerator;
     private $em;
-
 
     public function __construct(JWTEncoderInterface $jwtEncoder,
                                 RefreshTokenGeneratorInterface $refreshTokenGenerator,
@@ -31,10 +29,9 @@ class JwtSuccessHandler implements AuthenticationSuccessHandlerInterface
         $this->userRepository = $userRepository;
         $this->refreshTokenGenerator = $refreshTokenGenerator;
         $this->em = $em;
-
-
     }
-    public function onAuthenticationSuccess(Request $request, TokenInterface $token) : JsonResponse
+
+    public function onAuthenticationSuccess(Request $request, TokenInterface $token): JsonResponse
     {
         $data = json_decode($request->getContent(), true);
         $user = $this->userRepository->findOneBy(['email' => $data['username']]);
@@ -49,7 +46,7 @@ class JwtSuccessHandler implements AuthenticationSuccessHandlerInterface
             throw new AuthenticationException('Your account is not active');
         }
 
-        if (!$user->isVerified()){
+        if (!$user->isVerified()) {
             throw new AuthenticationException('Your account is not verified');
         }
 
@@ -68,7 +65,7 @@ class JwtSuccessHandler implements AuthenticationSuccessHandlerInterface
 
         $data = [
             'token' => $jwt,
-            'refresh_token' => $refresh_token->getRefreshToken()
+            'refresh_token' => $refresh_token->getRefreshToken(),
         ];
 
         $json_data = json_encode($data);
@@ -76,6 +73,4 @@ class JwtSuccessHandler implements AuthenticationSuccessHandlerInterface
         // Renvoi du token JWT
         return new JsonResponse($json_data, Response::HTTP_OK, [], true);
     }
-
-
 }

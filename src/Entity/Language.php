@@ -14,15 +14,15 @@ class Language
     #[ORM\Id]
     #[ORM\GeneratedValue]
     #[ORM\Column]
-    #[Groups(["getUsers", "getSettings"])]
+    #[Groups(['getUsers', 'getSettings'])]
     private ?int $id = null;
 
     #[ORM\Column(length: 255)]
-    #[Groups(["getUsers", "getSettings"])]
+    #[Groups(['getUsers', 'getSettings'])]
     private ?string $label = null;
 
     #[ORM\Column(length: 255)]
-    #[Groups(["getUsers", "getSettings"])]
+    #[Groups(['getUsers', 'getSettings'])]
     private ?string $name = null;
 
     #[ORM\OneToMany(mappedBy: 'language', targetEntity: Settings::class)]
@@ -33,8 +33,10 @@ class Language
         $language = new self();
         $language->label = $label;
         $language->name = $name;
+
         return $language;
     }
+
     public function __construct()
     {
         $this->settings = new ArrayCollection();

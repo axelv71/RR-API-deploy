@@ -20,10 +20,8 @@ class CategoryCrudController extends AbstractCrudController
         return $crud
             ->setEntityLabelInPlural('Categories')
             ->setEntityLabelInSingular('Categorie')
-            ->setPageTitle("index","Administration des categories");
-
+            ->setPageTitle('index', 'Administration des categories');
     }
-
 
     public function configureFields(string $pageName): iterable
     {
@@ -34,5 +32,4 @@ class CategoryCrudController extends AbstractCrudController
             TextField::new('name', 'Nom'),
         ];
     }
-
 }

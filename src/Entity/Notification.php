@@ -40,17 +40,18 @@ class Notification
     #[Groups(['getNotifications'])]
     private ?Ressource $resource = null;
 
-    public static function create($sender, User $receiver, string $type, string $content) : self
+    public static function create($sender, User $receiver, string $type, string $content): self
     {
         $notification = new self();
         $notification->sender = $sender;
         $notification->receiver = $receiver;
         $notification->type = $type;
         $notification->content = $content;
+
         return $notification;
     }
 
-    public function __construct ()
+    public function __construct()
     {
         $this->createdAt = new \DateTimeImmutable();
     }

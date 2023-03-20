@@ -20,10 +20,8 @@ class RelationTypeCrudController extends AbstractCrudController
         return $crud
             ->setEntityLabelInPlural('Types de relation')
             ->setEntityLabelInSingular('Type de relation')
-            ->setPageTitle("index","Administration des types de relations");
-
+            ->setPageTitle('index', 'Administration des types de relations');
     }
-
 
     public function configureFields(string $pageName): iterable
     {
@@ -32,5 +30,4 @@ class RelationTypeCrudController extends AbstractCrudController
             TextField::new('name', 'Nom'),
         ];
     }
-
 }

@@ -6,12 +6,11 @@ use App\Repository\UserRepository;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
+use OpenApi\Attributes as OA;
 use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
 use Symfony\Component\Security\Core\User\PasswordAuthenticatedUserInterface;
 use Symfony\Component\Security\Core\User\UserInterface;
 use Symfony\Component\Serializer\Annotation\Groups;
-use Symfony\Component\Validator\Constraints as Assert;
-use OpenApi\Attributes as OA;
 
 #[ORM\Entity(repositoryClass: UserRepository::class)]
 #[ORM\Table(name: '`user`')]
@@ -21,20 +20,18 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     #[ORM\Id]
     #[ORM\GeneratedValue]
     #[ORM\Column]
-    #[Groups(["getUsers", "getRessources", "getRoles", "getComments", "getRelationTypesDetails",
-        "getFavorites", "createFavorite", "getLikes", "createLike", "userLogin", "relation:read", "getNotifications"])]
+    #[Groups(['getUsers', 'getRessources', 'getRoles', 'getComments', 'getRelationTypesDetails',
+        'getFavorites', 'createFavorite', 'getLikes', 'createLike', 'userLogin', 'relation:read', 'getNotifications'])]
     private ?int $id = null;
 
     #[ORM\Column(length: 180, unique: true)]
-    #[Groups(["getUsers", "getRessources", "getRoles", "getRelationTypesDetails", "userLogin", "relation:read"])]
+    #[Groups(['getUsers', 'getRessources', 'getRoles', 'getRelationTypesDetails', 'userLogin', 'relation:read'])]
     private ?string $email = null;
 
-
-    #[OA\Property(type: "string", enum: ["ROLE_USER", "ROLE_ADMIN"])]
+    #[OA\Property(type: 'string', enum: ['ROLE_USER', 'ROLE_ADMIN'])]
     #[ORM\Column]
-    #[Groups(["getUsers", "userLogin"])]
+    #[Groups(['getUsers', 'userLogin'])]
     private array $roles = [];
-
 
     /**
      * @var string The hashed password
@@ -43,27 +40,27 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     private ?string $password = null;
 
     #[ORM\Column(length: 255)]
-    #[Groups(["getUsers","getRessources", "getRelationTypesDetails", "getFavorites", "userLogin", "relation:read"])]
+    #[Groups(['getUsers', 'getRessources', 'getRelationTypesDetails', 'getFavorites', 'userLogin', 'relation:read'])]
     private ?string $first_name = null;
 
     #[ORM\Column(length: 255)]
-    #[Groups(["getUsers", "getRessources", "getRelationTypesDetails", "getFavorites", "userLogin", "relation:read"])]
+    #[Groups(['getUsers', 'getRessources', 'getRelationTypesDetails', 'getFavorites', 'userLogin', 'relation:read'])]
     private ?string $last_name = null;
 
     #[ORM\Column(length: 255)]
-    #[Groups(["getUsers", "getRessources", "getRoles", "getRelationTypesDetails", "getFavorites", "getLikes", "userLogin", "relation:read", "getNotifications"])]
+    #[Groups(['getUsers', 'getRessources', 'getRoles', 'getRelationTypesDetails', 'getFavorites', 'getLikes', 'userLogin', 'relation:read', 'getNotifications'])]
     private ?string $account_name = null;
 
     #[ORM\Column(nullable: true)]
-    #[Groups(["getUsers"])]
+    #[Groups(['getUsers'])]
     private ?\DateTimeImmutable $birthday = null;
 
     #[ORM\Column]
-    #[Groups(["getUsers"])]
+    #[Groups(['getUsers'])]
     private ?\DateTimeImmutable $createdAt = null;
 
     #[ORM\OneToOne(mappedBy: 'user', targetEntity: Settings::class, cascade: ['persist', 'remove'])]
-    #[Groups(["getUsers"])]
+    #[Groups(['getUsers'])]
     private ?Settings $settings = null;
 
     #[ORM\OneToMany(mappedBy: 'creator', targetEntity: Ressource::class, orphanRemoval: true)]
@@ -73,7 +70,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     private Collection $comments;
 
     #[ORM\Column]
-    #[Groups(["getUsers", "userLogin"])]
+    #[Groups(['getUsers', 'userLogin'])]
     private ?bool $isActive = null;
 
     #[ORM\OneToMany(mappedBy: 'Sender', targetEntity: Relation::class, orphanRemoval: true)]
@@ -89,7 +86,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     private Collection $favorites;
 
     #[ORM\Column(type: 'boolean')]
-    #[Groups(["getUsers", "userLogin"])]
+    #[Groups(['getUsers', 'userLogin'])]
     private $isVerified = false;
 
     #[ORM\OneToMany(mappedBy: 'receiver', targetEntity: Notification::class, orphanRemoval: true)]
@@ -101,7 +98,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
         $this->ressources = new ArrayCollection();
         $this->comments = new ArrayCollection();
 
-        //Relations
+        // Relations
         $this->sent_relation = new ArrayCollection();
         $this->received_relation = new ArrayCollection();
 
@@ -114,6 +111,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     {
         return $this->getAccountName();
     }
+
     public function getId(): ?int
     {
         return $this->id;
@@ -138,11 +136,11 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
      */
     public function getUserIdentifier(): string
     {
-        return (string)$this->email;
+        return (string) $this->email;
     }
 
     /**
-     *  Username method for the security component
+     *  Username method for the security component.
      *
      * @see UserInterface
      */
@@ -213,7 +211,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
 
     public function setLastName(string $surname): self
     {
-        $this->last_name= $surname;
+        $this->last_name = $surname;
 
         return $this;
     }
@@ -504,5 +502,4 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
 
         return $this;
     }
-
 }

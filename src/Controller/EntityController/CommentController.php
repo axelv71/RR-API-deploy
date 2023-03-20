@@ -20,77 +20,74 @@ use Symfony\Component\Serializer\SerializerInterface;
 
 class CommentController extends AbstractController
 {
-    /**
-     * @param CommentRepository $repository
-     * @param SerializerInterface $serializer
-     * @return JsonResponse
-     */
-
-    #[Route('/api/comments', name: 'comments', methods: ["GET"])]
-    #[OA\Tag(name: "Comment")]
-    public function getAllComments(CommentRepository $repository, SerializerInterface $serializer) : JsonResponse
+    #[Route('/api/comments', name: 'comments', methods: ['GET'])]
+    #[OA\Tag(name: 'Comment')]
+    public function getAllComments(CommentRepository $repository, SerializerInterface $serializer): JsonResponse
     {
         $commentList = $repository->findAll();
-        $jsonCommentList = $serializer->serialize($commentList, "json", ["groups"=>"getComments"]);
+        $jsonCommentList = $serializer->serialize($commentList, 'json', ['groups' => 'getComments']);
+
         return new JsonResponse($jsonCommentList, Response::HTTP_OK, [], true);
     }
 
-    #[Route('/api/comments/{id}', name: 'oneComment', methods: ["GET"])]
-    #[OA\Response(response: 200, description: "Returns one comment", content: new OA\JsonContent(ref: new Model(type: Comment::class)))]
-    #[OA\Tag(name: "Comment")]
-    #[OA\Parameter(name: "id", description: "The id of the comment", in: "path", required: true, example: 1)]
-    public function getOneComment(Comment $comment, SerializerInterface $serializer) : JsonResponse
+    #[Route('/api/comments/{id}', name: 'oneComment', methods: ['GET'])]
+    #[OA\Response(response: 200, description: 'Returns one comment', content: new OA\JsonContent(ref: new Model(type: Comment::class)))]
+    #[OA\Tag(name: 'Comment')]
+    #[OA\Parameter(name: 'id', description: 'The id of the comment', in: 'path', required: true, example: 1)]
+    public function getOneComment(Comment $comment, SerializerInterface $serializer): JsonResponse
     {
-        $jsonComment = $serializer->serialize($comment, "json", ["groups"=>"getComments"]);
+        $jsonComment = $serializer->serialize($comment, 'json', ['groups' => 'getComments']);
+
         return new JsonResponse($jsonComment, Response::HTTP_OK, [], true);
     }
 
-    #[Route('/api/comments/{id}', name: 'deleteComment', methods: ["DELETE"])]
-    #[OA\Response(response: 204, description: "Delete one comment", content: new Model(type: Comment::class, groups: ["default"]))]
-    #[OA\Tag(name: "Comment")]
-    #[OA\Parameter(name: "id", description: "The id of the comment", in: "path", required: true, example: 1)]
-    public function deleteComment(Comment $comment, EntityManagerInterface $em) : JsonResponse
+    #[Route('/api/comments/{id}', name: 'deleteComment', methods: ['DELETE'])]
+    #[OA\Response(response: 204, description: 'Delete one comment', content: new Model(type: Comment::class, groups: ['default']))]
+    #[OA\Tag(name: 'Comment')]
+    #[OA\Parameter(name: 'id', description: 'The id of the comment', in: 'path', required: true, example: 1)]
+    public function deleteComment(Comment $comment, EntityManagerInterface $em): JsonResponse
     {
         $em->remove($comment);
         $em->flush();
-        return new JsonResponse("Comment deleted", Response::HTTP_NO_CONTENT, [], true);
+
+        return new JsonResponse('Comment deleted', Response::HTTP_NO_CONTENT, [], true);
     }
 
-    #[Route('/api/comments', name: 'addComment', methods: ["POST"])]
-    #[OA\Response(response: 201, description: "Add one comment", content: new Model(type: Comment::class, groups: ["comment"]))]
-    #[OA\Tag(name: "Comment")]
-    #[OA\RequestBody(description: "Add a new comment", attachables: [
+    #[Route('/api/comments', name: 'addComment', methods: ['POST'])]
+    #[OA\Response(response: 201, description: 'Add one comment', content: new Model(type: Comment::class, groups: ['comment']))]
+    #[OA\Tag(name: 'Comment')]
+    #[OA\RequestBody(description: 'Add a new comment', attachables: [
             new OA\MediaType(
-                mediaType: "application/json",
+                mediaType: 'application/json',
                 schema: new OA\Schema(
-                    type: "object",
+                    type: 'object',
                     properties: [
                         new OA\Property(
-                            property: "content",
-                            type: "string",
-                            example: "This is a comment"
+                            property: 'content',
+                            type: 'string',
+                            example: 'This is a comment'
                         ),
                         new OA\Property(
-                            property: "ressourceid",
-                            type: "integer",
+                            property: 'ressourceid',
+                            type: 'integer',
                             example: 1
-                        )
+                        ),
                     ]
                 )
-            )
+            ),
         ])]
     public function addComment(EntityManagerInterface $em,
                                Request $request,
                                SerializerInterface $serializer,
                                UserRepository $userRepository,
-                               RessourceRepository $ressourceRepository) : JsonResponse
+                               RessourceRepository $ressourceRepository): JsonResponse
     {
         $jsonComment = $request->getContent();
-        $comment = $serializer->deserialize($jsonComment, Comment::class, "json");
+        $comment = $serializer->deserialize($jsonComment, Comment::class, 'json');
 
         $content = $request->toArray();
 
-        $ressourceId = $content["ressourceid"];
+        $ressourceId = $content['ressourceid'];
 
         /** @var User $user */
         $user = $this->getUser();
@@ -99,22 +96,22 @@ class CommentController extends AbstractController
         $comment->setCreator($user);
         $comment->setRessource($ressource);
 
-        if($user){
+        if ($user) {
             $user->addComment($comment);
             $em->persist($user);
         }
-        if($ressource){
+        if ($ressource) {
             $ressource->addComment($comment);
             $em->persist($ressource);
         }
 
-        $notification = Notification::create($user, $ressource->getCreator(), "commentaire", $user->getAccountName() . " a commenté une de vos ressources ");
+        $notification = Notification::create($user, $ressource->getCreator(), 'commentaire', $user->getAccountName().' a commenté une de vos ressources ');
         $notification->setResource($ressource);
         $em->persist($notification);
 
         $em->persist($comment);
         $em->flush();
 
-        return new JsonResponse("Comment added", Response::HTTP_CREATED, ["Location" => $this->generateUrl("oneComment", ["id" => $comment->getId()])], true);
+        return new JsonResponse('Comment added', Response::HTTP_CREATED, ['Location' => $this->generateUrl('oneComment', ['id' => $comment->getId()])], true);
     }
 }

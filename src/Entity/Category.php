@@ -14,30 +14,30 @@ class Category
     #[ORM\Id]
     #[ORM\GeneratedValue]
     #[ORM\Column]
-    #[Groups(["getRessources", "getCategories"])]
+    #[Groups(['getRessources', 'getCategories'])]
     private ?int $id = null;
 
     #[ORM\Column(length: 255)]
-    #[Groups(["getRessources","getCategories","createCategory"])]
+    #[Groups(['getRessources', 'getCategories', 'createCategory'])]
     private ?string $label = null;
 
     #[ORM\Column(length: 255)]
-    #[Groups(["getRessources","getCategories","createCategory"])]
+    #[Groups(['getRessources', 'getCategories', 'createCategory'])]
     private ?string $name = null;
 
     #[ORM\Column]
-    #[Groups(["getCategories"])]
+    #[Groups(['getCategories'])]
     private ?\DateTimeImmutable $createdAt = null;
 
     #[ORM\OneToMany(mappedBy: 'category', targetEntity: Ressource::class)]
     private Collection $ressources;
 
-
-    public static function create (string $label, string $name): self
+    public static function create(string $label, string $name): self
     {
         $category = new self();
         $category->label = $label;
         $category->name = $name;
+
         return $category;
     }
 
@@ -51,6 +51,7 @@ class Category
     {
         return $this->label;
     }
+
     public function getId(): ?int
     {
         return $this->id;
@@ -59,6 +60,7 @@ class Category
     public function setId($id): self
     {
         $this->id = $id;
+
         return $this;
     }
 

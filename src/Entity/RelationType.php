@@ -36,22 +36,21 @@ class RelationType
     #[ORM\ManyToMany(targetEntity: Ressource::class, mappedBy: 'relationType')]
     private Collection $ressources;
 
-
-
-    public static function create (string $label, string $name): self
+    public static function create(string $label, string $name): self
     {
         $relationType = new self();
         $relationType->label = $label;
         $relationType->name = $name;
+
         return $relationType;
     }
+
     public function __construct()
     {
         $this->relations = new ArrayCollection();
         $this->createdAt = new \DateTimeImmutable();
         $this->ressources = new ArrayCollection();
     }
-
 
     #[Groups(['getRelationType', 'getRelationTypesDetails', 'relation:read'])]
     public function getId(): ?int
@@ -62,6 +61,7 @@ class RelationType
     public function setId($id): self
     {
         $this->id = $id;
+
         return $this;
     }
 
@@ -157,5 +157,4 @@ class RelationType
 
         return $this;
     }
-
 }
