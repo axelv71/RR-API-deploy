@@ -92,6 +92,10 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     #[ORM\OneToMany(mappedBy: 'receiver', targetEntity: Notification::class, orphanRemoval: true)]
     private Collection $notifications;
 
+    #[ORM\OneToMany(mappedBy: 'citizen', targetEntity: ExploitedRessource::class)]
+    private Collection $exploitedRessources;
+
+
     public function __construct()
     {
         $this->createdAt = new \DateTimeImmutable();
@@ -105,6 +109,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
         $this->likes = new ArrayCollection();
         $this->favorites = new ArrayCollection();
         $this->notifications = new ArrayCollection();
+        $this->exploitedRessources = new ArrayCollection();
     }
 
     public function __toString()
@@ -502,4 +507,35 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
 
         return $this;
     }
+
+    /**
+     * @return Collection<int, ExploitedRessource>
+     */
+    public function getExploitedRessources(): Collection
+    {
+        return $this->exploitedRessources;
+    }
+
+    public function addExploitedRessource(ExploitedRessource $exploitedRessource): self
+    {
+        if (!$this->exploitedRessources->contains($exploitedRessource)) {
+            $this->exploitedRessources->add($exploitedRessource);
+            $exploitedRessource->setCitizen($this);
+        }
+
+        return $this;
+    }
+
+    public function removeExploitedRessource(ExploitedRessource $exploitedRessource): self
+    {
+        if ($this->exploitedRessources->removeElement($exploitedRessource)) {
+            // set the owning side to null (unless already changed)
+            if ($exploitedRessource->getCitizen() === $this) {
+                $exploitedRessource->setCitizen(null);
+            }
+        }
+
+        return $this;
+    }
+
 }

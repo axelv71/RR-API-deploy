@@ -3,6 +3,7 @@
 namespace App\Controller\EntityController;
 
 use App\Entity\Comment;
+use App\Entity\ExploitedRessource;
 use App\Entity\Favorite;
 use App\Entity\Like;
 use App\Entity\Media;
@@ -10,6 +11,7 @@ use App\Entity\Ressource;
 use App\Entity\RessourceType;
 use App\Entity\User;
 use App\Repository\CategoryRepository;
+use App\Repository\ExploitedRessourceRepository;
 use App\Repository\RelationRepository;
 use App\Repository\RelationTypeRepository;
 use App\Repository\RessourceRepository;
@@ -287,6 +289,84 @@ class RessourceController extends AbstractController
 
         return new JsonResponse($jsonRessourcesTypes, Response::HTTP_OK, [], true);
     }
+
+    /**
+     * This function allows us to add a resource exploited by a user.
+     */
+    #[OA\Tag(name: 'Ressource')]
+    #[OA\Response(response: 201, description: 'Resource exploited by a user is created')]
+    #[OA\RequestBody(description: 'Create a resource exploited by a user', required: true, attachables: [
+        new OA\MediaType(
+            mediaType: 'application/json',
+            schema: new OA\Schema(
+                type: 'object',
+                properties: [
+                    new OA\Property(property: 'resource_id', type: 'integer', example: 1),
+                ]
+            )
+        )
+    ])]
+    #[Route('/api/resources/exploited_resource', name: 'exploited_ressorce', methods: ['POST'])]
+    public function add_exploited_resource(Request $request,
+                                           ExploitedRessourceRepository $exploitedRessourceRepository,
+                                           EntityManagerInterface $entityManager,
+                                           RessourceRepository $ressourceRepository,
+                                           SerializerInterface $serializer): JsonResponse
+    {
+        $content = $serializer->decode($request->getContent(), 'json');
+        /** @var User $user */
+        $user = $this->getUser();
+        $resource_id = $content['resource_id'];
+
+        $resource = $ressourceRepository->findOneBy(['id' => $resource_id]);
+
+        $exploitedResource = ExploitedRessource::create($resource, $user);
+
+        $entityManager->persist($exploitedResource);
+        $entityManager->flush();
+
+        return new JsonResponse("Exploited resource", Response::HTTP_CREATED);
+    }
+
+    /**
+     * Remove the "exploited" status of a resource
+     */
+    #[OA\Tag(name: 'Ressource')]
+    #[OA\Response(response: 204, description: 'Remove the "exploited" status of a resource')]
+    #[OA\RequestBody(description: 'Remove the "exploited" status of a resource', required: true, attachables: [
+        new OA\MediaType(
+            mediaType: 'application/json',
+            schema: new OA\Schema(
+                type: 'object',
+                properties: [
+                    new OA\Property(property: 'resource_id', type: 'integer', example: 1),
+                ]
+            )
+        )
+    ])]
+    #[Route('/api/resources/unexploited_resource', name: 'unexploited_ressorce', methods: ['DELETE'])]
+    public function removeExploitedResource(Request $request,
+                                            ExploitedRessourceRepository $exploitedRessourceRepository,
+                                            EntityManagerInterface $entityManager,
+                                            RessourceRepository $ressourceRepository,
+                                            SerializerInterface $serializer): JsonResponse
+    {
+        $content = $serializer->decode($request->getContent(), 'json');
+        /** @var User $user */
+        $user = $this->getUser();
+        $resource_id = $content['resource_id'];
+
+        $resource = $ressourceRepository->findOneBy(['id' => $resource_id]);
+
+        $exploitedResource = $exploitedRessourceRepository->findOneBy(['ressource' => $resource, 'citizen' => $user]);
+
+        $entityManager->remove($exploitedResource);
+        $entityManager->flush();
+
+        return new JsonResponse("Unexploited resource", Response::HTTP_NO_CONTENT);
+    }
+
+
 
     /**
      * This function allows us to get one ressource by his id.

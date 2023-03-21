@@ -71,6 +71,9 @@ class Ressource
     #[ORM\ManyToOne(inversedBy: 'ressources')]
     private ?RessourceType $type = null;
 
+    #[ORM\OneToMany(mappedBy: 'ressource', targetEntity: ExploitedRessource::class)]
+    private Collection $exploitedRessources;
+
     public function __construct()
     {
         $this->comments = new ArrayCollection();
@@ -80,6 +83,7 @@ class Ressource
         $this->createdAt = new \DateTimeImmutable();
         $this->relationType = new ArrayCollection();
         $this->notifications = new ArrayCollection();
+        $this->exploitedRessources = new ArrayCollection();
     }
 
     public function __toString(): string
@@ -365,6 +369,36 @@ class Ressource
     public function setType(?RessourceType $type): self
     {
         $this->type = $type;
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, ExploitedRessource>
+     */
+    public function getExploitedRessources(): Collection
+    {
+        return $this->exploitedRessources;
+    }
+
+    public function addExploitedRessource(ExploitedRessource $exploitedRessource): self
+    {
+        if (!$this->exploitedRessources->contains($exploitedRessource)) {
+            $this->exploitedRessources->add($exploitedRessource);
+            $exploitedRessource->setRessource($this);
+        }
+
+        return $this;
+    }
+
+    public function removeExploitedRessource(ExploitedRessource $exploitedRessource): self
+    {
+        if ($this->exploitedRessources->removeElement($exploitedRessource)) {
+            // set the owning side to null (unless already changed)
+            if ($exploitedRessource->getRessource() === $this) {
+                $exploitedRessource->setRessource(null);
+            }
+        }
 
         return $this;
     }
