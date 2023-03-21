@@ -85,7 +85,7 @@ class RessourceRepository extends ServiceEntityRepository
                 WHERE "user".id = :user_id
                 AND relation.relation_type_id = :relation_type_id
             )
-            AND ressource_relation_type.relation_type_id = (
+            AND ressource_relation_type.relation_type_id IN (
                 SELECT relation_type_id
                 FROM (
                     SELECT 
@@ -138,7 +138,7 @@ class RessourceRepository extends ServiceEntityRepository
                 WHERE "user".id = :user_id
                 AND relation.relation_type_id = :relation_type_id
             )
-            AND ressource_relation_type.relation_type_id = (
+            AND ressource_relation_type.relation_type_id IN (
                 SELECT relation_type_id
                 FROM (
                     SELECT 
@@ -188,7 +188,7 @@ class RessourceRepository extends ServiceEntityRepository
                 INNER JOIN relation_type ON relation.relation_type_id = relation_type.id
                 WHERE "user".id = :user_id
             )
-            AND ressource_relation_type.relation_type_id = (
+            AND ressource_relation_type.relation_type_id IN (
                 SELECT relation_type_id
                 FROM (
                     SELECT 
@@ -237,7 +237,7 @@ class RessourceRepository extends ServiceEntityRepository
                 INNER JOIN relation_type ON relation.relation_type_id = relation_type.id
                 WHERE "user".id = :user_id
             )
-            AND ressource_relation_type.relation_type_id = (
+            AND ressource_relation_type.relation_type_id IN (
                 SELECT relation_type_id
                 FROM (
                     SELECT 

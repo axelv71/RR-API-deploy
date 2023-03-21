@@ -181,15 +181,16 @@ class RessourceController extends AbstractController
         $relation_type_id = $request->query->getInt('relation_type_id');
         $category_id = $request->query->getInt('category_id');
 
+        $this->logger->info('Relation type id '.$relation_type_id);
+        $this->logger->info('Category id '.$category_id);
+        $this->logger->info('User id '.$user_id);
+
         // Get all resources from friends
-        if (0 != $category_id && 0 != $relation_type_id) {
+        if ($category_id!= 0  && $relation_type_id != 0 ) {
             $all_relations_resources = $ressourceRepository->getAllResourcesByRelationsByCategory($user_id, $relation_type_id, $category_id);
-        } elseif (0 === $category_id && 0 != $relation_type_id) {
-            $this->logger->info('Relation type id '.$relation_type_id);
-            $this->logger->info('Category id '.$category_id);
-            $this->logger->info('User id '.$user_id);
+        } elseif ($category_id === 0 && $relation_type_id != 0) {
             $all_relations_resources = $ressourceRepository->getAllResourcesByRelationsType($user_id, $relation_type_id);
-        } elseif (0 != $category_id && 0 === $relation_type_id) {
+        } elseif ($category_id != 0 && $relation_type_id === 0) {
             $all_relations_resources = $ressourceRepository->getAllResourcesByCategoryWithourRelationType($user_id, $category_id);
         } else {
             $all_relations_resources = $ressourceRepository->getAllResourcesWithoutRelationTypeWithoutCategory($user_id);
@@ -254,8 +255,7 @@ class RessourceController extends AbstractController
                 $resources_drafts[] = $resource;
             }
         }
-
-
+        
         $jsonRessources = $serializer->serialize($resources_drafts, 'json', ['groups' => 'getRessources']);
 
         return new JsonResponse($jsonRessources, Response::HTTP_OK, [], true);
