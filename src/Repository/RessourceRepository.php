@@ -3,6 +3,7 @@
 namespace App\Repository;
 
 use App\Entity\Ressource;
+use App\Entity\User;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\DBAL\Exception;
 use Doctrine\ORM\Tools\Pagination\Paginator;
@@ -303,6 +304,36 @@ class RessourceRepository extends ServiceEntityRepository
         $query->getQuery();
 
         return new Paginator($query, true);
+    }
+
+    /**
+     * @throws Exception
+     */
+    public function getOneUserResources($user_id, $research_user_id, $page = 0, $pageSize = 10): array
+    {
+        $conn = $this->getEntityManager()->getConnection();
+
+        $sql = '
+            SELECT *
+            FROM ressource
+            INNER JOIN ressource_relation_type ON ressource.id = ressource_relation_type.ressource_id
+            WHERE ressource.creator_id = :research_user_id
+            AND (
+                ressource_relation_type.relation_type_id = 1
+                OR ressource_relation_type.relation_type_id IN (
+                    SELECT relation_type_id
+                    FROM relation
+                    WHERE (relation.sender_id = :research_user_id AND relation.receiver_id = :user_id) OR (relation.sender_id = :user_id AND relation.receiver_id = :research_user_id)
+                ))
+        ';
+
+        $stmt = $conn->prepare($sql);
+        $resultSet = $stmt->executeQuery([
+            'user_id' => $user_id,
+            'research_user_id' => $research_user_id,
+        ]);
+
+        return $resultSet->fetchAllAssociative();
     }
 
 //    /**

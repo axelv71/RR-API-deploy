@@ -44,8 +44,9 @@ class RessourceController extends AbstractController
         $this->faker = Factory::create('fr_FR');
     }
 
-    /***
-     * Create 20 ressources
+
+    /**
+     * This function allows us to create 20 ressources in database
      * @param RessourceRepository $ressourceRepository
      * @param UserRepository $repository
      * @param CategoryRepository $categoryRepository
@@ -56,6 +57,7 @@ class RessourceController extends AbstractController
      */
     #[OA\Tag(name: 'Ressource')]
     #[Route('/api/ressources/create', name: 'create_ressources', methods: ['GET'])]
+    #[OA\Response(response: 200, description: 'Create 20 ressources')]
     public function createRessources(RessourceRepository $ressourceRepository,
                                      UserRepository $repository,
                                      CategoryRepository $categoryRepository,
@@ -254,8 +256,12 @@ class RessourceController extends AbstractController
         return new JsonResponse($jsonResourceList, Response::HTTP_OK, [], true);
     }
 
-    /***
-     * This function allows us to get all user's resources
+
+
+
+    /**
+     * This function allows us to get connected user's resources.
+     *
      * @param SerializerInterface $serializer
      * @param RessourceRepository $repository
      * @return JsonResponse
@@ -273,8 +279,10 @@ class RessourceController extends AbstractController
         return new JsonResponse($jsonRessources, Response::HTTP_OK, [], true);
     }
 
-    /***
-     * This function allows us to get all ressources types
+
+    /**
+     * This function allows us to get all resources types.
+     *
      * @param SerializerInterface $serializer
      * @param RessourceTypeRepository $repository
      * @return JsonResponse
@@ -366,6 +374,47 @@ class RessourceController extends AbstractController
         return new JsonResponse("Unexploited resource", Response::HTTP_NO_CONTENT);
     }
 
+    /**
+     * This function allows us to get all resources public resources and relation resource for one user.
+     *
+     * @param RessourceRepository $ressourceRepository
+     * @param Request $request
+     * @param UserRepository $userRepository
+     * @param SerializerInterface $serializer
+     * @return JsonResponse
+     */
+    #[OA\Tag(name: 'Ressource')]
+    #[OA\Parameter(name: 'research_user_id', description: 'The id of the user', in: 'query', required: true, example: 1)]
+    #[OA\Parameter(name: 'page', description: 'Page number', in: 'query', required: false, example: 1)]
+    #[OA\Parameter(name: 'pageSize', description: 'Number of ressources per page', in: 'query', required: false, example: 10)]
+    #[Route('/api/resources/user', name: 'get_user_resources', methods: ['GET'])]
+    public function getOneUserResources(RessourceRepository $ressourceRepository,
+                                        Request $request,
+                                        UserRepository $userRepository,
+                                        SerializerInterface $serializer) : JsonResponse
+    {
+        $page = $request->query->getInt('page', 1);
+        $pageSize = $request->query->getInt('pageSize', 10);
+        $research_user_id = $request->query->getInt('research_user_id', 1);
+
+        /** @var User $user */
+        $user = $this->getUser();
+        $research_user = $userRepository->find($research_user_id);
+
+        $resources_array = $ressourceRepository->getOneUserResources($user->getId(), $research_user->getId(), $page, $pageSize);
+
+        $resources_id = [];
+        foreach ($resources_array as $resource) {
+            $resources_id[] = $resource['id'];
+        }
+
+        $resources = $ressourceRepository->getAllWithPaginationById($resources_id, $page, $pageSize);
+
+
+        $jsonRessources = $serializer->serialize($resources, 'json', ['groups' => 'getRessources']);
+
+        return new JsonResponse($jsonRessources, Response::HTTP_OK, [], true);
+    }
 
 
     /**
@@ -499,4 +548,5 @@ class RessourceController extends AbstractController
 
         return new JsonResponse('Ressource updated', Response::HTTP_OK);
     }
+
 }
