@@ -103,6 +103,7 @@ class RessourceRepository extends ServiceEntityRepository
             )
             AND ressource.category_id = :category_id
             AND (ressource.is_valid = true AND ressource.is_published = true)
+            ORDER BY ressource.created_at DESC
         ';
 
         $stmt = $conn->prepare($sql);
@@ -155,6 +156,7 @@ class RessourceRepository extends ServiceEntityRepository
                 WHERE subquery.other_user_id = ressource.creator_id
             )
             AND (ressource.is_valid = true AND ressource.is_published = true)
+            ORDER BY ressource.created_at DESC
         ';
 
         $stmt = $conn->prepare($sql);
@@ -188,23 +190,26 @@ class RessourceRepository extends ServiceEntityRepository
                 INNER JOIN relation_type ON relation.relation_type_id = relation_type.id
                 WHERE "user".id = :user_id
             )
-            AND ressource_relation_type.relation_type_id IN (
-                SELECT relation_type_id
-                FROM (
-                    SELECT 
-                        CASE 
-                            WHEN relation.sender_id = "user".id THEN relation.receiver_id
-                            ELSE relation.sender_id
-                        END as other_user_id, 
-                        relation_type.id as relation_type_id
-                    FROM "user"
-                    INNER JOIN relation ON "user".id = relation.receiver_id OR "user".id = relation.sender_id
-                    INNER JOIN relation_type ON relation.relation_type_id = relation_type.id
-                    WHERE "user".id = :user_id
-                ) as subquery
-                WHERE subquery.other_user_id = ressource.creator_id
-            )
+            AND (ressource_relation_type.relation_type_id IN
+                (
+                    SELECT relation_type_id
+                    FROM (
+                        SELECT
+                            CASE
+                                WHEN relation.sender_id = "user".id THEN relation.receiver_id
+                                ELSE relation.sender_id
+                            END as other_user_id,
+                            relation_type.id as relation_type_id
+                        FROM "user"
+                        INNER JOIN relation ON "user".id = relation.receiver_id OR "user".id = relation.sender_id
+                        INNER JOIN relation_type ON relation.relation_type_id = relation_type.id
+                        WHERE "user".id = :user_id
+                    ) as subquery
+                    WHERE subquery.other_user_id = ressource.creator_id
+                )
+                OR ressource_relation_type.relation_type_id = 1)
             AND (ressource.is_valid = true AND ressource.is_published = true)
+            ORDER BY ressource.created_at DESC
         ';
 
         $stmt = $conn->prepare($sql);
@@ -237,24 +242,27 @@ class RessourceRepository extends ServiceEntityRepository
                 INNER JOIN relation_type ON relation.relation_type_id = relation_type.id
                 WHERE "user".id = :user_id
             )
-            AND ressource_relation_type.relation_type_id IN (
-                SELECT relation_type_id
-                FROM (
-                    SELECT 
-                        CASE 
-                            WHEN relation.sender_id = "user".id THEN relation.receiver_id
-                            ELSE relation.sender_id
-                        END as other_user_id, 
-                        relation_type.id as relation_type_id
-                    FROM "user"
-                    INNER JOIN relation ON "user".id = relation.receiver_id OR "user".id = relation.sender_id
-                    INNER JOIN relation_type ON relation.relation_type_id = relation_type.id
-                    WHERE "user".id = :user_id
-                ) as subquery
-                WHERE subquery.other_user_id = ressource.creator_id
-            )
+            AND (ressource_relation_type.relation_type_id IN
+                (
+                    SELECT relation_type_id
+                    FROM (
+                        SELECT
+                            CASE
+                                WHEN relation.sender_id = "user".id THEN relation.receiver_id
+                                ELSE relation.sender_id
+                            END as other_user_id,
+                            relation_type.id as relation_type_id
+                        FROM "user"
+                        INNER JOIN relation ON "user".id = relation.receiver_id OR "user".id = relation.sender_id
+                        INNER JOIN relation_type ON relation.relation_type_id = relation_type.id
+                        WHERE "user".id = :user_id
+                    ) as subquery
+                    WHERE subquery.other_user_id = ressource.creator_id
+                )
+                OR ressource_relation_type.relation_type_id = 1)
             AND ressource.category_id = :category_id
             AND (ressource.is_valid = true AND ressource.is_published = true)
+            ORDER BY ressource.created_at DESC
         ';
 
         $stmt = $conn->prepare($sql);
