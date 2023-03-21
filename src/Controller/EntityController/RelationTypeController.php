@@ -19,7 +19,7 @@ class RelationTypeController extends AbstractController
     /**
      * Return all relations types.
      */
-    #[Route('/api/relationtype', name: 'relation_type', methods: ['GET'])]
+    #[Route('/api/relation_type', name: 'relation_type', methods: ['GET'])]
     #[OA\Tag(name: 'Relation Type')]
     #[OA\Response(response: 200, description: 'Return all relations types')]
     public function getAllRelationTypes(RelationTypeRepository $relationTypeRepository, SerializerInterface $serializer): JsonResponse
@@ -33,7 +33,7 @@ class RelationTypeController extends AbstractController
     /**
      *This function allows us to get details of one relation type.
      */
-    #[Route('/api/relationtype/{id}', name: 'relation_type_details', methods: ['GET'])]
+    #[Route('/api/relation_type/{id}', name: 'relation_type_details', methods: ['GET'])]
     #[OA\Tag(name: 'Relation Type')]
     #[OA\Response(response: 200, description: 'Return details of one relation type')]
     #[OA\Parameter(name: 'id', description: 'The id of the relation type', in: 'path', required: true, example: 1)]
@@ -47,7 +47,7 @@ class RelationTypeController extends AbstractController
     /**
      * This function allows us to create a relation type.
      */
-    #[Route('/api/relationtype', name: 'create_relation_type', methods: ['POST'])]
+    #[Route('/api/relation_type', name: 'create_relation_type', methods: ['POST'])]
     #[OA\Tag(name: 'Relation Type')]
     #[OA\Response(response: 201, description: 'Relation type is created')]
     #[OA\RequestBody(description: 'Create a relation type', required: true, attachables: [
@@ -78,7 +78,7 @@ class RelationTypeController extends AbstractController
     /**
      * This function allows us to update a relation type.
      */
-    #[Route('/api/relationtype/{id}', name: 'update_relation_type', methods: ['PUT'])]
+    #[Route('/api/relation_type/{id}', name: 'update_relation_type', methods: ['PUT'])]
     #[OA\Tag(name: 'Relation Type')]
     #[OA\Parameter(name: 'id', description: 'The id of the relation type', in: 'path', required: true, example: 1)]
     #[OA\RequestBody(description: 'Update a relation type', required: true, attachables: [
@@ -111,7 +111,7 @@ class RelationTypeController extends AbstractController
      *
      * @return JsonResponse
      */
-    #[Route('/api/relationtype/{id}', name: 'delete_relation_type', methods: ['DELETE'])]
+    #[Route('/api/relation_type/{id}', name: 'delete_relation_type', methods: ['DELETE'])]
     #[OA\Parameter(name: 'id', description: 'The id of the relation type', in: 'path', required: true, example: 1)]
     #[OA\Response(response: 204, description: 'Relation type has been deleted')]
     #[OA\Tag(name: 'Relation Type')]
