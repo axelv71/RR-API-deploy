@@ -229,6 +229,27 @@ class RessourceController extends AbstractController
         return new JsonResponse($jsonRessources, Response::HTTP_OK, [], true);
     }
 
+    #[OA\Tag(name: 'Ressource')]
+    #[Route('/api/resources/user_drafts', name: 'getDraftsByUser', methods: ['GET'])]
+    public function getUserDrafts(SerializerInterface $serializer, RessourceRepository $repository): JsonResponse
+    {
+        /** @var User $user */
+        $user = $this->getUser();
+        $resources = $user->getRessources();
+
+        $resources_drafts = [];
+
+        foreach ($resources as $resource) {
+            if (!$resource->isIsPublished()) {
+                $resources_drafts[] = $resource;
+            }
+        }
+
+
+        $jsonRessources = $serializer->serialize($resources_drafts, 'json', ['groups' => 'getRessources']);
+
+        return new JsonResponse($jsonRessources, Response::HTTP_OK, [], true);
+    }
 
     /**
      * This function allows us to get all resources types.
