@@ -181,31 +181,6 @@ class RessourceController extends AbstractController
         $relation_type_id = $request->query->getInt('relation_type_id');
         $category_id = $request->query->getInt('category_id');
 
-        // Get all relations for user
-        $relations = $relationRepository->retrieveAllRelationsByUser($user);
-
-        $friends_relations = [];
-        $friends_ids = [];
-
-        // Get all friends ids to get their resources
-        foreach ($relations as $relation) {
-            if ($relation->getRelationType()->getId() != $relation_type_id && 0 != $relation_type_id) {
-                continue;
-            }
-            $sender_id = $relation->getSender()->getId();
-            $receiver_id = $relation->getReceiver()->getId();
-            if ($sender_id == $user_id) {
-                $friend_id = $receiver_id;
-            } else {
-                $friend_id = $sender_id;
-            }
-            $friends_ids[] = $friend_id;
-            $this->logger->info('friend id : '.$friend_id.' relation type id : '.$relation->getRelationType()->getId());
-            $friends_relations[] = [
-                $friend_id, $relation->getRelationType()->getId(),
-            ];
-        }
-
         // Get all resources from friends
         if (0 != $category_id && 0 != $relation_type_id) {
             $all_relations_resources = $ressourceRepository->getAllResourcesByRelationsByCategory($user_id, $relation_type_id, $category_id);
@@ -233,9 +208,6 @@ class RessourceController extends AbstractController
 
         return new JsonResponse($jsonResourceList, Response::HTTP_OK, [], true);
     }
-
-
-
 
     /**
      * This function allows us to get connected user's resources.
