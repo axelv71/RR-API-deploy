@@ -1,4 +1,13 @@
-# Projet CUBE 1 - Backend
+<!-- PROJECT LOGO -->
+<br />
+<p align="center">
+  <a href="https://github.com/Twachx/CUBE-Back">
+    <img src="public/banner.png" alt="Logo" >
+  </a>
+
+  <h3 align="center">Projet CUBE</h3>
+ 
+## Pré-requis : 
 Pour exécuter le backend il est conseiller de le faire avec Docker afin que tout le monde est les mêmes dépendances ainsi que le même environnement de développement.
 
 >Pour installer Docker veuillez vous référer aux documentations de [Docker](https://docs.docker.com/get-docker/) et [docker-compose](https://docs.docker.com/compose/install/)( si vous êtes sur Mac, Docker a directement installé docker-compose, il n'est donc pas nécessaire de l'installer à nouveau
