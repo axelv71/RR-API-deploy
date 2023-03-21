@@ -229,8 +229,18 @@ class RessourceController extends AbstractController
         return new JsonResponse($jsonRessources, Response::HTTP_OK, [], true);
     }
 
+
+
+    /**
+     * This function allows us to get connected user's drafts.
+     *
+     * @param SerializerInterface $serializer
+     * @param RessourceRepository $repository
+     * @return JsonResponse
+     */
     #[OA\Tag(name: 'Ressource')]
     #[Route('/api/resources/user_drafts', name: 'getDraftsByUser', methods: ['GET'])]
+    #[OA\Response(response: 200, description: "Return user's drafts", content: new Model(type: Ressource::class))]
     public function getUserDrafts(SerializerInterface $serializer, RessourceRepository $repository): JsonResponse
     {
         /** @var User $user */
