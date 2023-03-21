@@ -49,6 +49,8 @@ class RessourceRepository extends ServiceEntityRepository
         $query = $this->createQueryBuilder('r')
             ->innerJoin('r.relationType', 'rtt')
             ->andWhere('rtt.id = :relationType')
+            ->andWhere('r.isValid = true')
+            ->andWhere('r.$isPublished = true')
             ->setParameter('relationType', 1)
             ->orderBy('r.createdAt', 'DESC');
 
@@ -65,18 +67,6 @@ class RessourceRepository extends ServiceEntityRepository
      */
     public function getAllResourcesByRelationsByCategory($user_id, $relation_type_id, $category_id): array
     {
-        /*$query = $this->createQueryBuilder('r')
-            ->andWhere('r.creator IN (:relations)')
-            ->andWhere('r.category = :category')
-            ->setParameter('category', $category_id)
-            ->setParameter('relations', $friends_ids)
-            ->orderBy('r.createdAt', 'DESC');
-
-        $query->setFirstResult($firstResult);
-        $query->setMaxResults($pageSize);
-
-        $query->getQuery();*/
-
         $conn = $this->getEntityManager()->getConnection();
 
         $sql = '
@@ -112,6 +102,7 @@ class RessourceRepository extends ServiceEntityRepository
                 WHERE subquery.other_user_id = ressource.creator_id
             )
             AND ressource.category_id = :category_id
+            AND (ressource.is_valid = true AND ressource.is_published = true)
         ';
 
         $stmt = $conn->prepare($sql);
@@ -163,6 +154,7 @@ class RessourceRepository extends ServiceEntityRepository
                 ) as subquery
                 WHERE subquery.other_user_id = ressource.creator_id
             )
+            AND (ressource.is_valid = true AND ressource.is_published = true)
         ';
 
         $stmt = $conn->prepare($sql);
@@ -212,6 +204,7 @@ class RessourceRepository extends ServiceEntityRepository
                 ) as subquery
                 WHERE subquery.other_user_id = ressource.creator_id
             )
+            AND (ressource.is_valid = true AND ressource.is_published = true)
         ';
 
         $stmt = $conn->prepare($sql);
@@ -261,6 +254,7 @@ class RessourceRepository extends ServiceEntityRepository
                 WHERE subquery.other_user_id = ressource.creator_id
             )
             AND ressource.category_id = :category_id
+            AND (ressource.is_valid = true AND ressource.is_published = true)
         ';
 
         $stmt = $conn->prepare($sql);
@@ -325,6 +319,8 @@ class RessourceRepository extends ServiceEntityRepository
                     FROM relation
                     WHERE (relation.sender_id = :research_user_id AND relation.receiver_id = :user_id) OR (relation.sender_id = :user_id AND relation.receiver_id = :research_user_id)
                 ))
+            AND (ressource.is_valid = true AND ressource.is_published = true)
+            ORDER BY ressource.created_at DESC
         ';
 
         $stmt = $conn->prepare($sql);
@@ -336,28 +332,4 @@ class RessourceRepository extends ServiceEntityRepository
         return $resultSet->fetchAllAssociative();
     }
 
-//    /**
-//     * @return Ressource[] Returns an array of Ressource objects
-//     */
-//    public function findByExampleField($value): array
-//    {
-//        return $this->createQueryBuilder('r')
-//            ->andWhere('r.exampleField = :val')
-//            ->setParameter('val', $value)
-//            ->orderBy('r.id', 'ASC')
-//            ->setMaxResults(10)
-//            ->getQuery()
-//            ->getResult()
-//        ;
-//    }
-
-//    public function findOneBySomeField($value): ?Ressource
-//    {
-//        return $this->createQueryBuilder('r')
-//            ->andWhere('r.exampleField = :val')
-//            ->setParameter('val', $value)
-//            ->getQuery()
-//            ->getOneOrNullResult()
-//        ;
-//    }
 }

@@ -152,16 +152,6 @@ class RessourceController extends AbstractController
     {
         $ressourceList = $repository->getAllPublicWithPagination($request->query->getInt('page', 1), $request->query->getInt('pageSize', 10));
 
-        /*$publicRessources = [];
-        foreach($ressourceList as $ressource) {
-            $ressource_relation_type_array = $ressource->getRelationType();
-            foreach($ressource_relation_type_array as $ressource_relation_type) {
-                $this->logger->info($ressource_relation_type->getId());
-                if($ressource_relation_type->getId() == 1) {
-                    $publicRessources[] = $ressource;
-                }
-            }
-        }*/
         $jsonRessourceList = $serializer->serialize($ressourceList, 'json', ['groups' => 'getRessources']);
 
         return new JsonResponse($jsonRessourceList, Response::HTTP_OK, [], true);
@@ -237,18 +227,6 @@ class RessourceController extends AbstractController
         }
 
         $friends_resources = $ressourceRepository->getAllWithPaginationById($resources_id, $request->query->getInt('page', 1), $request->query->getInt('pageSize', 10));
-
-        /*$friends_resources = [];
-        foreach($all_relations_resources as $resource){
-            $creator_id = $resource->getCreator()->getId();
-            $relation_type_array = $resource->getRelationType();
-            foreach($relation_type_array as $relation_type){
-                $relation_type_id = $relation_type->getId();
-                if(in_array([$creator_id, $relation_type_id], $friends_relations)){
-                    $friends_resources[] = $resource;
-                }
-            }
-        }*/
 
         $this->logger->info('Nombre de ressources : '.count($friends_resources));
         $jsonResourceList = $serializer->serialize($friends_resources, 'json', ['groups' => 'getRessources']);
@@ -382,6 +360,7 @@ class RessourceController extends AbstractController
      * @param UserRepository $userRepository
      * @param SerializerInterface $serializer
      * @return JsonResponse
+     * @throws Exception
      */
     #[OA\Tag(name: 'Ressource')]
     #[OA\Parameter(name: 'research_user_id', description: 'The id of the user', in: 'query', required: true, example: 1)]
