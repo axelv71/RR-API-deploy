@@ -4,8 +4,10 @@ namespace App\Controller\EntityController;
 
 use App\Entity\Favorite;
 use App\Entity\Notification;
+use App\Entity\NotificationType;
 use App\Entity\User;
 use App\Repository\FavoriteRepository;
+use App\Repository\NotificationTypeRepository;
 use App\Repository\RessourceRepository;
 use App\Repository\UserRepository;
 use Doctrine\ORM\EntityManagerInterface;
@@ -18,6 +20,13 @@ use Symfony\Component\Routing\Annotation\Route;
 
 class FavoriteController extends AbstractController
 {
+    private NotificationType $notificationType;
+
+    public function __construct(NotificationTypeRepository $notificationTypeRepository)
+    {
+        $this->notificationType = $notificationTypeRepository->findOneBy(['name' => 'favorite']);
+    }
+
     #[OA\Tag(name: 'Favorite')]
     #[OA\Response(
         response: 200,
@@ -74,8 +83,7 @@ class FavoriteController extends AbstractController
 
         $notification_content = $user->getAccountName().' a ajouté votre ressource à ses favoris';
 
-        $notification = Notification::create($user, $resource_creator, 'favorite', $notification_content);
-        $notification->setResource($resource);
+        $notification = Notification::create($user, $resource_creator, $this->notificationType, $notification_content, $resource);
         $em->persist($notification);
 
         $em->flush();

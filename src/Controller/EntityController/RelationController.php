@@ -3,9 +3,11 @@
 namespace App\Controller\EntityController;
 
 use App\Entity\Notification;
+use App\Entity\NotificationType;
 use App\Entity\Relation;
 use App\Entity\RelationType;
 use App\Entity\User;
+use App\Repository\NotificationTypeRepository;
 use App\Repository\RelationRepository;
 use App\Repository\RelationTypeRepository;
 use App\Repository\UserRepository;
@@ -23,10 +25,12 @@ use Symfony\Component\Serializer\SerializerInterface;
 class RelationController extends AbstractController
 {
     private LoggerInterface $logger;
+    private NotificationType $notificationType;
 
-    public function __construct(EntityManagerInterface $em, LoggerInterface $logger)
+    public function __construct(EntityManagerInterface $em, LoggerInterface $logger, NotificationTypeRepository $notificationTypeRepository)
     {
         $this->logger = $logger;
+        $this->notificationType = $notificationTypeRepository->findOneBy(['name' => 'relation']);
     }
 
     /**
@@ -97,7 +101,7 @@ class RelationController extends AbstractController
         $relation = Relation::create($sender, $receiver, $relationType);
         $relation->setUpdatedAt(new \DateTimeImmutable());
 
-        $notification = Notification::create($sender, $receiver, 'amis', "Vous avez reçu une demande d'amis de la part de ".$sender->getAccountName());
+        $notification = Notification::create($sender, $receiver, $this->notificationType, "Vous avez reçu une demande d'amis de la part de ".$sender->getAccountName());
         $entityManage->persist($notification);
 
         $entityManage->persist($relation);
@@ -171,7 +175,7 @@ class RelationController extends AbstractController
 
         $notification = Notification::create($relation->getReceiver(),
             $relation->getSender(),
-            'relation',
+            $this->notificationType,
             "Votre demande d'amis a été acceptée par ".$relation->getReceiver()->getAccountName());
 
         $entityManage->persist($notification);

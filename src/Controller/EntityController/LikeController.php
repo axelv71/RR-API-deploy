@@ -4,9 +4,11 @@ namespace App\Controller\EntityController;
 
 use App\Entity\Like;
 use App\Entity\Notification;
+use App\Entity\NotificationType;
 use App\Entity\User;
 use App\Repository\LikeRepository;
 use App\Repository\NotificationRepository;
+use App\Repository\NotificationTypeRepository;
 use App\Repository\RessourceRepository;
 use App\Repository\UserRepository;
 use Doctrine\ORM\EntityManagerInterface;
@@ -19,6 +21,13 @@ use Symfony\Component\Routing\Annotation\Route;
 
 class LikeController extends AbstractController
 {
+    private NotificationType $notificationType;
+
+    public function __construct(NotificationTypeRepository $notificationTypeRepository)
+    {
+        $this->notificationType = $notificationTypeRepository->findOneBy(['name' => 'like']);
+    }
+
     #[OA\Tag(name: 'Like')]
     #[OA\Response(
         response: 200,
@@ -78,8 +87,7 @@ class LikeController extends AbstractController
 
         $notification_content = $user->getAccountName().' a aimé votre ressource';
 
-        $notification = Notification::create($user, $resource_creator, 'like', $notification_content);
-        $notification->setResource($resource);
+        $notification = Notification::create($user, $resource_creator, $this->notificationType, $notification_content, $resource);
         $em->persist($notification);
 
         $em->flush();

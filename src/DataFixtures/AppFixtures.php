@@ -8,6 +8,8 @@ use App\Entity\Favorite;
 use App\Entity\Language;
 use App\Entity\Like;
 use App\Entity\Media;
+use App\Entity\Notification;
+use App\Entity\NotificationType;
 use App\Entity\Relation;
 use App\Entity\RelationType;
 use App\Entity\Ressource;
@@ -130,6 +132,21 @@ class AppFixtures extends Fixture
             $manager->persist($relationType);
         }
 
+        $notification_types = [
+            ["Like", "like"],
+            ["Comment", "comment"],
+            ["Favorite", "favorite"],
+            ["Relation", "relation"],
+            ["Ressource", "ressource"],
+        ];
+
+        $notificationTypes = [];
+        foreach($notification_types as $notification_type) {
+            $notificationType = NotificationType::create($notification_type[0], $notification_type[1]);
+            $notificationTypes[] = $notificationType;
+            $manager->persist($notificationType);
+        }
+
         $users = [];
         for ($i = 0; $i < 10; ++$i) {
             // Create a setting
@@ -178,6 +195,7 @@ class AppFixtures extends Fixture
         $user->setSettings($setting);
         $manager->persist($user);
         $users[] = $user;
+
 
         // Relation
         $relations = [];
@@ -309,6 +327,23 @@ class AppFixtures extends Fixture
                 }
             }
         }
+
+        //Notifications
+        // Create notification for test user
+        for ($i = 0; $i < 10; ++$i) {
+            $notification = Notification::create($users[mt_rand(0, count($users)-1)],
+                $user,
+                $notificationTypes[mt_rand(0, count($notificationTypes) - 1)],
+                "test",
+                $ressources[mt_rand(0, count($ressources)-1)]);
+
+            if ($notification->getNotificationType()->getName() == 'relation') {
+                $notification->setResource(null);
+            }
+
+            $manager->persist($notification);
+        }
+
         $manager->flush();
     }
 }

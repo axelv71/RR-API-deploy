@@ -4,8 +4,10 @@ namespace App\Controller\EntityController;
 
 use App\Entity\Comment;
 use App\Entity\Notification;
+use App\Entity\NotificationType;
 use App\Entity\User;
 use App\Repository\CommentRepository;
+use App\Repository\NotificationTypeRepository;
 use App\Repository\RessourceRepository;
 use App\Repository\UserRepository;
 use Doctrine\ORM\EntityManagerInterface;
@@ -20,6 +22,13 @@ use Symfony\Component\Serializer\SerializerInterface;
 
 class CommentController extends AbstractController
 {
+    private NotificationType $notificationType;
+
+    public function __construct(NotificationTypeRepository $notificationTypeRepository)
+    {
+        $this->notificationType = $notificationTypeRepository->findOneBy(['name' => 'comment']);
+    }
+
     #[Route('/api/comments', name: 'comments', methods: ['GET'])]
     #[OA\Tag(name: 'Comment')]
     public function getAllComments(CommentRepository $repository, SerializerInterface $serializer): JsonResponse
@@ -105,8 +114,12 @@ class CommentController extends AbstractController
             $em->persist($ressource);
         }
 
-        $notification = Notification::create($user, $ressource->getCreator(), 'commentaire', $user->getAccountName().' a commenté une de vos ressources ');
-        $notification->setResource($ressource);
+        $notification = Notification::create($user,
+            $ressource->getCreator(),
+            $this->notificationType,
+            $user->getAccountName().' a commenté une de vos ressources ',
+            $ressource);
+
         $em->persist($notification);
 
         $em->persist($comment);

@@ -24,9 +24,9 @@ class Notification
     #[Groups(['getNotifications'])]
     private ?User $sender = null;
 
-    #[ORM\Column(length: 255)]
+    #[ORM\ManyToOne(inversedBy: 'notifications')]
     #[Groups(['getNotifications'])]
-    private ?string $type = null;
+    private ?NotificationType $notificationType = null;
 
     #[ORM\Column(length: 255)]
     #[Groups(['getNotifications'])]
@@ -40,13 +40,16 @@ class Notification
     #[Groups(['getNotifications'])]
     private ?Ressource $resource = null;
 
-    public static function create($sender, User $receiver, string $type, string $content): self
+
+
+    public static function create($sender, User $receiver, NotificationType $type, string $content, Ressource $resource=null): self
     {
         $notification = new self();
         $notification->sender = $sender;
         $notification->receiver = $receiver;
-        $notification->type = $type;
+        $notification->notificationType = $type;
         $notification->content = $content;
+        $notification->resource = $resource;
 
         return $notification;
     }
@@ -85,18 +88,6 @@ class Notification
         return $this;
     }
 
-    public function getType(): ?string
-    {
-        return $this->type;
-    }
-
-    public function setType(string $type): self
-    {
-        $this->type = $type;
-
-        return $this;
-    }
-
     public function getContent(): ?string
     {
         return $this->content;
@@ -129,6 +120,18 @@ class Notification
     public function setResource(?Ressource $resource): self
     {
         $this->resource = $resource;
+
+        return $this;
+    }
+
+    public function getNotificationType(): ?NotificationType
+    {
+        return $this->notificationType;
+    }
+
+    public function setNotificationType(?NotificationType $notificationType): self
+    {
+        $this->notificationType = $notificationType;
 
         return $this;
     }
