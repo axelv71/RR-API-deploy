@@ -40,6 +40,7 @@ class Comment
     public function __construct()
     {
         $this->createAt = new \DateTimeImmutable();
+        $this->isValid = true;
     }
 
     public function getId(): ?int

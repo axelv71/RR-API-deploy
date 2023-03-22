@@ -125,6 +125,8 @@ class CommentController extends AbstractController
         $em->persist($comment);
         $em->flush();
 
-        return new JsonResponse('Comment added', Response::HTTP_CREATED, ['Location' => $this->generateUrl('oneComment', ['id' => $comment->getId()])], true);
+        $jsonComment = $serializer->serialize($comment, 'json', ['groups' => 'getComments']);
+
+        return new JsonResponse($jsonComment, Response::HTTP_CREATED, ['Location' => $this->generateUrl('oneComment', ['id' => $comment->getId()])], true);
     }
 }

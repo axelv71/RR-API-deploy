@@ -25,7 +25,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     private ?int $id = null;
 
     #[ORM\Column(length: 180, unique: true)]
-    #[Groups(['getUsers', 'getRessources', 'getRoles', 'getRelationTypesDetails', 'userLogin', 'relation:read'])]
+    #[Groups(['getUsers', 'getRessources', 'getComments', 'getRoles', 'getRelationTypesDetails', 'userLogin', 'relation:read'])]
     private ?string $email = null;
 
     #[OA\Property(type: 'string', enum: ['ROLE_USER', 'ROLE_ADMIN'])]
@@ -40,15 +40,15 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     private ?string $password = null;
 
     #[ORM\Column(length: 255)]
-    #[Groups(['getUsers', 'getRessources', 'getRelationTypesDetails', 'getFavorites', 'userLogin', 'relation:read'])]
+    #[Groups(['getUsers', 'getRessources', 'getComments', 'getRelationTypesDetails', 'getFavorites', 'userLogin', 'relation:read'])]
     private ?string $first_name = null;
 
     #[ORM\Column(length: 255)]
-    #[Groups(['getUsers', 'getRessources', 'getRelationTypesDetails', 'getFavorites', 'userLogin', 'relation:read'])]
+    #[Groups(['getUsers', 'getRessources', 'getComments','getRelationTypesDetails', 'getFavorites', 'userLogin', 'relation:read'])]
     private ?string $last_name = null;
 
     #[ORM\Column(length: 255)]
-    #[Groups(['getUsers', 'getRessources', 'getRoles', 'getRelationTypesDetails', 'getFavorites', 'getLikes', 'userLogin', 'relation:read', 'getNotifications'])]
+    #[Groups(['getUsers', 'getRessources', 'getComments', 'getRoles', 'getRelationTypesDetails', 'getFavorites', 'getLikes', 'userLogin', 'relation:read', 'getNotifications'])]
     private ?string $account_name = null;
 
     #[ORM\Column(nullable: true)]
