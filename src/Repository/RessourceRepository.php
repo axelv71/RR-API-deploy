@@ -50,7 +50,7 @@ class RessourceRepository extends ServiceEntityRepository
             ->innerJoin('r.relationType', 'rtt')
             ->andWhere('rtt.id = :relationType')
             ->andWhere('r.isValid = true')
-            ->andWhere('r.$isPublished = true')
+            ->andWhere('r.isPublished = true')
             ->setParameter('relationType', 1)
             ->orderBy('r.createdAt', 'DESC');
 
