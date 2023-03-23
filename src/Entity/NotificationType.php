@@ -33,7 +33,7 @@ class NotificationType
         $this->notifications = new ArrayCollection();
     }
 
-    public static function create($label, $name) : self
+    public static function create($label, $name): self
     {
         $notificationType = new self();
         $notificationType->label = $label;

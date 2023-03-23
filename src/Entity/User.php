@@ -44,7 +44,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     private ?string $first_name = null;
 
     #[ORM\Column(length: 255)]
-    #[Groups(['getUsers', 'getRessources', 'getComments','getRelationTypesDetails', 'getFavorites', 'userLogin', 'relation:read'])]
+    #[Groups(['getUsers', 'getRessources', 'getComments', 'getRelationTypesDetails', 'getFavorites', 'userLogin', 'relation:read'])]
     private ?string $last_name = null;
 
     #[ORM\Column(length: 255)]
@@ -94,7 +94,6 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
 
     #[ORM\OneToMany(mappedBy: 'citizen', targetEntity: ExploitedRessource::class)]
     private Collection $exploitedRessources;
-
 
     public function __construct()
     {
@@ -537,5 +536,4 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
 
         return $this;
     }
-
 }

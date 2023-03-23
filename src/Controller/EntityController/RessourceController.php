@@ -44,16 +44,8 @@ class RessourceController extends AbstractController
         $this->faker = Factory::create('fr_FR');
     }
 
-
     /**
-     * This function allows us to create 20 ressources in database
-     * @param RessourceRepository $ressourceRepository
-     * @param UserRepository $repository
-     * @param CategoryRepository $categoryRepository
-     * @param RessourceTypeRepository $ressourceTypeRepository
-     * @param EntityManagerInterface $manager
-     * @param RelationTypeRepository $relationTypeRepository
-     * @return JsonResponse
+     * This function allows us to create 20 ressources in database.
      */
     #[OA\Tag(name: 'Ressource')]
     #[Route('/api/ressources/create', name: 'create_ressources', methods: ['GET'])]
@@ -186,11 +178,11 @@ class RessourceController extends AbstractController
         $this->logger->info('User id '.$user_id);
 
         // Get all resources from friends
-        if ($category_id!= 0  && $relation_type_id != 0 ) {
+        if (0 != $category_id && 0 != $relation_type_id) {
             $all_relations_resources = $ressourceRepository->getAllResourcesByRelationsByCategory($user_id, $relation_type_id, $category_id);
-        } elseif ($category_id === 0 && $relation_type_id != 0) {
+        } elseif (0 === $category_id && 0 != $relation_type_id) {
             $all_relations_resources = $ressourceRepository->getAllResourcesByRelationsType($user_id, $relation_type_id);
-        } elseif ($category_id != 0 && $relation_type_id === 0) {
+        } elseif (0 != $category_id && 0 === $relation_type_id) {
             $all_relations_resources = $ressourceRepository->getAllResourcesByCategoryWithourRelationType($user_id, $category_id);
         } else {
             $all_relations_resources = $ressourceRepository->getAllResourcesWithoutRelationTypeWithoutCategory($user_id);
@@ -212,10 +204,6 @@ class RessourceController extends AbstractController
 
     /**
      * This function allows us to get connected user's resources.
-     *
-     * @param SerializerInterface $serializer
-     * @param RessourceRepository $repository
-     * @return JsonResponse
      */
     #[OA\Tag(name: 'Ressource')]
     #[OA\Response(response: 200, description: "Return user's ressources", content: new Model(type: Ressource::class))]
@@ -230,14 +218,8 @@ class RessourceController extends AbstractController
         return new JsonResponse($jsonRessources, Response::HTTP_OK, [], true);
     }
 
-
-
     /**
      * This function allows us to get connected user's drafts.
-     *
-     * @param SerializerInterface $serializer
-     * @param RessourceRepository $repository
-     * @return JsonResponse
      */
     #[OA\Tag(name: 'Ressource')]
     #[Route('/api/resources/user_drafts', name: 'getDraftsByUser', methods: ['GET'])]
@@ -255,7 +237,7 @@ class RessourceController extends AbstractController
                 $resources_drafts[] = $resource;
             }
         }
-        
+
         $jsonRessources = $serializer->serialize($resources_drafts, 'json', ['groups' => 'getRessources']);
 
         return new JsonResponse($jsonRessources, Response::HTTP_OK, [], true);
@@ -263,10 +245,6 @@ class RessourceController extends AbstractController
 
     /**
      * This function allows us to get all resources types.
-     *
-     * @param SerializerInterface $serializer
-     * @param RessourceTypeRepository $repository
-     * @return JsonResponse
      */
     #[Route('/api/resources/types', name: 'getRessourcesTypes', methods: ['GET'])]
     #[OA\Tag(name: 'Ressource')]
@@ -293,7 +271,7 @@ class RessourceController extends AbstractController
                     new OA\Property(property: 'resource_id', type: 'integer', example: 1),
                 ]
             )
-        )
+        ),
     ])]
     #[Route('/api/resources/exploited_resource', name: 'exploited_ressorce', methods: ['POST'])]
     public function add_exploited_resource(Request $request,
@@ -314,11 +292,11 @@ class RessourceController extends AbstractController
         $entityManager->persist($exploitedResource);
         $entityManager->flush();
 
-        return new JsonResponse("Exploited resource", Response::HTTP_CREATED);
+        return new JsonResponse('Exploited resource', Response::HTTP_CREATED);
     }
 
     /**
-     * Remove the "exploited" status of a resource
+     * Remove the "exploited" status of a resource.
      */
     #[OA\Tag(name: 'Ressource')]
     #[OA\Response(response: 204, description: 'Remove the "exploited" status of a resource')]
@@ -331,7 +309,7 @@ class RessourceController extends AbstractController
                     new OA\Property(property: 'resource_id', type: 'integer', example: 1),
                 ]
             )
-        )
+        ),
     ])]
     #[Route('/api/resources/unexploited_resource', name: 'unexploited_ressorce', methods: ['DELETE'])]
     public function removeExploitedResource(Request $request,
@@ -352,17 +330,12 @@ class RessourceController extends AbstractController
         $entityManager->remove($exploitedResource);
         $entityManager->flush();
 
-        return new JsonResponse("Unexploited resource", Response::HTTP_NO_CONTENT);
+        return new JsonResponse('Unexploited resource', Response::HTTP_NO_CONTENT);
     }
 
     /**
      * This function allows us to get all resources public resources and relation resource for one user.
      *
-     * @param RessourceRepository $ressourceRepository
-     * @param Request $request
-     * @param UserRepository $userRepository
-     * @param SerializerInterface $serializer
-     * @return JsonResponse
      * @throws Exception
      */
     #[OA\Tag(name: 'Ressource')]
@@ -373,7 +346,7 @@ class RessourceController extends AbstractController
     public function getOneUserResources(RessourceRepository $ressourceRepository,
                                         Request $request,
                                         UserRepository $userRepository,
-                                        SerializerInterface $serializer) : JsonResponse
+                                        SerializerInterface $serializer): JsonResponse
     {
         $page = $request->query->getInt('page', 1);
         $pageSize = $request->query->getInt('pageSize', 10);
@@ -392,12 +365,10 @@ class RessourceController extends AbstractController
 
         $resources = $ressourceRepository->getAllWithPaginationById($resources_id, $page, $pageSize);
 
-
         $jsonRessources = $serializer->serialize($resources, 'json', ['groups' => 'getRessources']);
 
         return new JsonResponse($jsonRessources, Response::HTTP_OK, [], true);
     }
-
 
     /**
      * This function allows us to get one ressource by his id.
@@ -530,5 +501,4 @@ class RessourceController extends AbstractController
 
         return new JsonResponse('Ressource updated', Response::HTTP_OK);
     }
-
 }

@@ -40,9 +40,7 @@ class Notification
     #[Groups(['getNotifications'])]
     private ?Ressource $resource = null;
 
-
-
-    public static function create($sender, User $receiver, NotificationType $type, string $content, Ressource $resource=null): self
+    public static function create($sender, User $receiver, NotificationType $type, string $content, Ressource $resource = null): self
     {
         $notification = new self();
         $notification->sender = $sender;

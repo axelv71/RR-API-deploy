@@ -3,7 +3,6 @@
 namespace App\Repository;
 
 use App\Entity\Ressource;
-use App\Entity\User;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\DBAL\Exception;
 use Doctrine\ORM\Tools\Pagination\Paginator;
@@ -339,5 +338,4 @@ class RessourceRepository extends ServiceEntityRepository
 
         return $resultSet->fetchAllAssociative();
     }
-
 }
