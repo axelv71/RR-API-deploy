@@ -7,9 +7,12 @@ services:
     container_name: www_cube
     ports:
       - '8000:8000'
+    dns:
+      - 8.8.8.8
     volumes:
       - ./:/var/www/
-    command: "symfony server:start"
+    command: symfony server:start
+
 
   postgresql:
     image: postgres:${POSTGRES_VERSION:-14}-alpine

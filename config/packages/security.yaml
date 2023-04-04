@@ -10,24 +10,57 @@ security:
                 class: App\Entity\User
                 property: email
     firewalls:
+        login:
+            pattern: ^/api/login
+            stateless: true
+            json_login:
+                check_path: /api/login # or api_login_check as defined in config/routes.yaml
+                success_handler: App\Security\JwtSuccessHandler
+                failure_handler: App\Security\JwtFailureHandler
+        register:
+            pattern: ^/api/register
+            stateless: true
+            json_login:
+                check_path: /api/register_check # or api_login_check as defined in config/routes.yaml
+                success_handler: lexik_jwt_authentication.handler.authentication_success
+                failure_handler: lexik_jwt_authentication.handler.authentication_failure
+        api:
+            pattern: ^/api
+            stateless: true
+            entry_point: jwt
+            jwt: ~
+            refresh_jwt:
+                check_path: /api/token/refresh # or api_refresh_token as defined in config/routes.yaml
         dev:
             pattern: ^/(_(profiler|wdt)|css|images|js)/
             security: false
         main:
             lazy: true
             provider: app_user_provider
+            custom_authenticator: App\Security\AdminAuthenticator
+            logout:
+                path: app_logout
+                # where to redirect after logout
+                target: /admin
+
 
             # activate different ways to authenticate
             # https://symfony.com/doc/current/security.html#the-firewall
 
             # https://symfony.com/doc/current/security/impersonating_user.html
             # switch_user: true
-
+    role_hierarchy:
+        ROLE_USER_AUTHENTICATED: ROLE_USER
+        ROLE_MODERATOR: ROLE_USER_AUTHENTICATED
+        ROLE_ADMIN: ROLE_MODERATOR
+        ROLE_SUPER_ADMIN: ROLE_ADMIN
     # Easy way to control access for large sections of your site
     # Note: Only the *first* access control that matches will be used
     access_control:
-        # - { path: ^/admin, roles: ROLE_ADMIN }
-        # - { path: ^/profile, roles: ROLE_USER }
+        - { path: ^/admin, roles: [ROLE_SUPER_ADMIN, ROLE_ADMIN, ROLE_MODERATOR] }
+        - { path: ^/api/doc, roles: PUBLIC_ACCESS }
+        - { path: ^/api/(register|login|token/refresh|verify), roles: PUBLIC_ACCESS }
+        - { path: ^/api, roles: ROLE_USER_AUTHENTICATED }
 
 when@test:
     security:

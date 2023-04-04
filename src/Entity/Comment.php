@@ -5,6 +5,7 @@ namespace App\Entity;
 use App\Repository\CommentRepository;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Component\Serializer\Annotation\Groups;
 
 #[ORM\Entity(repositoryClass: CommentRepository::class)]
 class Comment
@@ -12,25 +13,46 @@ class Comment
     #[ORM\Id]
     #[ORM\GeneratedValue]
     #[ORM\Column]
+    #[Groups(['getRessources', 'getComments'])]
     private ?int $id = null;
 
     #[ORM\Column(type: Types::TEXT)]
+    #[Groups(['getRessources', 'getComments'])]
     private ?string $content = null;
 
     #[ORM\Column]
+    #[Groups(['getRessources', 'getComments'])]
     private ?\DateTimeImmutable $createAt = null;
 
     #[ORM\ManyToOne(inversedBy: 'comments')]
     #[ORM\JoinColumn(nullable: false)]
+    #[Groups(['getRessources', 'getComments'])]
     private ?User $creator = null;
 
     #[ORM\ManyToOne(inversedBy: 'comments')]
     #[ORM\JoinColumn(nullable: false)]
+    #[Groups(['getComments'])]
     private ?Ressource $ressource = null;
+
+    #[ORM\Column]
+    private ?bool $isValid = null;
+
+    public function __construct()
+    {
+        $this->createAt = new \DateTimeImmutable();
+        $this->isValid = true;
+    }
 
     public function getId(): ?int
     {
         return $this->id;
+    }
+
+    public function setId(int $id): self
+    {
+        $this->id = $id;
+
+        return $this;
     }
 
     public function getContent(): ?string
@@ -77,6 +99,18 @@ class Comment
     public function setRessource(?Ressource $ressource): self
     {
         $this->ressource = $ressource;
+
+        return $this;
+    }
+
+    public function isIsValid(): ?bool
+    {
+        return $this->isValid;
+    }
+
+    public function setIsValid(bool $isValid): self
+    {
+        $this->isValid = $isValid;
 
         return $this;
     }

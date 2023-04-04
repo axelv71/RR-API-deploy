@@ -2,26 +2,26 @@
 
 namespace App\Repository;
 
-use App\Entity\Role;
+use App\Entity\Relation;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\Persistence\ManagerRegistry;
 
 /**
- * @extends ServiceEntityRepository<Role>
+ * @extends ServiceEntityRepository<Relation>
  *
- * @method Role|null find($id, $lockMode = null, $lockVersion = null)
- * @method Role|null findOneBy(array $criteria, array $orderBy = null)
- * @method Role[]    findAll()
- * @method Role[]    findBy(array $criteria, array $orderBy = null, $limit = null, $offset = null)
+ * @method Relation|null find($id, $lockMode = null, $lockVersion = null)
+ * @method Relation|null findOneBy(array $criteria, array $orderBy = null)
+ * @method Relation[]    findAll()
+ * @method Relation[]    findBy(array $criteria, array $orderBy = null, $limit = null, $offset = null)
  */
-class RoleRepository extends ServiceEntityRepository
+class RelationRepository extends ServiceEntityRepository
 {
     public function __construct(ManagerRegistry $registry)
     {
-        parent::__construct($registry, Role::class);
+        parent::__construct($registry, Relation::class);
     }
 
-    public function save(Role $entity, bool $flush = false): void
+    public function save(Relation $entity, bool $flush = false): void
     {
         $this->getEntityManager()->persist($entity);
 
@@ -30,7 +30,7 @@ class RoleRepository extends ServiceEntityRepository
         }
     }
 
-    public function remove(Role $entity, bool $flush = false): void
+    public function remove(Relation $entity, bool $flush = false): void
     {
         $this->getEntityManager()->remove($entity);
 
@@ -39,8 +39,20 @@ class RoleRepository extends ServiceEntityRepository
         }
     }
 
+    public function retrieveAllRelationsByUser($user): array
+    {
+        return $this->createQueryBuilder('r')
+            ->andWhere('r.Sender = :user')
+            ->orWhere('r.Receiver = :user')
+            ->andWhere('r.isAccepted = true')
+            ->setParameter('user', $user)
+            ->getQuery()
+            ->getResult()
+        ;
+    }
+
 //    /**
-//     * @return Role[] Returns an array of Role objects
+//     * @return Relation[] Returns an array of Relation objects
 //     */
 //    public function findByExampleField($value): array
 //    {
@@ -54,7 +66,7 @@ class RoleRepository extends ServiceEntityRepository
 //        ;
 //    }
 
-//    public function findOneBySomeField($value): ?Role
+//    public function findOneBySomeField($value): ?Relation
 //    {
 //        return $this->createQueryBuilder('r')
 //            ->andWhere('r.exampleField = :val')
