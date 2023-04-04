@@ -7,6 +7,7 @@ use App\Entity\Ressource;
 use App\Repository\MediaRepository;
 use Doctrine\ORM\EntityManagerInterface;
 use OpenApi\Attributes as OA;
+use Psr\Log\LoggerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
@@ -18,6 +19,12 @@ use Symfony\Component\Validator\Validator\ValidatorInterface;
 
 class MediaController extends AbstractController
 {
+    private LoggerInterface $logger;
+
+    public function __construct(LoggerInterface $logger)
+    {
+        $this->logger = $logger;
+    }
     /**
      * Add media to a resource.
      */
@@ -50,7 +57,7 @@ class MediaController extends AbstractController
         $media->setRessource($ressource);
         $media->setFile($request->files->get('file'));
         $media->setTitle(explode('.', $request->files->get('file')->getClientOriginalName())[0]);
-        $media->setMimetype($request->files->get('file')->getMimeType());
+        //$media->setMimetype($request->files->get('file')->getMimeType());
         $media->setUpdatedAt(new \DateTimeImmutable());
 
         // Validate the media
