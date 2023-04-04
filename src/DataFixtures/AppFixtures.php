@@ -315,7 +315,7 @@ class AppFixtures extends Fixture
                     $like = new Like();
                     $like->setUserLike($users[$u])
                         ->setRessourceLike($ressources[$r])
-                        ->setIsLiked((bool) mt_rand(0, 1));
+                        ->setIsLiked(true);
 
                     $favorite = new Favorite();
                     $favorite->setUserFavorite($users[$u])

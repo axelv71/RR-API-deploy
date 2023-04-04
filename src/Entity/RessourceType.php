@@ -21,6 +21,9 @@ class RessourceType
     #[ORM\OneToMany(mappedBy: 'type', targetEntity: Ressource::class)]
     private Collection $ressources;
 
+    #[ORM\OneToMany(mappedBy: 'ressource_type', targetEntity: Statistics::class)]
+    private Collection $statistics;
+
     public static function create(string $name): self
     {
         $ressourceType = new self();
@@ -32,6 +35,7 @@ class RessourceType
     public function __construct()
     {
         $this->ressources = new ArrayCollection();
+        $this->statistics = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -75,6 +79,36 @@ class RessourceType
             // set the owning side to null (unless already changed)
             if ($ressource->getType() === $this) {
                 $ressource->setType(null);
+            }
+        }
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, Statistics>
+     */
+    public function getStatistics(): Collection
+    {
+        return $this->statistics;
+    }
+
+    public function addStatistic(Statistics $statistic): self
+    {
+        if (!$this->statistics->contains($statistic)) {
+            $this->statistics->add($statistic);
+            $statistic->setRessourceType($this);
+        }
+
+        return $this;
+    }
+
+    public function removeStatistic(Statistics $statistic): self
+    {
+        if ($this->statistics->removeElement($statistic)) {
+            // set the owning side to null (unless already changed)
+            if ($statistic->getRessourceType() === $this) {
+                $statistic->setRessourceType(null);
             }
         }
 

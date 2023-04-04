@@ -57,6 +57,7 @@ class Ressource
     private Collection $media;
 
     #[ORM\OneToMany(mappedBy: 'ressource_like', targetEntity: Like::class, orphanRemoval: true)]
+    #[Groups(['getRessources'])]
     private Collection $likes;
 
     #[ORM\OneToMany(mappedBy: 'ressource_favorite', targetEntity: Favorite::class, orphanRemoval: true)]

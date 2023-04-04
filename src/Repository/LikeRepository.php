@@ -39,6 +39,18 @@ class LikeRepository extends ServiceEntityRepository
         }
     }
 
+    public function getLikeForResources($resourcesIds, $userId)
+    {
+        $qb = $this->createQueryBuilder('l');
+        $qb->select('l.ressourceLike, l.isLiked')
+            ->where('l.ressourceLike IN (:resourcesIds)')
+            ->andWhere('l.userLike = :userId')
+            ->setParameter('resourcesIds', $resourcesIds)
+            ->setParameter('userId', $userId);
+
+        return $qb->getQuery()->getResult();
+    }
+
 //    /**
 //     * @return Like[] Returns an array of Like objects
 //     */
