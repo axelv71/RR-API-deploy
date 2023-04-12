@@ -15,6 +15,8 @@ use App\Entity\RelationType;
 use App\Entity\Ressource;
 use App\Entity\RessourceType;
 use App\Entity\Settings;
+use App\Entity\Statistic;
+use App\Entity\StatisticType;
 use App\Entity\Theme;
 use App\Entity\User;
 use Doctrine\Bundle\FixturesBundle\Fixture;
@@ -330,10 +332,21 @@ class AppFixtures extends Fixture
         // Notifications
         // Create notification for test user
         for ($i = 0; $i < 10; ++$i) {
+            $type_of_notification = $notificationTypes[mt_rand(0, count($notificationTypes) - 1)];
+            if ($type_of_notification == 1) {
+                $content = "a aimé votre ressource";
+            } elseif ($type_of_notification == 2){
+                $content = "a commenté votre ressource";
+            } elseif ($type_of_notification == 3) {
+                $content = "a mis votre ressource en favoris";
+            } elseif($type_of_notification == 4) {
+                $content = "souhaite vous ajouter en tant que relation";
+            } else {
+                $content = "a ajouté une nouvelle ressource";
+            }
             $notification = Notification::create($users[mt_rand(0, count($users) - 1)],
                 $user,
-                $notificationTypes[mt_rand(0, count($notificationTypes) - 1)],
-                'test',
+                $type_of_notification, $content ,
                 $ressources[mt_rand(0, count($ressources) - 1)]);
 
             if ('relation' == $notification->getNotificationType()->getName()) {
@@ -341,6 +354,30 @@ class AppFixtures extends Fixture
             }
 
             $manager->persist($notification);
+        }
+
+        //Statistiques
+        $statisticsType_array = [
+            ['Consultation', 'consultation'],
+            ['Recherche', 'recherche'],
+            ['Exploitation', 'exploitation'],
+            ['Creation', 'creation']
+        ];
+
+        $statisticsType = [];
+        foreach($statisticsType_array as $statisticsType){
+            $statisticsType = StatisticType::create($statisticsType[0], $statisticsType[1]);
+            $statisticsTypes[] = $statisticsType;
+            $manager->persist($statisticsType);
+        }
+
+        for ($i=0; $i < 50; $i++) {
+            $statistic = Statistic::create($statisticsTypes[mt_rand(0, count($statisticsTypes) - 1)],
+                $relationTypes[mt_rand(0, count($relationTypes) - 1)],
+                $resource_types[mt_rand(0, count($resource_types) - 1)],
+                $categories[mt_rand(0, count($categories) - 1)]);
+
+            $manager->persist($statistic);
         }
 
         $manager->flush();
