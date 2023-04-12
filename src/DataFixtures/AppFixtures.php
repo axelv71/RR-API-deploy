@@ -333,13 +333,13 @@ class AppFixtures extends Fixture
         // Create notification for test user
         for ($i = 0; $i < 10; ++$i) {
             $type_of_notification = $notificationTypes[mt_rand(0, count($notificationTypes) - 1)];
-            if ($type_of_notification == 1) {
+            if ($type_of_notification->getId() == 1) {
                 $content = "a aimé votre ressource";
-            } elseif ($type_of_notification == 2){
+            } elseif ($type_of_notification->getId() == 2){
                 $content = "a commenté votre ressource";
-            } elseif ($type_of_notification == 3) {
+            } elseif ($type_of_notification->getId() == 3) {
                 $content = "a mis votre ressource en favoris";
-            } elseif($type_of_notification == 4) {
+            } elseif($type_of_notification->getId() == 4) {
                 $content = "souhaite vous ajouter en tant que relation";
             } else {
                 $content = "a ajouté une nouvelle ressource";
