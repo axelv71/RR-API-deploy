@@ -46,6 +46,22 @@ class UserController extends AbstractController
     }
 
     /**
+     * This function allows us to search a user by his name.
+     */
+    #[Route('/api/users/search', name: 'searchUser', methods: ['GET'])]
+    #[OA\Response(response: 200, description: 'Returns the finded user', content: new Model(type: User::class))]
+    #[OA\Tag(name: 'User')]
+    #[OA\Parameter(name: 'search', description: 'The name of the user', in: 'query', required: true, example: 'John',)]
+    public function searchUser(UserRepository $userRepository, SerializerInterface $serializer, Request $request): JsonResponse
+    {
+        $search = $request->query->get('search', default: '');
+        $userList = $userRepository->searchUser($search);
+        $jsonUserList = $serializer->serialize($userList, 'json', ['groups' => 'getUsers']);
+
+        return new JsonResponse($jsonUserList, Response::HTTP_OK, [], true);
+    }
+
+    /**
      * This function allows us to get one user by his id.
      */
     #[Route('/api/users/{id}', name: 'oneUser', methods: ['GET'])]
