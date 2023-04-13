@@ -351,12 +351,21 @@ class AppFixtures extends Fixture
 
             if ('relation' == $notification->getNotificationType()->getName()) {
                 $notification->setResource(null);
+                $notification_sender = $users[mt_rand(0, count($users) - 1)];
+                if ($notification_sender->getId() == $user->getId()) {
+                    $notification_sender = $users[mt_rand(0, count($users) - 1)];
+                }
+                $relation = Relation::create($notification_sender,$user, $relationTypes[mt_rand(0, count($relationTypes) - 1)]);
+                $manager->persist($relation);
+                $notification->setRelation($relation);
+            } else {
+                $notification->setRelation(null);
             }
 
             $manager->persist($notification);
         }
 
-        //Statistiques
+        /*//Statistiques
         $statisticsType_array = [
             ['Consultation', 'consultation'],
             ['Recherche', 'recherche'],
@@ -378,7 +387,7 @@ class AppFixtures extends Fixture
                 $categories[mt_rand(0, count($categories) - 1)]);
 
             $manager->persist($statistic);
-        }
+        }*/
 
         $manager->flush();
     }
