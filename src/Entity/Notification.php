@@ -40,7 +40,15 @@ class Notification
     #[Groups(['getNotifications'])]
     private ?Ressource $resource = null;
 
-    public static function create($sender, User $receiver, NotificationType $type, string $content, Ressource $resource = null): self
+    #[ORM\ManyToOne(inversedBy: 'notifications')]
+    #[Groups(['getNotifications'])]
+    private ?Relation $relation = null;
+
+    public static function create($sender, User $receiver,
+                                  NotificationType $type,
+                                  string $content,
+                                  Ressource $resource = null,
+                                  Relation $relation = null): self
     {
         $notification = new self();
         $notification->sender = $sender;
@@ -48,6 +56,7 @@ class Notification
         $notification->notificationType = $type;
         $notification->content = $content;
         $notification->resource = $resource;
+        $notification->relation = $relation;
 
         return $notification;
     }
@@ -130,6 +139,18 @@ class Notification
     public function setNotificationType(?NotificationType $notificationType): self
     {
         $this->notificationType = $notificationType;
+
+        return $this;
+    }
+
+    public function getRelation(): ?Relation
+    {
+        return $this->relation;
+    }
+
+    public function setRelation(?Relation $relation): self
+    {
+        $this->relation = $relation;
 
         return $this;
     }
