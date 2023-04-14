@@ -9,10 +9,11 @@ use App\Entity\Like;
 use App\Entity\Media;
 use App\Entity\Ressource;
 use App\Entity\RessourceType;
-use App\Entity\Statistics;
+use App\Entity\Statistic;
 use App\Entity\User;
 use App\Repository\CategoryRepository;
 use App\Repository\ExploitedRessourceRepository;
+use App\Repository\FavoriteRepository;
 use App\Repository\LikeRepository;
 use App\Repository\RelationRepository;
 use App\Repository\RelationTypeRepository;
@@ -170,6 +171,8 @@ class RessourceController extends AbstractController
     #[Route('/api/resources', name: 'user_resources', methods: ['GET'])]
     public function getAllRelationsRessources(RessourceRepository $ressourceRepository,
                                               RelationRepository $relationRepository,
+                                              LikeRepository $likeRepository,
+                                              FavoriteRepository $favoriteRepository,
                                               RelationTypeRepository $relationTypeRepository,
                                               SerializerInterface $serializer,
                                               Request $request): JsonResponse
@@ -203,6 +206,18 @@ class RessourceController extends AbstractController
         }
 
         $friends_resources = $ressourceRepository->getAllWithPaginationById($resources_id, $request->query->getInt('page', 1), $request->query->getInt('pageSize', 10));
+
+        foreach ($friends_resources as $resource) {
+            $like = $likeRepository->findOneBy(['user_like' => $user, 'ressource_like' => $resource]);
+            $favorite = $favoriteRepository->findOneBy(['user_favorite' => $user, 'ressource_favorite' => $resource]);
+
+            if($like) {
+                $resource->setIsLiked(true);
+            }
+            if($favorite) {
+                $resource->setIsFavorite(true);
+            }
+        }
 
         $this->logger->info('Nombre de ressources : '.count($friends_resources));
         $jsonResourceList = $serializer->serialize($friends_resources, 'json', ['groups' => 'getRessources']);

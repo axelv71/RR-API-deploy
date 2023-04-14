@@ -7,6 +7,7 @@ use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
+use phpDocumentor\Reflection\Types\Boolean;
 use Symfony\Component\Serializer\Annotation\Groups;
 
 #[ORM\Entity(repositoryClass: RessourceRepository::class)]
@@ -61,6 +62,7 @@ class Ressource
     private Collection $likes;
 
     #[ORM\OneToMany(mappedBy: 'ressource_favorite', targetEntity: Favorite::class, orphanRemoval: true)]
+    #[Groups(['getRessources'])]
     private Collection $favorites;
 
     #[ORM\ManyToMany(targetEntity: RelationType::class, inversedBy: 'ressources', fetch: 'EAGER')]
@@ -74,6 +76,11 @@ class Ressource
 
     #[ORM\OneToMany(mappedBy: 'ressource', targetEntity: ExploitedRessource::class)]
     private Collection $exploitedRessources;
+
+    #[Groups(['getRessources'])]
+    private bool $isFavorite = false;
+    #[Groups(['getRessources'])]
+    private bool $isLiked = false;
 
     public function __construct()
     {
@@ -402,5 +409,29 @@ class Ressource
         }
 
         return $this;
+    }
+
+    public function setIsFavorite(bool $isFavorite): self
+    {
+        $this->isFavorite = $isFavorite;
+
+        return $this;
+    }
+
+    public function getIsFavorite(): ?bool
+    {
+        return $this->isFavorite;
+    }
+
+    public function setIsLiked(bool $isLiked): self
+    {
+        $this->isLiked = $isLiked;
+
+        return $this;
+    }
+
+    public function getIsLiked(): ?bool
+    {
+        return $this->isLiked;
     }
 }
