@@ -55,42 +55,42 @@ class AppFixtures extends Fixture
             'secondary_color' => '#536DFE',
         ], [
             'label' => 'Classic Lollipop',
-            'name' => 'lollipop',
+            'name' => 'classic_lollipop',
             'primary_color' => '#CDB4DB',
             'secondary_color' => '#FFC8DD',
         ], [
-            'label' => 'Endless Galaxy',
-            'name' => 'galaxy',
+            'label' => 'Dark Hole',
+            'name' => 'dark_hole',
             'primary_color' => '#5A189A',
             'secondary_color' => '#9D4EDD',
         ], [
             'label' => 'Juicy Raspberry',
-            'name' => 'raspberry',
+            'name' => 'juicy_raspberry',
             'primary_color' => '#C71F37',
             'secondary_color' => '#E01E37',
         ], [
             'label' => 'Ocean View',
-            'name' => 'ocean',
+            'name' => 'ocean_view',
             'primary_color' => '#2196F3',
             'secondary_color' => '#90CAF9',
         ], [
             'label' => 'Pumpkin Fall',
-            'name' => 'fall',
+            'name' => 'pumpkin_fall',
             'primary_color' => '#FF8800',
             'secondary_color' => '#FFA200',
         ], [
             'label' => 'Shiny Spring',
-            'name' => 'spring',
+            'name' => 'shiny_spring',
             'primary_color' => '#4F772D',
             'secondary_color' => '#90A955',
         ], [
             'label' => 'Sunny Summer',
-            'name' => 'summer',
+            'name' => 'sunny_summer',
             'primary_color' => '#FEC89A',
             'secondary_color' => '#F9DCC4',
         ], [
             'label' => 'Wet Winter',
-            'name' => 'winter',
+            'name' => 'wet_winter',
             'primary_color' => '#A2D2FF',
             'secondary_color' => '#BDE0FE',
         ]];
