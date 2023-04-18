@@ -28,7 +28,7 @@ class Media
     #[Vich\UploadableField(mapping: 'media', fileNameProperty: 'filePath', size: 'fileSize')]
     #[Assert\File(
         maxSize: '100M',
-        mimeTypes: ['image/jpeg', 'image/png', 'image/gif', 'image/svg+xml', 'pdf', 'application/pdf', 'mp4', 'video/mp4', 'video/quicktime'],
+        mimeTypes: ['image/jpeg', 'image/jpg', 'jpg', "application/octet-stream", 'image/png', 'image/gif', 'image/svg+xml', 'pdf', 'application/pdf', 'mp4', 'video/mp4', 'video/quicktime'],
         maxSizeMessage: 'Le fichier est trop volumineux ({{ size }} {{ suffix }}). La taille maximale autorisée est de {{ limit }} {{ suffix }}.',
         mimeTypesMessage: 'Please upload a valid file')
     ]

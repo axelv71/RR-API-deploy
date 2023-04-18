@@ -65,6 +65,7 @@ class FavoriteController extends AbstractController
     #[Route('/api/favorite', name: 'create_favorite', methods: ['POST'])]
     public function createFavorite(Request $request,
                                    UserRepository $userRepository,
+                                   FavoriteRepository $favoriteRepository,
                                    RessourceRepository $resourceRepository,
                                    EntityManagerInterface $em): JsonResponse
     {
@@ -72,6 +73,14 @@ class FavoriteController extends AbstractController
         $resource_id = $data['ressource_id'];
         /** @var User $user */
         $user = $this->getUser();
+
+        $favorite = $favoriteRepository->findOneBy(['user_favorite' => $user, 'ressource_favorite' => $resource_id]);
+
+        if ($favorite) {
+            $em->remove($favorite);
+            $em->flush();
+            return $this->json(null, 204);
+        }
 
         $resource = $resourceRepository->findOneBy(['id' => $resource_id]);
         $resource_creator = $resource->getCreator();

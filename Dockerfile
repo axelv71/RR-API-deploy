@@ -16,6 +16,10 @@ RUN apk --no-cache update && apk --no-cache add bash && apk --no-cache add git
 RUN  apk add unzip && apk add icu-dev
 RUN docker-php-ext-install intl pdo pdo_pgsql
 RUN echo 'extension=intl.so' > /usr/local/etc/php/conf.d/docker-php-ext-intl.ini
+# Change upload size
+RUN echo "upload_max_filesize = 100M" >> /usr/local/etc/php/conf.d/uploads.ini
+RUN echo "post_max_size = 100M" >> /usr/local/etc/php/conf.d/uploads.ini
+
 
 # Install composer
 RUN php -r "copy('https://getcomposer.org/installer', 'composer-setup.php');" && php composer-setup.php && php -r "unlink('composer-setup.php');" && mv composer.phar /usr/local/bin/composer

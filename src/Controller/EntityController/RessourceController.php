@@ -9,16 +9,21 @@ use App\Entity\Like;
 use App\Entity\Media;
 use App\Entity\Ressource;
 use App\Entity\RessourceType;
+use App\Entity\Statistic;
 use App\Entity\User;
 use App\Repository\CategoryRepository;
 use App\Repository\ExploitedRessourceRepository;
+use App\Repository\FavoriteRepository;
+use App\Repository\LikeRepository;
 use App\Repository\RelationRepository;
 use App\Repository\RelationTypeRepository;
 use App\Repository\RessourceRepository;
 use App\Repository\RessourceTypeRepository;
+use App\Repository\StatisticsRepository;
 use App\Repository\UserRepository;
 use Doctrine\DBAL\Exception;
 use Doctrine\ORM\EntityManagerInterface;
+use Doctrine\ORM\Query\AST\LikeExpression;
 use Faker\Factory;
 use Faker\Generator as FakerGenerator;
 use Nelmio\ApiDocBundle\Annotation\Model;
@@ -140,13 +145,17 @@ class RessourceController extends AbstractController
     #[OA\Tag(name: 'Ressource')]
     #[OA\Parameter(name: 'page', description: 'Page number', in: 'query', required: false, example: 1)]
     #[OA\Parameter(name: 'pageSize', description: 'Number of ressources per page', in: 'query', required: false, example: 10)]
-    public function getAllRessources(RessourceRepository $repository, SerializerInterface $serializer, Request $request): JsonResponse
+    public function getAllRessources(RessourceRepository $repository,
+                                     SerializerInterface $serializer,
+                                     LikeRepository $likeRepository,
+                                     Request $request,
+                                     StatisticsRepository $statisticsRepository): JsonResponse
     {
-        $ressourceList = $repository->getAllPublicWithPagination($request->query->getInt('page', 1), $request->query->getInt('pageSize', 10));
+        $resourceList = $repository->getAllPublicWithPagination($request->query->getInt('page', 1), $request->query->getInt('pageSize', 10));
 
-        $jsonRessourceList = $serializer->serialize($ressourceList, 'json', ['groups' => 'getRessources']);
+        $jsonResourceList = $serializer->serialize($resourceList, 'json', ['groups' => 'getRessources']);
 
-        return new JsonResponse($jsonRessourceList, Response::HTTP_OK, [], true);
+        return new JsonResponse($jsonResourceList, Response::HTTP_OK, [], true);
     }
 
     /**
@@ -162,6 +171,8 @@ class RessourceController extends AbstractController
     #[Route('/api/resources', name: 'user_resources', methods: ['GET'])]
     public function getAllRelationsRessources(RessourceRepository $ressourceRepository,
                                               RelationRepository $relationRepository,
+                                              LikeRepository $likeRepository,
+                                              FavoriteRepository $favoriteRepository,
                                               RelationTypeRepository $relationTypeRepository,
                                               SerializerInterface $serializer,
                                               Request $request): JsonResponse
@@ -195,6 +206,18 @@ class RessourceController extends AbstractController
         }
 
         $friends_resources = $ressourceRepository->getAllWithPaginationById($resources_id, $request->query->getInt('page', 1), $request->query->getInt('pageSize', 10));
+
+        foreach ($friends_resources as $resource) {
+            $like = $likeRepository->findOneBy(['user_like' => $user, 'ressource_like' => $resource]);
+            $favorite = $favoriteRepository->findOneBy(['user_favorite' => $user, 'ressource_favorite' => $resource]);
+
+            if($like) {
+                $resource->setIsLiked(true);
+            }
+            if($favorite) {
+                $resource->setIsFavorite(true);
+            }
+        }
 
         $this->logger->info('Nombre de ressources : '.count($friends_resources));
         $jsonResourceList = $serializer->serialize($friends_resources, 'json', ['groups' => 'getRessources']);

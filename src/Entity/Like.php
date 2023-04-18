@@ -13,11 +13,11 @@ class Like
     #[ORM\Id]
     #[ORM\GeneratedValue]
     #[ORM\Column]
-    #[Groups(['getLikes'])]
+    #[Groups(['getLikes', "getRessources"])]
     private ?int $id = null;
 
     #[ORM\ManyToOne(inversedBy: 'likes')]
-    #[Groups(['getLikes', 'createLike'])]
+    #[Groups(['getLikes', 'createLike', 'getRessources'])]
     private ?User $user_like = null;
 
     #[ORM\ManyToOne(inversedBy: 'likes')]
@@ -25,6 +25,7 @@ class Like
     private ?Ressource $ressource_like = null;
 
     #[ORM\Column]
+    #[Groups(['getLikes', 'createLike', 'getRessources'])]
     private ?bool $isLiked = null;
 
     public function getId(): ?int

@@ -15,6 +15,8 @@ use App\Entity\RelationType;
 use App\Entity\Ressource;
 use App\Entity\RessourceType;
 use App\Entity\Settings;
+use App\Entity\Statistic;
+use App\Entity\StatisticType;
 use App\Entity\Theme;
 use App\Entity\User;
 use Doctrine\Bundle\FixturesBundle\Fixture;
@@ -53,42 +55,42 @@ class AppFixtures extends Fixture
             'secondary_color' => '#536DFE',
         ], [
             'label' => 'Classic Lollipop',
-            'name' => 'lollipop',
+            'name' => 'classic_lollipop',
             'primary_color' => '#CDB4DB',
             'secondary_color' => '#FFC8DD',
         ], [
-            'label' => 'Endless Galaxy',
-            'name' => 'galaxy',
+            'label' => 'Dark Hole',
+            'name' => 'dark_hole',
             'primary_color' => '#5A189A',
             'secondary_color' => '#9D4EDD',
         ], [
             'label' => 'Juicy Raspberry',
-            'name' => 'raspberry',
+            'name' => 'juicy_raspberry',
             'primary_color' => '#C71F37',
             'secondary_color' => '#E01E37',
         ], [
             'label' => 'Ocean View',
-            'name' => 'ocean',
+            'name' => 'ocean_view',
             'primary_color' => '#2196F3',
             'secondary_color' => '#90CAF9',
         ], [
             'label' => 'Pumpkin Fall',
-            'name' => 'fall',
+            'name' => 'pumpkin_fall',
             'primary_color' => '#FF8800',
             'secondary_color' => '#FFA200',
         ], [
             'label' => 'Shiny Spring',
-            'name' => 'spring',
+            'name' => 'shiny_spring',
             'primary_color' => '#4F772D',
             'secondary_color' => '#90A955',
         ], [
             'label' => 'Sunny Summer',
-            'name' => 'summer',
+            'name' => 'sunny_summer',
             'primary_color' => '#FEC89A',
             'secondary_color' => '#F9DCC4',
         ], [
             'label' => 'Wet Winter',
-            'name' => 'winter',
+            'name' => 'wet_winter',
             'primary_color' => '#A2D2FF',
             'secondary_color' => '#BDE0FE',
         ]];
@@ -315,7 +317,7 @@ class AppFixtures extends Fixture
                     $like = new Like();
                     $like->setUserLike($users[$u])
                         ->setRessourceLike($ressources[$r])
-                        ->setIsLiked((bool) mt_rand(0, 1));
+                        ->setIsLiked(true);
 
                     $favorite = new Favorite();
                     $favorite->setUserFavorite($users[$u])
@@ -330,18 +332,62 @@ class AppFixtures extends Fixture
         // Notifications
         // Create notification for test user
         for ($i = 0; $i < 10; ++$i) {
+            $type_of_notification = $notificationTypes[mt_rand(0, count($notificationTypes) - 1)];
+            if ($type_of_notification->getId() == 1) {
+                $content = "a aimé votre ressource";
+            } elseif ($type_of_notification->getId() == 2){
+                $content = "a commenté votre ressource";
+            } elseif ($type_of_notification->getId() == 3) {
+                $content = "a mis votre ressource en favoris";
+            } elseif($type_of_notification->getId() == 4) {
+                $content = "souhaite vous ajouter en tant que relation";
+            } else {
+                $content = "a ajouté une nouvelle ressource";
+            }
             $notification = Notification::create($users[mt_rand(0, count($users) - 1)],
                 $user,
-                $notificationTypes[mt_rand(0, count($notificationTypes) - 1)],
-                'test',
+                $type_of_notification, $content ,
                 $ressources[mt_rand(0, count($ressources) - 1)]);
 
             if ('relation' == $notification->getNotificationType()->getName()) {
                 $notification->setResource(null);
+                $notification_sender = $users[mt_rand(0, count($users) - 1)];
+                if ($notification_sender->getId() == $user->getId()) {
+                    $notification_sender = $users[mt_rand(0, count($users) - 1)];
+                }
+                $relation = Relation::create($notification_sender,$user, $relationTypes[mt_rand(0, count($relationTypes) - 1)]);
+                $manager->persist($relation);
+                $notification->setRelation($relation);
+            } else {
+                $notification->setRelation(null);
             }
 
             $manager->persist($notification);
         }
+
+        /*//Statistiques
+        $statisticsType_array = [
+            ['Consultation', 'consultation'],
+            ['Recherche', 'recherche'],
+            ['Exploitation', 'exploitation'],
+            ['Creation', 'creation']
+        ];
+
+        $statisticsType = [];
+        foreach($statisticsType_array as $statisticsType){
+            $statisticsType = StatisticType::create($statisticsType[0], $statisticsType[1]);
+            $statisticsTypes[] = $statisticsType;
+            $manager->persist($statisticsType);
+        }
+
+        for ($i=0; $i < 50; $i++) {
+            $statistic = Statistic::create($statisticsTypes[mt_rand(0, count($statisticsTypes) - 1)],
+                $relationTypes[mt_rand(0, count($relationTypes) - 1)],
+                $resource_types[mt_rand(0, count($resource_types) - 1)],
+                $categories[mt_rand(0, count($categories) - 1)]);
+
+            $manager->persist($statistic);
+        }*/
 
         $manager->flush();
     }

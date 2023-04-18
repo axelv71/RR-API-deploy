@@ -28,6 +28,14 @@ class LikeController extends AbstractController
         $this->notificationType = $notificationTypeRepository->findOneBy(['name' => 'like']);
     }
 
+
+    /**
+     * Return all likes of one user
+     * @param Request $request
+     * @param UserRepository $userRepository
+     * @param LikeRepository $likeRepository
+     * @return JsonResponse
+     */
     #[OA\Tag(name: 'Like')]
     #[OA\Response(
         response: 200,
@@ -45,6 +53,17 @@ class LikeController extends AbstractController
         return $this->json($likes, 200, [], ['groups' => 'getLikes']);
     }
 
+
+    /**
+     * Create a like or remove it
+     * @param Request $request
+     * @param UserRepository $userRepository
+     * @param LikeRepository $likeRepository
+     * @param RessourceRepository $resourceRepository
+     * @param NotificationRepository $notificationRepository
+     * @param EntityManagerInterface $em
+     * @return JsonResponse
+     */
     #[OA\Tag(name: 'Like')]
     #[OA\RequestBody(
         content: new OA\JsonContent(
@@ -63,9 +82,14 @@ class LikeController extends AbstractController
         description: 'Returns the created like',
         content: new Model(type: Like::class)
     )]
+    #[OA\Response(
+        response: 204,
+        description: 'Returns nothing'
+    )]
     #[Route('/api/like', name: 'create_like', methods: ['POST'])]
     public function createLike(Request $request,
                                UserRepository $userRepository,
+                               LikeRepository $likeRepository,
                                RessourceRepository $resourceRepository,
                                NotificationRepository $notificationRepository,
                                EntityManagerInterface $em): JsonResponse
@@ -75,6 +99,16 @@ class LikeController extends AbstractController
 
         /** @var User $user */
         $user = $this->getUser();
+
+        $like = $likeRepository->findOneBy(['user_like' => $user, 'ressource_like' => $resource_id]);
+
+        if ($like) {
+            $em->remove($like);
+            $em->flush();
+
+            return $this->json(null, 204);
+        }
+
 
         $resource = $resourceRepository->findOneBy(['id' => $resource_id]);
         $resource_creator = $resource->getCreator();

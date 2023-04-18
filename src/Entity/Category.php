@@ -32,6 +32,9 @@ class Category
     #[ORM\OneToMany(mappedBy: 'category', targetEntity: Ressource::class)]
     private Collection $ressources;
 
+    #[ORM\OneToMany(mappedBy: 'category', targetEntity: Statistics::class)]
+    private Collection $statistics;
+
     public static function create(string $label, string $name): self
     {
         $category = new self();
@@ -45,6 +48,7 @@ class Category
     {
         $this->ressources = new ArrayCollection();
         $this->createdAt = new \DateTimeImmutable();
+        $this->statistics = new ArrayCollection();
     }
 
     public function __toString()
@@ -126,6 +130,36 @@ class Category
     public function setName(string $name): self
     {
         $this->name = $name;
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, Statistics>
+     */
+    public function getStatistics(): Collection
+    {
+        return $this->statistics;
+    }
+
+    public function addStatistic(Statistics $statistic): self
+    {
+        if (!$this->statistics->contains($statistic)) {
+            $this->statistics->add($statistic);
+            $statistic->setCategory($this);
+        }
+
+        return $this;
+    }
+
+    public function removeStatistic(Statistics $statistic): self
+    {
+        if ($this->statistics->removeElement($statistic)) {
+            // set the owning side to null (unless already changed)
+            if ($statistic->getCategory() === $this) {
+                $statistic->setCategory(null);
+            }
+        }
 
         return $this;
     }
