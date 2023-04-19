@@ -14,15 +14,15 @@ class Language
     #[ORM\Id]
     #[ORM\GeneratedValue]
     #[ORM\Column]
-    #[Groups(['getUsers', 'getSettings'])]
+    #[Groups(['getUsers', 'getSettings', 'getLanguages'])]
     private ?int $id = null;
 
     #[ORM\Column(length: 255)]
-    #[Groups(['getUsers', 'getSettings'])]
+    #[Groups(['getUsers', 'getSettings', 'getLanguages'])]
     private ?string $label = null;
 
     #[ORM\Column(length: 255)]
-    #[Groups(['getUsers', 'getSettings'])]
+    #[Groups(['getUsers', 'getSettings', 'getLanguages'])]
     private ?string $name = null;
 
     #[ORM\OneToMany(mappedBy: 'language', targetEntity: Settings::class)]
