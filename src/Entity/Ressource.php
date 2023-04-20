@@ -46,7 +46,7 @@ class Ressource
 
     #[ORM\ManyToOne(inversedBy: 'ressources')]
     #[ORM\JoinColumn(nullable: false)]
-    #[Groups(['getRessources', 'getMedia', 'getFavorites'])]
+    #[Groups(['getRessources', 'getMedia', 'getFavorites', 'getLikes'])]
     private ?User $creator = null;
 
     #[ORM\OneToMany(mappedBy: 'ressource', targetEntity: Comment::class, orphanRemoval: true)]
@@ -54,7 +54,7 @@ class Ressource
     private Collection $comments;
 
     #[ORM\OneToMany(mappedBy: 'ressource', targetEntity: Media::class, orphanRemoval: true)]
-    #[Groups(['getRessources'])]
+    #[Groups(['getRessources', 'getLikes', 'getFavorites'])]
     private Collection $media;
 
     #[ORM\OneToMany(mappedBy: 'ressource_like', targetEntity: Like::class, orphanRemoval: true)]
