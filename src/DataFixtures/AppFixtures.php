@@ -209,12 +209,22 @@ class AppFixtures extends Fixture
                 $receiver = $users[mt_rand(0, count($users) - 1)];
             }
 
+            $isRelationExists = false;
+            foreach($relations as $relation) {
+                if($relation->getSender() === $sender && $relation->getReceiver() === $receiver) {
+                    $isRelationExists = true;
+                } else if($relation->getSender() === $receiver && $relation->getReceiver() === $sender) {
+                    $isRelationExists = true;
+                }
+            }
+
+            if($isRelationExists) {
+                continue;
+            }
             $relation = Relation::create($sender, $receiver, $relationTypes[mt_rand(0, count($relationTypes) - 1)]);
             $relation->setIsAccepted(true);
-            $publicRelation = Relation::createPublic($sender, $receiver, $relationTypes[0]);
             $relations[] = $relation;
             $manager->persist($relation);
-            $manager->persist($publicRelation);
         }
 
         $categories_array = [

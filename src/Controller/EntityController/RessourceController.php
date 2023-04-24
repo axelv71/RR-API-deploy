@@ -69,15 +69,17 @@ class RessourceController extends AbstractController
 
         $ressources = [];
         for ($r = 0; $r < 50; ++$r) {
+            $this_category_type = $categories[mt_rand(0, count($categories) - 1)];
+            $this_resource_relationType = $relationTypes[mt_rand(0, count($relationTypes) - 1)];
             $ressource = new Ressource();
-            $ressource->setDescription($this->faker->paragraph())
-                ->setIsValid((bool) mt_rand(0, 1))
-                ->setIsPublished((bool) mt_rand(0, 1))
-                ->setCategory($categories[mt_rand(0, count($categories) - 1)])
+            $ressource->setDescription($this_resource_relationType->getName())
+                ->setIsValid(true)
+                ->setIsPublished(true)
+                ->setCategory($this_category_type)
                 ->setCreator($users[mt_rand(0, count($users) - 1)])
-                ->setTitle($this->faker->sentence(4, true))
+                ->setTitle($this_category_type->getName())
                 ->setType($resource_types[mt_rand(0, count($resource_types) - 1)])
-                ->addRelationType($relationTypes[mt_rand(0, count($relationTypes) - 1)]);
+                ->addRelationType($this_resource_relationType);
 
             // Comments
             for ($c = 0; $c < mt_rand(0, 3); ++$c) {
@@ -189,7 +191,11 @@ class RessourceController extends AbstractController
         $this->logger->info('User id '.$user_id);
 
         // Get all resources from friends
-        if (0 != $category_id && 0 != $relation_type_id) {
+        if (0 === $category_id && 1 === $relation_type_id) {
+            $all_relations_resources = $ressourceRepository->getAllPublicResourcesByRelations($user_id);
+        } elseif (0 != $category_id && 1 === $relation_type_id) {
+            $all_relations_resources = $ressourceRepository->getAllPublicResourcesByRelationsByCategory($user_id, $category_id);
+        } elseif(0 != $category_id && 0 != $relation_type_id) {
             $all_relations_resources = $ressourceRepository->getAllResourcesByRelationsByCategory($user_id, $relation_type_id, $category_id);
         } elseif (0 === $category_id && 0 != $relation_type_id) {
             $all_relations_resources = $ressourceRepository->getAllResourcesByRelationsType($user_id, $relation_type_id);

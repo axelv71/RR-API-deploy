@@ -177,26 +177,6 @@ class RelationController extends AbstractController
         $relation->setUpdatedAt(new \DateTimeImmutable());
         $entityManage->persist($relation);
 
-        $publicRelationType = $relationTypeRepository->find(1);
-
-        $relations = $relationRepository->findBy([
-            'Sender' => $relation->getReceiver(),
-            'Receiver' => $relation->getSender(),
-        ]);
-
-        $publicRelationExists = false;
-
-        foreach ($relations as $existingRelation) {
-            if ($existingRelation->getRelationType()->getId() === 1) {
-                $publicRelationExists = true;
-            }
-        }
-
-        if (!$publicRelationExists) {
-            $relation = Relation::createPublic($relation->getReceiver(), $relation->getSender(), $publicRelationType);
-            $relation->setUpdatedAt(new \DateTimeImmutable());
-            $entityManage->persist($relation);
-        }
 
         $notification = Notification::create($relation->getReceiver(),
             $relation->getSender(),
