@@ -68,7 +68,7 @@ class Ressource
     #[ORM\ManyToMany(targetEntity: RelationType::class, inversedBy: 'ressources', fetch: 'EAGER')]
     private Collection $relationType;
 
-    #[ORM\OneToMany(mappedBy: 'resource', targetEntity: Notification::class)]
+    #[ORM\OneToMany(mappedBy: 'resource', targetEntity: Notification::class, orphanRemoval: true)]
     private Collection $notifications;
 
     #[ORM\ManyToOne(inversedBy: 'ressources')]

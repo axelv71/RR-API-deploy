@@ -27,7 +27,7 @@ class LikeControllerTest extends WebTestCase
         $client->loginUser($testUser);
 
         $data = [
-            'ressourceid' => 1,
+            'ressource_id' => 1,
         ];
 
         $json_data = json_encode($data);

@@ -8,6 +8,9 @@ use Symfony\Component\Serializer\SerializerInterface;
 
 class CommentControllerTest extends WebTestCase
 {
+    /**
+     * @throws \Exception
+     */
     public function testGetOneComment() : void
     {
         $client = static::createClient();
