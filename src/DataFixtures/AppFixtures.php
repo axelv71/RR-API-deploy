@@ -211,13 +211,13 @@ class AppFixtures extends Fixture
 
             $relation = Relation::create($sender, $receiver, $relationTypes[mt_rand(0, count($relationTypes) - 1)]);
             $relation->setIsAccepted(true);
-
+            $publicRelation = Relation::createPublic($sender, $receiver, $relationTypes[0]);
             $relations[] = $relation;
             $manager->persist($relation);
+            $manager->persist($publicRelation);
         }
 
         $categories_array = [
-            ['Toutes', 'all'],
             ['Communication', 'communication'],
             ['Cultures', 'cultures'],
             ['Développement personnel', 'personal_development'],
@@ -263,15 +263,19 @@ class AppFixtures extends Fixture
 
         $ressources = [];
         for ($r = 0; $r < 25; ++$r) {
+            $this_category_type = $categories[mt_rand(0, count($categories) - 1)];
+            $this_resource_relationType = $relationTypes[mt_rand(0, count($relationTypes) - 1)];
             $ressource = new Ressource();
-            $ressource->setDescription($this->faker->paragraph())
-                ->setIsValid((bool) mt_rand(0, 1))
-                ->setIsPublished((bool) mt_rand(0, 1))
-                ->setCategory($categories[mt_rand(0, count($categories) - 1)])
+            $ressource//->setDescription($this->faker->paragraph())
+                ->setIsValid(true)
+                ->setIsPublished(true)
+                ->setCategory($this_category_type)
                 ->setCreator($users[mt_rand(0, count($users) - 1)])
-                ->setTitle($this->faker->sentence(4, true))
+                //->setTitle($this->faker->sentence(4, true))
+                ->setTitle($this_category_type->getName())
                 ->setType($resource_types[mt_rand(0, count($resource_types) - 1)])
-                ->addRelationType($relationTypes[mt_rand(0, count($relationTypes) - 1)]);
+                ->addRelationType($this_resource_relationType)
+                ->setDescription($this_resource_relationType->getName());
 
             // Comments
             for ($c = 0; $c < mt_rand(0, 3); ++$c) {
