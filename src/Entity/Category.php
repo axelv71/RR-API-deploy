@@ -32,7 +32,7 @@ class Category
     #[ORM\OneToMany(mappedBy: 'category', targetEntity: Ressource::class)]
     private Collection $ressources;
 
-    #[ORM\OneToMany(mappedBy: 'category', targetEntity: Statistics::class)]
+    #[ORM\OneToMany(mappedBy: 'category', targetEntity: Statistic::class)]
     private Collection $statistics;
 
     public static function create(string $label, string $name): self
@@ -135,14 +135,14 @@ class Category
     }
 
     /**
-     * @return Collection<int, Statistics>
+     * @return Collection<int, Statistic>
      */
     public function getStatistics(): Collection
     {
         return $this->statistics;
     }
 
-    public function addStatistic(Statistics $statistic): self
+    public function addStatistic(Statistic $statistic): self
     {
         if (!$this->statistics->contains($statistic)) {
             $this->statistics->add($statistic);
@@ -152,7 +152,7 @@ class Category
         return $this;
     }
 
-    public function removeStatistic(Statistics $statistic): self
+    public function removeStatistic(Statistic $statistic): self
     {
         if ($this->statistics->removeElement($statistic)) {
             // set the owning side to null (unless already changed)

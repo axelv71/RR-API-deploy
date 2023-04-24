@@ -379,17 +379,17 @@ class AppFixtures extends Fixture
             $manager->persist($notification);
         }
 
-        /*//Statistiques
+        //Statistiques
         $statisticsType_array = [
-            ['Consultation', 'consultation'],
-            ['Recherche', 'recherche'],
-            ['Exploitation', 'exploitation'],
-            ['Creation', 'creation']
+            'Consultation',
+            'Recherche',
+            'Exploitation',
+            'Creation'
         ];
 
         $statisticsType = [];
         foreach($statisticsType_array as $statisticsType){
-            $statisticsType = StatisticType::create($statisticsType[0], $statisticsType[1]);
+            $statisticsType = StatisticType::create($statisticsType);
             $statisticsTypes[] = $statisticsType;
             $manager->persist($statisticsType);
         }
@@ -401,7 +401,7 @@ class AppFixtures extends Fixture
                 $categories[mt_rand(0, count($categories) - 1)]);
 
             $manager->persist($statistic);
-        }*/
+        }
 
         $manager->flush();
     }
