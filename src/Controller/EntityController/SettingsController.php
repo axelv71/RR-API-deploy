@@ -127,7 +127,7 @@ class SettingsController extends AbstractController
         return new JsonResponse($jsonSettings, Response::HTTP_OK, [], true);
     }
 
-    #[Route('/api/settings/update-device-mode', name: 'settings', methods: ['POST'])]
+    #[Route('/api/settings/update-device-mode', name: 'settings', methods: ['PUT'])]
     #[OA\Response(response: 200, description: 'Returns settings')]
     #[OA\Tag(name: 'Settings')]
     public function updateDeviceMode(EntityManagerInterface $entityManager,
@@ -150,7 +150,7 @@ class SettingsController extends AbstractController
         return new JsonResponse('Settings updated', Response::HTTP_OK);
     }
 
-    #[Route('/api/settings/update-theme', name: 'settings', methods: ['POST'])]
+    #[Route('/api/settings/update-theme', name: 'settings', methods: ['PUT'])]
     #[OA\Response(response: 200, description: 'Returns settings')]
     #[OA\Tag(name: 'Settings')]
     public function updateTheme(EntityManagerInterface $entityManager,
@@ -176,7 +176,7 @@ class SettingsController extends AbstractController
         return new JsonResponse('Settings updated', Response::HTTP_OK);
     }
 
-    #[Route('/api/settings/update-language', name: 'settings', methods: ['POST'])]
+    #[Route('/api/settings/update-language', name: 'settings', methods: ['PUT'])]
     #[OA\Response(response: 200, description: 'Returns settings')]
     #[OA\Tag(name: 'Settings')]
     public function updateLanguage(EntityManagerInterface $entityManager,
@@ -202,7 +202,7 @@ class SettingsController extends AbstractController
         return new JsonResponse('Settings updated', Response::HTTP_OK);
     }
 
-    #[Route('/api/settings/update-is-dark', name: 'settings', methods: ['POST'])]
+    #[Route('/api/settings/update-is-dark', name: 'settings', methods: ['PUT'])]
     #[OA\Response(response: 200, description: 'Returns settings')]
     #[OA\Tag(name: 'Settings')]
     public function updateIsDark(EntityManagerInterface $entityManager,
@@ -225,7 +225,7 @@ class SettingsController extends AbstractController
         return new JsonResponse('Settings updated', Response::HTTP_OK);
     }
 
-    #[Route('/api/settings/update-allow-notifications', name: 'settings', methods: ['POST'])]
+    #[Route('/api/settings/update-allow-notifications', name: 'settings', methods: ['PUT'])]
     #[OA\Response(response: 200, description: 'Returns settings')]
     #[OA\Tag(name: 'Settings')]
     public function updateAllowNotifications(EntityManagerInterface $entityManager,
