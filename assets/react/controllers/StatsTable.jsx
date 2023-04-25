@@ -7,7 +7,6 @@ const StatsTable = (props) => {
 
     React.useEffect(() => {
         const stats = JSON.parse(props.stats);
-        console.log(stats)
 
         stats.forEach((stat, index) => {
             setRows((prevRows) => [
