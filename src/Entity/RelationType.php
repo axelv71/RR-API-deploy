@@ -36,7 +36,7 @@ class RelationType
     #[ORM\ManyToMany(targetEntity: Ressource::class, mappedBy: 'relationType')]
     private Collection $ressources;
 
-    #[ORM\OneToMany(mappedBy: 'relationÃ_type', targetEntity: Statistics::class)]
+    #[ORM\OneToMany(mappedBy: 'relationï¿½_type', targetEntity: Statistic::class)]
     private Collection $statistics;
 
     public static function create(string $label, string $name): self
@@ -163,29 +163,29 @@ class RelationType
     }
 
     /**
-     * @return Collection<int, Statistics>
+     * @return Collection<int, Statistic>
      */
     public function getStatistics(): Collection
     {
         return $this->statistics;
     }
 
-    public function addStatistic(Statistics $statistic): self
+    public function addStatistic(Statistic $statistic): self
     {
         if (!$this->statistics->contains($statistic)) {
             $this->statistics->add($statistic);
-            $statistic->setRelationÃType($this);
+            $statistic->setRelationï¿½Type($this);
         }
 
         return $this;
     }
 
-    public function removeStatistic(Statistics $statistic): self
+    public function removeStatistic(Statistic $statistic): self
     {
         if ($this->statistics->removeElement($statistic)) {
             // set the owning side to null (unless already changed)
-            if ($statistic->getRelationÃType() === $this) {
-                $statistic->setRelationÃType(null);
+            if ($statistic->getRelationï¿½Type() === $this) {
+                $statistic->setRelationï¿½Type(null);
             }
         }
 

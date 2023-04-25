@@ -6,15 +6,12 @@ use App\Repository\StatisticsRepository;
 use Doctrine\ORM\Mapping as ORM;
 
 #[ORM\Entity(repositoryClass: StatisticsRepository::class)]
-class Statistics
+class Statistic
 {
     #[ORM\Id]
     #[ORM\GeneratedValue]
     #[ORM\Column]
     private ?int $id = null;
-
-    #[ORM\Column(length: 255)]
-    private ?string $type = null;
 
     #[ORM\ManyToOne(inversedBy: 'statistics')]
     private ?RelationType $relation_type = null;
@@ -28,21 +25,25 @@ class Statistics
     #[ORM\ManyToOne(inversedBy: 'statistics')]
     private ?Category $category = null;
 
+    #[ORM\ManyToOne(inversedBy: 'statistics')]
+    #[ORM\JoinColumn(nullable: false)]
+    private ?StatisticType $type = null;
+
+    public static function create($type, $relation_type, $resource_type, $category): self
+    {
+        $statistics = new self();
+        $statistics->relation_type = $relation_type;
+        $statistics->ressource_type = $resource_type;
+        $statistics->category = $category;
+        $statistics->type = $type;
+        $statistics->createdAt = new \DateTimeImmutable();
+
+        return $statistics;
+    }
+
     public function getId(): ?int
     {
         return $this->id;
-    }
-
-    public function getType(): ?string
-    {
-        return $this->type;
-    }
-
-    public function setType(string $type): self
-    {
-        $this->type = $type;
-
-        return $this;
     }
 
     public function getCategory(): ?string
@@ -89,6 +90,18 @@ class Statistics
     public function setCreatedAt(\DateTimeImmutable $createdAt): self
     {
         $this->createdAt = $createdAt;
+
+        return $this;
+    }
+
+    public function getType(): ?StatisticType
+    {
+        return $this->type;
+    }
+
+    public function setType(?StatisticType $type): self
+    {
+        $this->type = $type;
 
         return $this;
     }

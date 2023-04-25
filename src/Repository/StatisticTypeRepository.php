@@ -2,26 +2,26 @@
 
 namespace App\Repository;
 
-use App\Entity\Statistic;
+use App\Entity\StatisticType;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\Persistence\ManagerRegistry;
 
 /**
- * @extends ServiceEntityRepository<Statistic>
+ * @extends ServiceEntityRepository<StatisticType>
  *
- * @method Statistic|null find($id, $lockMode = null, $lockVersion = null)
- * @method Statistic|null findOneBy(array $criteria, array $orderBy = null)
- * @method Statistic[]    findAll()
- * @method Statistic[]    findBy(array $criteria, array $orderBy = null, $limit = null, $offset = null)
+ * @method StatisticType|null find($id, $lockMode = null, $lockVersion = null)
+ * @method StatisticType|null findOneBy(array $criteria, array $orderBy = null)
+ * @method StatisticType[]    findAll()
+ * @method StatisticType[]    findBy(array $criteria, array $orderBy = null, $limit = null, $offset = null)
  */
-class StatisticsRepository extends ServiceEntityRepository
+class StatisticTypeRepository extends ServiceEntityRepository
 {
     public function __construct(ManagerRegistry $registry)
     {
-        parent::__construct($registry, Statistic::class);
+        parent::__construct($registry, StatisticType::class);
     }
 
-    public function save(Statistic $entity, bool $flush = false): void
+    public function save(StatisticType $entity, bool $flush = false): void
     {
         $this->getEntityManager()->persist($entity);
 
@@ -30,7 +30,7 @@ class StatisticsRepository extends ServiceEntityRepository
         }
     }
 
-    public function remove(Statistic $entity, bool $flush = false): void
+    public function remove(StatisticType $entity, bool $flush = false): void
     {
         $this->getEntityManager()->remove($entity);
 
@@ -40,7 +40,7 @@ class StatisticsRepository extends ServiceEntityRepository
     }
 
 //    /**
-//     * @return Statistic[] Returns an array of Statistic objects
+//     * @return StatisticType[] Returns an array of StatisticType objects
 //     */
 //    public function findByExampleField($value): array
 //    {
@@ -54,7 +54,7 @@ class StatisticsRepository extends ServiceEntityRepository
 //        ;
 //    }
 
-//    public function findOneBySomeField($value): ?Statistic
+//    public function findOneBySomeField($value): ?StatisticType
 //    {
 //        return $this->createQueryBuilder('s')
 //            ->andWhere('s.exampleField = :val')
