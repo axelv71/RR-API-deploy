@@ -256,7 +256,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
         return $this;
     }
 
-    public function getSettings(): ?Settings
+    public function getSettings(): Settings
     {
         return $this->settings;
     }

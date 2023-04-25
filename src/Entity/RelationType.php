@@ -174,7 +174,7 @@ class RelationType
     {
         if (!$this->statistics->contains($statistic)) {
             $this->statistics->add($statistic);
-            $statistic->setRelation�Type($this);
+            $statistic->setRelationType($this);
         }
 
         return $this;
@@ -184,8 +184,8 @@ class RelationType
     {
         if ($this->statistics->removeElement($statistic)) {
             // set the owning side to null (unless already changed)
-            if ($statistic->getRelation�Type() === $this) {
-                $statistic->setRelation�Type(null);
+            if ($statistic->getRelationType() === $this) {
+                $statistic->setRelationType(null);
             }
         }
 
