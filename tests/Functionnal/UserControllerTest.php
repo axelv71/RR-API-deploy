@@ -1,80 +1,74 @@
 <?php
 
 namespace App\Tests\Functionnal;
-
+use App\Controller\EntityController\UserController;
 use App\Repository\UserRepository;
+use PHPUnit\Framework\TestCase;
 use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
 
-class SettingsControllerTest extends WebTestCase
+class UserControllerTest extends WebTestCase
 {
-    public function testGetUserSettings(): void
+
+    public function testSearchUser()
     {
         $client = static::createClient();
         $userRepository = static::getContainer()->get(UserRepository::class);
         $testUser = $userRepository->findOneByEmail('test@gmail.com');
         $client->loginUser($testUser);
 
-        $client->request('GET', '/api/settings/user');
+        $client->request('GET', '/api/users/search');
         $this->assertResponseIsSuccessful();
         $this->assertResponseHeaderSame('Content-Type', 'application/json');
         $this->assertJson($client->getResponse()->getContent());
     }
 
-    public function testGetAllThemes(): void
+    public function testGetOneUser()
     {
         $client = static::createClient();
         $userRepository = static::getContainer()->get(UserRepository::class);
         $testUser = $userRepository->findOneByEmail('test@gmail.com');
         $client->loginUser($testUser);
 
-        $client->request('GET', '/api/settings/themes');
+        $client->request('GET', '/api/users/1');
         $this->assertResponseIsSuccessful();
         $this->assertResponseHeaderSame('Content-Type', 'application/json');
         $this->assertJson($client->getResponse()->getContent());
     }
 
-    public function testGetAllLanguages(): void
+    public function testGetAllUsers()
     {
         $client = static::createClient();
         $userRepository = static::getContainer()->get(UserRepository::class);
         $testUser = $userRepository->findOneByEmail('test@gmail.com');
         $client->loginUser($testUser);
 
-        $client->request('GET', '/api/settings/languages');
+        $client->request('GET', '/api/users');
         $this->assertResponseIsSuccessful();
         $this->assertResponseHeaderSame('Content-Type', 'application/json');
         $this->assertJson($client->getResponse()->getContent());
     }
 
-    public function testUpdateUserSettings(): void
+    public function testGetProfile()
     {
         $client = static::createClient();
         $userRepository = static::getContainer()->get(UserRepository::class);
         $testUser = $userRepository->findOneByEmail('test@gmail.com');
         $client->loginUser($testUser);
 
-        $data = [
-            'theme' => 1,
-            'language' => 1,
-            'isDark' => true,
-            'allowNotifications' => true,
-            'useDeviceMode' => true,
-        ];
-
-        $client->request('PUT', '/api/settings/update', [], [], ['CONTENT_TYPE' => 'application/json'], json_encode($data));
+        $client->request('GET', '/api/profile');
         $this->assertResponseIsSuccessful();
         $this->assertResponseHeaderSame('Content-Type', 'application/json');
         $this->assertJson($client->getResponse()->getContent());
     }
 
-    public function testGetOneSetting() : void
+    public function testDeleteUser()
     {
         $client = static::createClient();
         $userRepository = static::getContainer()->get(UserRepository::class);
         $testUser = $userRepository->findOneByEmail('test@gmail.com');
         $client->loginUser($testUser);
 
-        $client->request('GET', '/api/settings/1');
+        $client->request('DELETE', '/api/users/1');
         $this->assertResponseIsSuccessful();
         $this->assertResponseHeaderSame('Content-Type', 'application/json');
         $this->assertJson($client->getResponse()->getContent());
