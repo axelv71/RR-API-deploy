@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Tests;
+namespace App\Tests\Functionnal;
 
 use App\Repository\UserRepository;
 use Exception;

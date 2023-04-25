@@ -1,12 +1,14 @@
 <?php
 
 
+namespace App\Tests\Functionnal;
+
 use App\Repository\UserRepository;
 use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
 
 class LikeControllerTest extends WebTestCase
 {
-    public function testGetAllLike() : void
+    public function testGetAllLike(): void
     {
         $client = static::createClient();
         $userRepository = static::getContainer()->get(UserRepository::class);
@@ -19,7 +21,7 @@ class LikeControllerTest extends WebTestCase
         $this->assertJson($client->getResponse()->getContent());
     }
 
-    public function testCreateLike() : void
+    public function testCreateLike(): void
     {
         $client = static::createClient();
         $userRepository = static::getContainer()->get(UserRepository::class);
@@ -37,7 +39,7 @@ class LikeControllerTest extends WebTestCase
         $this->assertResponseStatusCodeSame(201);
     }
 
-    public function testDeleteLike() : void
+    public function testDeleteLike(): void
     {
         $client = static::createClient();
         $userRepository = static::getContainer()->get(UserRepository::class);
