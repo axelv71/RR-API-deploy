@@ -113,6 +113,13 @@ class SettingsController extends AbstractController
         return new JsonResponse('Settings updated', Response::HTTP_OK);
     }
 
+
+    /**
+     * @param EntityManagerInterface $entityManager
+     * @param Request $request
+     * @param SettingsRepository $settingsRepository
+     * @return JsonResponse
+     */
     #[Route('/api/settings/update-device-mode', name: 'settings', methods: ['PUT'])]
     #[OA\Response(response: 200, description: 'Returns settings')]
     #[OA\Tag(name: 'Settings')]
