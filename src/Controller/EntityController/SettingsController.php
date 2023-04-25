@@ -113,20 +113,6 @@ class SettingsController extends AbstractController
         return new JsonResponse('Settings updated', Response::HTTP_OK);
     }
 
-    /**
-     * This function allows us to get settings by id.
-     */
-    #[Route('/api/settings/{id}', name: 'settings', methods: ['GET'])]
-    #[OA\Response(response: 200, description: 'Returns settings')]
-    #[OA\Tag(name: 'Settings')]
-    #[OA\Parameter(name: 'id', description: 'The id of the settings', in: 'path', required: true, example: 1)]
-    public function getOneSettings(Settings $settings, SerializerInterface $serializer): JsonResponse
-    {
-        $jsonSettings = $serializer->serialize($settings, 'json', ['groups' => 'getSettings']);
-
-        return new JsonResponse($jsonSettings, Response::HTTP_OK, [], true);
-    }
-
     #[Route('/api/settings/update-device-mode', name: 'settings', methods: ['PUT'])]
     #[OA\Response(response: 200, description: 'Returns settings')]
     #[OA\Tag(name: 'Settings')]
@@ -247,5 +233,21 @@ class SettingsController extends AbstractController
 
         return new JsonResponse('Settings updated', Response::HTTP_OK);
     }
+
+    /**
+     * This function allows us to get settings by id.
+     */
+    #[Route('/api/settings/{id}', name: 'settings', methods: ['GET'])]
+    #[OA\Response(response: 200, description: 'Returns settings')]
+    #[OA\Tag(name: 'Settings')]
+    #[OA\Parameter(name: 'id', description: 'The id of the settings', in: 'path', required: true, example: 1)]
+    public function getOneSettings(Settings $settings, SerializerInterface $serializer): JsonResponse
+    {
+        $jsonSettings = $serializer->serialize($settings, 'json', ['groups' => 'getSettings']);
+
+        return new JsonResponse($jsonSettings, Response::HTTP_OK, [], true);
+    }
+
+
 
 }
