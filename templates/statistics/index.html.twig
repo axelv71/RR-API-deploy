@@ -1,0 +1,8 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Statistics{% endblock %}
+
+{% block body %}
+    <h1>Statistics</h1>
+    <div {{ react_component('StatsTable', {'stats': stats}) }}></div>
+{% endblock %}

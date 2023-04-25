@@ -14,15 +14,15 @@ class RelationType
     #[ORM\Id]
     #[ORM\GeneratedValue]
     #[ORM\Column]
-    #[Groups(['getRelationType', 'getRelationTypesDetails', 'relation:read'])]
+    #[Groups(['getRelationType', 'getRelationTypesDetails', 'relation:read', 'getStats'])]
     private ?int $id = null;
 
     #[ORM\Column(length: 255)]
-    #[Groups(['getRelationType', 'getRelationTypesDetails', 'relation:read'])]
+    #[Groups(['getRelationType', 'getRelationTypesDetails', 'relation:read', 'getStats'])]
     private ?string $label = null;
 
     #[ORM\Column(length: 255)]
-    #[Groups(['getRelationType', 'getRelationTypesDetails', 'relation:read'])]
+    #[Groups(['getRelationType', 'getRelationTypesDetails', 'relation:read', 'getStats'])]
     private ?string $name = null;
 
     #[ORM\Column]

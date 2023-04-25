@@ -4,6 +4,7 @@ namespace App\Entity;
 
 use App\Repository\StatisticsRepository;
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Component\Serializer\Annotation\Groups;
 
 #[ORM\Entity(repositoryClass: StatisticsRepository::class)]
 class Statistic
@@ -11,22 +12,27 @@ class Statistic
     #[ORM\Id]
     #[ORM\GeneratedValue]
     #[ORM\Column]
+    #[Groups(['getStats'])]
     private ?int $id = null;
 
     #[ORM\ManyToOne(inversedBy: 'statistics')]
     private ?RelationType $relation_type = null;
 
     #[ORM\ManyToOne(inversedBy: 'statistics')]
+    #[Groups(['getStats'])]
     private ?RessourceType $ressource_type = null;
 
     #[ORM\Column]
+    #[Groups(['getStats'])]
     private ?\DateTimeImmutable $createdAt = null;
 
     #[ORM\ManyToOne(inversedBy: 'statistics')]
+    #[Groups(['getStats'])]
     private ?Category $category = null;
 
     #[ORM\ManyToOne(inversedBy: 'statistics')]
     #[ORM\JoinColumn(nullable: false)]
+    #[Groups(['getStats'])]
     private ?StatisticType $type = null;
 
     public static function create($type, $relation_type, $resource_type, $category): self
