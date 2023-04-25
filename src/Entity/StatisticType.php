@@ -6,6 +6,7 @@ use App\Repository\StatisticTypeRepository;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Component\Serializer\Annotation\Groups;
 
 #[ORM\Entity(repositoryClass: StatisticTypeRepository::class)]
 class StatisticType
@@ -13,9 +14,11 @@ class StatisticType
     #[ORM\Id]
     #[ORM\GeneratedValue]
     #[ORM\Column]
+    #[Groups(['getStats'])]
     private ?int $id = null;
 
     #[ORM\Column(length: 255)]
+    #[Groups(['getStats'])]
     private ?string $name = null;
 
     #[ORM\OneToMany(mappedBy: 'type', targetEntity: Statistic::class, orphanRemoval: true)]
