@@ -24,6 +24,9 @@ RUN echo "post_max_size = 100M" >> /usr/local/etc/php/conf.d/uploads.ini
 # Install composer
 RUN php -r "copy('https://getcomposer.org/installer', 'composer-setup.php');" && php composer-setup.php && php -r "unlink('composer-setup.php');" && mv composer.phar /usr/local/bin/composer
 
+# NodeJS
+RUN apk add nodejs npm
+
 # Install Symfony CLI
 RUN curl -1sLf 'https://dl.cloudsmith.io/public/symfony/stable/setup.alpine.sh' | bash && apk add symfony-cli
 
