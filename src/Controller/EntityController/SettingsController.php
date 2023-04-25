@@ -113,6 +113,134 @@ class SettingsController extends AbstractController
         return new JsonResponse('Settings updated', Response::HTTP_OK);
     }
 
+
+    /**
+     * @param EntityManagerInterface $entityManager
+     * @param Request $request
+     * @param SettingsRepository $settingsRepository
+     * @return JsonResponse
+     */
+    #[Route('/api/settings/update-device-mode', name: 'settings', methods: ['PUT'])]
+    #[OA\Response(response: 200, description: 'Returns settings')]
+    #[OA\Tag(name: 'Settings')]
+    public function updateDeviceMode(EntityManagerInterface $entityManager,
+                                     Request $request,
+                                     SettingsRepository $settingsRepository): JsonResponse
+    {
+        $content = $request->toArray();
+
+        $user_settings = $settingsRepository->findOneBy(['user' => $this->getUser()]);
+
+        if (!$user_settings) {
+            return new JsonResponse('Settings not found', Response::HTTP_NOT_FOUND);
+        }
+
+        $user_settings->setUseDeviceMode($content['useDeviceMode']);
+
+        $entityManager->persist($user_settings);
+        $entityManager->flush();
+
+        return new JsonResponse('Settings updated', Response::HTTP_OK);
+    }
+
+    #[Route('/api/settings/update-theme', name: 'settings', methods: ['PUT'])]
+    #[OA\Response(response: 200, description: 'Returns settings')]
+    #[OA\Tag(name: 'Settings')]
+    public function updateTheme(EntityManagerInterface $entityManager,
+                                Request $request,
+                                SettingsRepository $settingsRepository,
+                                ThemeRepository $themeRepository): JsonResponse
+    {
+        $content = $request->toArray();
+
+        $user_settings = $settingsRepository->findOneBy(['user' => $this->getUser()]);
+
+        if (!$user_settings) {
+            return new JsonResponse('Settings not found', Response::HTTP_NOT_FOUND);
+        }
+
+        $theme = $themeRepository->findOneBy(["id" => $content['theme']]);
+
+        $user_settings->setTheme($theme);
+
+        $entityManager->persist($user_settings);
+        $entityManager->flush();
+
+        return new JsonResponse('Settings updated', Response::HTTP_OK);
+    }
+
+    #[Route('/api/settings/update-language', name: 'settings', methods: ['PUT'])]
+    #[OA\Response(response: 200, description: 'Returns settings')]
+    #[OA\Tag(name: 'Settings')]
+    public function updateLanguage(EntityManagerInterface $entityManager,
+                                   Request $request,
+                                   SettingsRepository $settingsRepository,
+                                   LanguageRepository $languageRepository): JsonResponse
+    {
+        $content = $request->toArray();
+
+        $user_settings = $settingsRepository->findOneBy(['user' => $this->getUser()]);
+
+        if (!$user_settings) {
+            return new JsonResponse('Settings not found', Response::HTTP_NOT_FOUND);
+        }
+
+        $language = $languageRepository->findOneBy(['id' => $content['language']]);
+
+        $user_settings->setLanguage($language);
+
+        $entityManager->persist($user_settings);
+        $entityManager->flush();
+
+        return new JsonResponse('Settings updated', Response::HTTP_OK);
+    }
+
+    #[Route('/api/settings/update-is-dark', name: 'settings', methods: ['PUT'])]
+    #[OA\Response(response: 200, description: 'Returns settings')]
+    #[OA\Tag(name: 'Settings')]
+    public function updateIsDark(EntityManagerInterface $entityManager,
+                                 Request $request,
+                                 SettingsRepository $settingsRepository): JsonResponse
+    {
+        $content = $request->toArray();
+
+        $user_settings = $settingsRepository->findOneBy(['user' => $this->getUser()]);
+
+        if (!$user_settings) {
+            return new JsonResponse('Settings not found', Response::HTTP_NOT_FOUND);
+        }
+
+        $user_settings->setIsDark($content['isDark']);
+
+        $entityManager->persist($user_settings);
+        $entityManager->flush();
+
+        return new JsonResponse('Settings updated', Response::HTTP_OK);
+    }
+
+    #[Route('/api/settings/update-allow-notifications', name: 'settings', methods: ['PUT'])]
+    #[OA\Response(response: 200, description: 'Returns settings')]
+    #[OA\Tag(name: 'Settings')]
+    public function updateAllowNotifications(EntityManagerInterface $entityManager,
+                                             Request $request,
+                                             SettingsRepository $settingsRepository): JsonResponse
+    {
+        $content = $request->toArray();
+
+        $user_settings = $settingsRepository->findOneBy(['user' => $this->getUser()]);
+
+        if (!$user_settings) {
+            return new JsonResponse('Settings not found', Response::HTTP_NOT_FOUND);
+        }
+
+        $user_settings->setAllowNotifications($content['allowNotifications']);
+
+        $entityManager->persist($user_settings);
+        $entityManager->flush();
+
+        return new JsonResponse('Settings updated', Response::HTTP_OK);
+    }
+
     /**
      * This function allows us to get settings by id.
      */
@@ -126,4 +254,7 @@ class SettingsController extends AbstractController
 
         return new JsonResponse($jsonSettings, Response::HTTP_OK, [], true);
     }
+
+
+
 }

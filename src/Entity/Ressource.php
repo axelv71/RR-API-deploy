@@ -221,22 +221,22 @@ class Ressource
         return $this->media;
     }
 
-    public function addMedium(Media $medium): self
+    public function addMedia(Media $media): self
     {
-        if (!$this->media->contains($medium)) {
-            $this->media->add($medium);
-            $medium->setRessource($this);
+        if (!$this->media->contains($media)) {
+            $this->media->add($media);
+            $media->setRessource($this);
         }
 
         return $this;
     }
 
-    public function removeMedium(Media $medium): self
+    public function removeMedia(Media $media): self
     {
-        if ($this->media->removeElement($medium)) {
+        if ($this->media->removeElement($media)) {
             // set the owning side to null (unless already changed)
-            if ($medium->getRessource() === $this) {
-                $medium->setRessource(null);
+            if ($media->getRessource() === $this) {
+                $media->setRessource(null);
             }
         }
 

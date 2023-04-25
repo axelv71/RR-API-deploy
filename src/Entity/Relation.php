@@ -73,6 +73,7 @@ class Relation
     {
         $this->createdAt = new \DateTimeImmutable();
         $this->notifications = new ArrayCollection();
+        $this->updatedAt = new \DateTimeImmutable();
     }
 
     // public  function __construct() { }

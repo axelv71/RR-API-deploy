@@ -52,26 +52,26 @@ class Statistic
         return $this->id;
     }
 
-    public function getCategory(): ?string
+    public function getCategory(): ?Category
     {
         return $this->category;
     }
 
-    public function setCategory(?string $category): self
+    public function setCategory(?Category $category): self
     {
         $this->category = $category;
 
         return $this;
     }
 
-    public function getRelation�Type(): ?RelationType
+    public function getRelationType(): ?RelationType
     {
         return $this->relation_type;
     }
 
-    public function setRelation�Type(?RelationType $relation�_type): self
+    public function setRelationType(?RelationType $relation_type): self
     {
-        $this->relation_type = $relation�_type;
+        $this->relation_type = $relation_type;
 
         return $this;
     }

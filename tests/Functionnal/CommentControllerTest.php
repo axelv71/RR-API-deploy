@@ -1,10 +1,9 @@
 <?php
 
-namespace App\Tests;
+namespace App\Tests\Functionnal;
 
 use App\Repository\UserRepository;
 use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
-use Symfony\Component\Serializer\SerializerInterface;
 
 class CommentControllerTest extends WebTestCase
 {
