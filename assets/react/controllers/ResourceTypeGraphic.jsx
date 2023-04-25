@@ -29,7 +29,7 @@ const ExploitationTypeGraphic = (props) => {
         labels: labels,
         datasets: [
             {
-                label: "Exploitation Type Graphic",
+                label: "Resource Type Graphic",
                 backgroundColor: "rgb(99,115,255)",
                 borderColor: "rgb(99,115,255)",
                 data: graphData,
@@ -44,7 +44,7 @@ const ExploitationTypeGraphic = (props) => {
                 component="div"
                 sx={{ flexGrow: 1 }}
             >
-                Exploitation Type Graphic
+                Resource Type Graphic
             </Typography>
             <Bar data={data} />
         </Paper>
