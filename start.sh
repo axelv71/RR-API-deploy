@@ -19,6 +19,7 @@ docker exec -ti www_cube /bin/bash -c "php bin/console doctrine:database:create 
 docker exec -ti www_cube /bin/bash -c "php bin/console make:migration"
 docker exec -ti www_cube /bin/bash -c "php bin/console doctrine:migrations:migrate --no-interaction"
 docker exec -ti www_cube /bin/bash -c "php bin/console doctrine:fixtures:load --no-interaction"
+docker exec -ti www_cube /bin/bash -c "symfony console lexik:jwt:generate-keypair --skip-if-exists"
 
 
 

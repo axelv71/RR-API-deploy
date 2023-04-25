@@ -161,7 +161,11 @@ class RelationController extends AbstractController
     #[OA\Parameter(name: 'id', description: 'Relation id', in: 'path', required: true, example: 1)]
     #[OA\Response(response: 200, description: 'The relation has been accepted')]
     #[OA\Response(response: 401, description: 'You are not allowed to accept this relation')]
-    public function acceptRelation(Relation $relation, EntityManagerInterface $entityManage, SerializerInterface $serializer): JsonResponse
+    public function acceptRelation(Relation $relation,
+                                   EntityManagerInterface $entityManage,
+                                   RelationRepository $relationRepository,
+                                   RelationTypeRepository $relationTypeRepository,
+                                   SerializerInterface $serializer): JsonResponse
     {
         if ($relation->getReceiver() !== $this->getUser()) {
             $json = $serializer->serialize(['error' => 'You are not the receiver of this relation'], 'json');
@@ -172,6 +176,7 @@ class RelationController extends AbstractController
         $relation->setIsAccepted(true);
         $relation->setUpdatedAt(new \DateTimeImmutable());
         $entityManage->persist($relation);
+
 
         $notification = Notification::create($relation->getReceiver(),
             $relation->getSender(),

@@ -78,7 +78,7 @@ class SettingsController extends AbstractController
                     new OA\Property(property: 'isDark', type: 'boolean', example: 'true'),
                     new OA\Property(property: 'allowNotifications', type: 'boolean', example: 'true'),
                     new OA\Property(property: 'useDeviceMode', type: 'boolean', example: 'true'),
-                    new OA\Property(property: 'language', type: 'string', example: 'fr'),
+                    new OA\Property(property: 'language', type: 'int', example: '1'),
                 ]
             )
         ),
@@ -87,6 +87,7 @@ class SettingsController extends AbstractController
                                    Request $request,
                                    SettingsRepository $settingsRepository,
                                    ThemeRepository $themeRepository,
+                                   LanguageRepository $languageRepository,
                                    SerializerInterface $serializer): JsonResponse
     {
         $content = $request->toArray();
@@ -97,13 +98,14 @@ class SettingsController extends AbstractController
             return new JsonResponse('Settings not found', Response::HTTP_NOT_FOUND);
         }
 
-        $theme = $themeRepository->find($content['theme']);
+        $theme = $themeRepository->findOneBy(["id" => $content['theme']]);
+        $language = $languageRepository->findOneBy(['id' => $content['language']]);
 
         $user_settings->setTheme($theme);
         $user_settings->setIsDark($content['isDark']);
         $user_settings->setAllowNotifications($content['allowNotifications']);
         $user_settings->setUseDeviceMode($content['useDeviceMode']);
-        $user_settings->setLanguage($content['language']);
+        $user_settings->setLanguage($language);
 
         $entityManager->persist($user_settings);
         $entityManager->flush();

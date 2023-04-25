@@ -3,6 +3,8 @@
 namespace App\Entity;
 
 use App\Repository\RelationRepository;
+use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Serializer\Annotation\Groups;
 
@@ -12,7 +14,7 @@ class Relation
     #[ORM\Id]
     #[ORM\GeneratedValue]
     #[ORM\Column]
-    #[Groups(['getRelationTypesDetails', 'relation:read'])]
+    #[Groups(['getRelationTypesDetails', 'relation:read', 'getNotifications'])]
     private ?int $id = null;
 
     #[ORM\ManyToOne(inversedBy: 'Receiver')]
@@ -26,7 +28,7 @@ class Relation
     private ?User $Receiver = null;
 
     #[ORM\Column]
-    #[Groups(['getRelationTypesDetails', 'relation:read'])]
+    #[Groups(['getRelationTypesDetails', 'relation:read', 'getNotifications'])]
     private ?bool $isAccepted = null;
 
     #[ORM\ManyToOne(inversedBy: 'relations')]
@@ -42,6 +44,9 @@ class Relation
     #[Groups(['relation:read'])]
     private ?\DateTimeImmutable $updatedAt = null;
 
+    #[ORM\OneToMany(mappedBy: 'relation', targetEntity: Notification::class, cascade: ["remove"])]
+    private Collection $notifications;
+
     public static function create($Sender, $Receiver, $relation_type): self
     {
         $relation = new self();
@@ -53,9 +58,21 @@ class Relation
         return $relation;
     }
 
+    public static function createPublic($Sender, $Receiver, $relation_type): self
+    {
+        $relation = new self();
+        $relation->Sender = $Sender;
+        $relation->Receiver = $Receiver;
+        $relation->relation_type = $relation_type;
+        $relation->isAccepted = true;
+
+        return $relation;
+    }
+
     public function __construct()
     {
         $this->createdAt = new \DateTimeImmutable();
+        $this->notifications = new ArrayCollection();
     }
 
     // public  function __construct() { }
@@ -133,6 +150,36 @@ class Relation
     public function setUpdatedAt(?\DateTimeImmutable $updatedAt): self
     {
         $this->updatedAt = $updatedAt;
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, Notification>
+     */
+    public function getNotifications(): Collection
+    {
+        return $this->notifications;
+    }
+
+    public function addNotification(Notification $notification): self
+    {
+        if (!$this->notifications->contains($notification)) {
+            $this->notifications->add($notification);
+            $notification->setRelation($this);
+        }
+
+        return $this;
+    }
+
+    public function removeNotification(Notification $notification): self
+    {
+        if ($this->notifications->removeElement($notification)) {
+            // set the owning side to null (unless already changed)
+            if ($notification->getRelation() === $this) {
+                $notification->setRelation(null);
+            }
+        }
 
         return $this;
     }
