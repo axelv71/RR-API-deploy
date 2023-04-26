@@ -102,10 +102,11 @@ class RelationController extends AbstractController
         $relation = Relation::create($sender, $receiver, $relationType);
         $relation->setUpdatedAt(new \DateTimeImmutable());
 
+        $entityManage->persist($relation);
+
         $notification = Notification::create($sender, $receiver, $this->notificationType, "Vous avez reçu une demande d'amis de la part de ".$sender->getAccountName(), relation: $relation);
         $entityManage->persist($notification);
 
-        $entityManage->persist($relation);
         $entityManage->flush();
 
         $url = $urlGenerator->generate('relation_details', ['id' => $relation->getId()], UrlGeneratorInterface::ABSOLUTE_URL);
