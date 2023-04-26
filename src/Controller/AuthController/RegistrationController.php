@@ -4,6 +4,7 @@ namespace App\Controller\AuthController;
 
 use App\Entity\Settings;
 use App\Entity\User;
+use App\Repository\LanguageRepository;
 use App\Repository\ThemeRepository;
 use App\Repository\UserRepository;
 use App\Security\EmailVerifier;
@@ -80,6 +81,7 @@ class RegistrationController extends AbstractController
     public function register(Request $request,
                              UserRepository $userRepository,
                              UserPasswordHasherInterface $userPasswordHasher,
+                             LanguageRepository $languageRepository,
                              ThemeRepository $themeRepository,
                              EntityManagerInterface $em): JsonResponse
     {
@@ -104,6 +106,7 @@ class RegistrationController extends AbstractController
         }
 
         $theme = $themeRepository->findOneBy(['name' => 'default']);
+        $language = $languageRepository->findOneBy(['name' => 'fr']);
 
         $user->setEmail($data['email']);
         $user->setFirstName($data['first_name']);
@@ -115,7 +118,7 @@ class RegistrationController extends AbstractController
         $user->setSettings(Settings::create(isDark: false,
             allowNotifications: false,
             useDeviceMode: false,
-            language: 'fr',
+            language: $language,
             theme: $theme));
         // change this after enabled email verification
         // $user->setIsVerified(true);
