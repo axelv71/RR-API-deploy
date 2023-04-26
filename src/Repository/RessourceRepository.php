@@ -156,6 +156,7 @@ class RessourceRepository extends ServiceEntityRepository
                 INNER JOIN relation_type ON relation.relation_type_id = relation_type.id
                 WHERE "user".id = :user_id
                 AND relation.relation_type_id = :relation_type_id
+                AND relation.is_accepted = true
             )
             AND ressource_relation_type.relation_type_id IN (
                 SELECT relation_type_id
@@ -210,6 +211,7 @@ class RessourceRepository extends ServiceEntityRepository
                 INNER JOIN relation_type ON relation.relation_type_id = relation_type.id
                 WHERE "user".id = :user_id
                 AND relation.relation_type_id = :relation_type_id
+                AND relation.is_accepted = true
             )
             AND ressource_relation_type.relation_type_id IN (
                 SELECT relation_type_id
@@ -261,6 +263,7 @@ class RessourceRepository extends ServiceEntityRepository
                 INNER JOIN relation ON "user".id = relation.receiver_id OR "user".id = relation.sender_id
                 INNER JOIN relation_type ON relation.relation_type_id = relation_type.id
                 WHERE "user".id = :user_id
+                AND relation.is_accepted = true
             )
             AND (ressource_relation_type.relation_type_id IN
                 (
@@ -313,6 +316,7 @@ class RessourceRepository extends ServiceEntityRepository
                 INNER JOIN relation ON "user".id = relation.receiver_id OR "user".id = relation.sender_id
                 INNER JOIN relation_type ON relation.relation_type_id = relation_type.id
                 WHERE "user".id = :user_id
+                AND relation.is_accepted = true
             )
             AND (ressource_relation_type.relation_type_id IN
                 (
