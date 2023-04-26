@@ -150,7 +150,7 @@ class AppFixtures extends Fixture
         }
 
         $users = [];
-        for ($i = 0; $i < 10; ++$i) {
+        for ($i = 0; $i < 100; ++$i) {
             // Create a setting
             $setting = Settings::create(isDark: false,
                 allowNotifications: false,
@@ -227,6 +227,35 @@ class AppFixtures extends Fixture
             $manager->persist($relation);
         }
 
+        // For base demo
+        $base_relations = [];
+        for ($i = 0; $i < 100; ++$i) {
+            $sender = $users[100];
+            $receiver = $users[mt_rand(0, count($users) - 1)];
+            // dd($receiver);
+
+            while ($sender === $receiver) {
+                $receiver = $users[mt_rand(0, count($users) - 1)];
+            }
+
+            /*$isRelationExists = false;
+            foreach($relations as $relation) {
+                if($relation->getSender() === $sender && $relation->getReceiver() === $receiver) {
+                    $isRelationExists = true;
+                } else if($relation->getSender() === $receiver && $relation->getReceiver() === $sender) {
+                    $isRelationExists = true;
+                }
+            }*/
+
+            /*if($isRelationExists) {
+                continue;
+            }*/
+            $relation = Relation::create($sender, $receiver, $relationTypes[mt_rand(0, count($relationTypes) - 1)]);
+            $relation->setIsAccepted(true);
+            $base_relations[] = $relation;
+            $manager->persist($relation);
+        }
+
         $categories_array = [
             ['Communication', 'communication'],
             ['Cultures', 'cultures'],
@@ -272,20 +301,21 @@ class AppFixtures extends Fixture
         }
 
         $ressources = [];
-        for ($r = 0; $r < 25; ++$r) {
+        for ($r = 0; $r < 1000; ++$r) {
             $this_category_type = $categories[mt_rand(0, count($categories) - 1)];
             $this_resource_relationType = $relationTypes[mt_rand(0, count($relationTypes) - 1)];
             $ressource = new Ressource();
-            $ressource//->setDescription($this->faker->paragraph())
+            $ressource
                 ->setIsValid(true)
                 ->setIsPublished(true)
                 ->setCategory($this_category_type)
                 ->setCreator($users[mt_rand(0, count($users) - 1)])
-                //->setTitle($this->faker->sentence(4, true))
-                ->setTitle($this_category_type->getName())
+                ->setTitle($this->faker->sentence(4, true))
+                //->setTitle($this_category_type->getName())
                 ->setType($resource_types[mt_rand(0, count($resource_types) - 1)])
                 ->addRelationType($this_resource_relationType)
-                ->setDescription($this_resource_relationType->getName());
+                //->setDescription($this_resource_relationType->getName());
+                ->setDescription($this->faker->paragraph());
 
             // Comments
             for ($c = 0; $c < mt_rand(0, 3); ++$c) {
@@ -308,7 +338,7 @@ class AppFixtures extends Fixture
                 'mp4',
                 'video/mp4',
                 'video/quicktime'];
-            /*// Media
+            // Media
             for ($m = 0; $m < mt_rand(0, 3); $m++)
             {
                 $media = new Media();
@@ -319,7 +349,7 @@ class AppFixtures extends Fixture
                     ->setRessource($ressource);
 
                 $manager->persist($media);
-            }*/
+            }
 
             $manager->persist($ressource);
             $ressources[] = $ressource;
