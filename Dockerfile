@@ -19,6 +19,7 @@ RUN echo 'extension=intl.so' > /usr/local/etc/php/conf.d/docker-php-ext-intl.ini
 # Change upload size
 RUN echo "upload_max_filesize = 100M" >> /usr/local/etc/php/conf.d/uploads.ini
 RUN echo "post_max_size = 100M" >> /usr/local/etc/php/conf.d/uploads.ini
+RUN echo 'memory_limit = 2048M' >> /usr/local/etc/php/conf.d/docker-php-memlimit.ini;
 
 
 # Install composer

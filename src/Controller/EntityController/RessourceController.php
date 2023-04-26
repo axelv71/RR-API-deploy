@@ -20,6 +20,7 @@ use App\Repository\RelationTypeRepository;
 use App\Repository\RessourceRepository;
 use App\Repository\RessourceTypeRepository;
 use App\Repository\StatisticsRepository;
+use App\Repository\StatisticTypeRepository;
 use App\Repository\UserRepository;
 use Doctrine\DBAL\Exception;
 use Doctrine\ORM\EntityManagerInterface;
@@ -173,15 +174,20 @@ class RessourceController extends AbstractController
     #[Route('/api/resources', name: 'user_resources', methods: ['GET'])]
     public function getAllRelationsRessources(RessourceRepository $ressourceRepository,
                                               RelationRepository $relationRepository,
+                                              CategoryRepository $categoryRepository,
+                                              StatisticTypeRepository $statisticTypeRepository,
                                               LikeRepository $likeRepository,
                                               FavoriteRepository $favoriteRepository,
                                               RelationTypeRepository $relationTypeRepository,
                                               SerializerInterface $serializer,
+                                              EntityManagerInterface $em,
                                               Request $request): JsonResponse
     {
         /** @var User $user */
         $user = $this->getUser();
         $user_id = $user->getId();
+
+
 
         $relation_type_id = $request->query->getInt('relation_type_id');
         $category_id = $request->query->getInt('category_id');
@@ -189,6 +195,8 @@ class RessourceController extends AbstractController
         $this->logger->info('Relation type id '.$relation_type_id);
         $this->logger->info('Category id '.$category_id);
         $this->logger->info('User id '.$user_id);
+        $this->logger->info('Page '.$request->query->getInt('page', 1));
+        $this->logger->info('Page size '.$request->query->getInt('pageSize', 10));
 
         // Get all resources from friends
         if (0 === $category_id && 1 === $relation_type_id) {
@@ -212,7 +220,9 @@ class RessourceController extends AbstractController
         }
 
         $friends_resources = $ressourceRepository->getAllWithPaginationById($resources_id, $request->query->getInt('page', 1), $request->query->getInt('pageSize', 10));
+        $this->logger->info('Nombre de ressources après pagination : '.count($friends_resources));
 
+        $resources_types = [];
         foreach ($friends_resources as $resource) {
             $like = $likeRepository->findOneBy(['user_like' => $user, 'ressource_like' => $resource]);
             $favorite = $favoriteRepository->findOneBy(['user_favorite' => $user, 'ressource_favorite' => $resource]);
@@ -223,7 +233,30 @@ class RessourceController extends AbstractController
             if($favorite) {
                 $resource->setIsFavorite(true);
             }
+
+            $resources_types[] = $resource->getType();
         }
+
+        if($category_id === 0) {
+            $category = null;
+        } else {
+            $category = $categoryRepository->findOneBy(['id' => $category_id]);
+        }
+
+        if ($relation_type_id === 0) {
+            $relation_type = null;
+        } else {
+            $relation_type = $relationTypeRepository->findOneBy(['id' => $relation_type_id]);
+        }
+
+        $statistic_type = $statisticTypeRepository->findOneBy(['name' => 'Consultation']);
+
+        foreach ($resources_types as $type) {
+            $statistic = Statistic::create($statistic_type, $relation_type, $type, $category);
+            $em->persist($statistic);
+        }
+        $em->flush();
+
 
         $this->logger->info('Nombre de ressources : '.count($friends_resources));
         $jsonResourceList = $serializer->serialize($friends_resources, 'json', ['groups' => 'getRessources']);
