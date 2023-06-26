@@ -40,6 +40,8 @@ RUN composer update || true && composer update || true
 RUN composer install
 RUN symfony console lexik:jwt:generate-keypair --skip-if-exists
 
+RUN npm run build
+
 CMD ["symfony", "server:start"]
 
 EXPOSE 8000
