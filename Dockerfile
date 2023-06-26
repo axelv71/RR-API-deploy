@@ -32,3 +32,12 @@ RUN apk add nodejs npm
 RUN curl -1sLf 'https://dl.cloudsmith.io/public/symfony/stable/setup.alpine.sh' | bash && apk add symfony-cli
 
 WORKDIR /var/www/
+
+COPY . /var/www/
+
+RUN npm install
+RUN composer update || true && composer update || true
+RUN composer install
+RUN symfony console lexik:jwt:generate-keypair --skip-if-exists
+
+EXPOSE 8080
